@@ -1,6 +1,3 @@
-# ArtGallery
-
-
 # ArtGallery - Plataforma de Exposição de Arte Digital
 
 ## Visão Geral
