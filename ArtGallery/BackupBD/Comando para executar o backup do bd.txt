@@ -1,0 +1,3 @@
+Para executar o backup do banco de dados é necessário que não esteja logado, em seguida execute o código a segui;
+	mysqldump -u root nome_do_banco > backup.sql
+

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title><%= title %></title>
+      <link rel="stylesheet" href="/stylesheets/style.css" />
+   </head>
+   <body>
+      <div class="topo-logo">
+         <h1>ArtGallery</h1>
+      </div>
+      <div class="formulario">
+         <div class="topo-formulario">
+            <h1>Entrar Em Uma Conta de Usuario Comum</h1>
+            <p>Insira seu e-mail e senha para entrar em sua conta:</p>
+         </div>
+         <form action="/loginUserCom" method="post">
+            <div class="entrada">
+               <label for="email">E-mail</label>
+               <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="email@dominio.com"
+                  required
+               />
+            </div>
+            <div class="entrada">
+               <label for="senha">Senha</label>
+               <input
+                  type="password"
+                  id="senha"
+                  name="senha"
+                  placeholder="Senha"
+                  required
+               />
+               <p>Esqueceu a senha? <a href="/">Recuperar sua conta</a></p>
+            </div>
+            <div class="envio">
+               <input type="submit" value="Entrar Agora" />
+            </div>
+         </form>
+         <div class="fim-formulario">
+            <p>
+               Não possui uma conta?
+               <a href="/cadastroUserCom">Cadastre-se agora!</a>
+            </p>
+         </div>
+         <div class="voltar">
+            <svg
+               xmlns="http://www.w3.org/2000/svg"
+               width="20"
+               height="20"
+               fill="currentColor"
+               class="bi bi-arrow-left"
+               viewBox="0 0 16 16"
+            >
+               <path
+                  fill-rule="evenodd"
+                  d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"
+               />
+            </svg>
+            <a href="/">Voltar</a>
+         </div>
+      </div>
+   </body>
+</html>

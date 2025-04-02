@@ -1,0 +1,131 @@
+body {
+   padding: 0;
+   margin: 0;
+   font: 14px "Inter, Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+body {
+   display: flex;
+   align-items: center;
+   flex-direction: column;
+}
+
+.conteudo {
+   /* >NÃO< utilizado nas páginas de acesssos, apenas navegação, */
+   max-width: 960px; /* Por padrão, máximo de 960 de largura */
+   width: 100%;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   flex-direction: column;
+}
+
+a {
+   color: black;
+   font-weight: bold;
+   text-decoration: underline;
+}
+
+.topo-logo {
+   padding: 50px;
+}
+
+.formulario {
+   /* Por padrão, máximo de 500 de largura */
+   max-width: 500px;
+   width: 100%;
+   /* Por padrão, mínimo de 300 de largura */
+   min-width: 300px;
+   display: flex;
+   flex-direction: column; /* Para alinhar verticalmente */
+   gap: 30px; /* Define um espaço de 20px entre as divs internas */
+}
+
+.topo-formulario {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   flex-direction: column;
+   padding: 0, 0, 20px, 0; /* Topo, Direita, Baixo, Esquerda */
+}
+
+.topo-formulario h1 {
+   padding: 0;
+   margin: 0;
+}
+
+.topo-formulario p {
+   padding: 0;
+   margin: 0;
+   font-size: 16px;
+}
+
+.entrada {
+   margin: 20px 0 20px 0;
+   display: flex;
+   justify-content: center;
+   flex-direction: column;
+}
+
+.entrada label {
+   margin: 0 0 5px 0;
+   font-size: 16px;
+   font-weight: 600;
+}
+
+.entrada input {
+   padding: 15px;
+   border-radius: 0.5rem;
+   border: 1px solid #ccc;
+}
+
+.entrada input::placeholder {
+   font-size: 14px;
+}
+
+.entrada p {
+   margin: 5px 0 0 0;
+   font-size: 14px;
+}
+
+.envio {
+   display: flex;
+   justify-content: center;
+}
+
+.envio input[type="submit"] {
+   padding: 15px;
+   border-radius: 0.5rem;
+   border: none;
+   background-color: #000;
+   color: #fff;
+   font-size: 16px;
+   font-weight: bold;
+   width: 100%;
+}
+
+.envio input[type="submit"]:hover {
+   background-color: #333;
+   cursor: pointer;
+   transition: background-color 0.3s ease;
+}
+
+.fim-formulario {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   flex-direction: column;
+}
+
+.fim-formulario p {
+   margin: 0;
+   font-size: 16px;
+}
+
+.voltar {
+   display: flex;
+   justify-content: center;
+   gap: 0 10px;
+   margin: 20px 0 0 0;
+   font-size: 16px;
+}
