@@ -4,56 +4,66 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 
-const indexRouter = require("./routes/index"); //home page - Pagina inicial a acessar o site sem logar
-const userComRouter = require("./routes/userCom"); //Users page - Pagina de utilizadores comum
-const userArtRouter = require("./routes/userArt"); //Users page - Pagina de utilizadores artista
-const adminRouter = require("./routes/admin"); //Admin page - Pagina de administrador
-const cadastroUserComRouter = require("./routes/cadastroUserCom"); //register page user commom - Pagina de cadastro do usuario comum
-const cadastroUserArtRouter = require("./routes/cadastroUserArt"); //register page user artist- Pagina de cadastro do usuario artista
-const loginUserComRouter = require("./routes/loginUserCom"); //Login page user common - Pagina de login do usuario comum
-const loginUserArtRouter = require("./routes/loginUserArt"); //Login page user artist - Pagina de login do usuario artista
+const indexRouter = require("./routes/index");
+const userComRouter = require("./routes/userCom");
+const userArtRouter = require("./routes/userArt");
+const adminRouter = require("./routes/admin");
+const cadastroUserComRouter = require("./routes/cadastroUserCom");
+const cadastroUserArtRouter = require("./routes/cadastroUserArt");
+const loginUserComRouter = require("./routes/loginUserCom");
+const loginUserArtRouter = require("./routes/loginUserArt");
 
 const app = express();
 
-// view engine setup
+const session = require('express-session');
+
+app.use(session({
+   secret: 'seuSegredoSuperSecreto', 
+   resave: false,
+   saveUninitialized: true,
+   cookie: { secure: false } // Altere para true se usar HTTPS
+}));
+
+// Configuração do EJS
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
+// Middlewares básicos
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+// Servir arquivos estáticos
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/", indexRouter); //home page - Pagina inicial a acessar o site sem logar
-app.use("/userCom", userComRouter); //Users page - Pagina de utilizadores comum
+// Definição de rotas
+app.use("/", indexRouter);
+app.use("/userCom", userComRouter);
 app.use("/userArt", userArtRouter);
-app.use("/admin", adminRouter); //Admin page - Pagina de administrador
-app.use("/cadastroUserCom", cadastroUserComRouter); //register page user commom - Pagina de cadastro do usuario comum
-app.use("/cadastroUserArt", cadastroUserArtRouter); //register page user artist- Pagina de cadastro do usuario artista
-app.use("/loginUserCom", loginUserComRouter); //Login page user common - Pagina de login do usuario comum
-app.use("/loginUserArt", loginUserArtRouter); //Login page user artist - Pagina de login do usuario artista
+app.use("/admin", adminRouter);
+app.use("/cadastroUserCom", cadastroUserComRouter);
+app.use("/cadastroUserArt", cadastroUserArtRouter);
+app.use("/loginUserCom", loginUserComRouter);
+app.use("/loginUserArt", loginUserArtRouter);
 
-// catch 404 and forward to error handler
-app.use(function (req, res, next) {
-   next(createError(404));
+// Middleware para erros 404
+app.use((req, res, next) => {
+   res.status(404).render("404", { title: "Página Não Encontrada" });
 });
 
-// error handler
-app.use(function (err, req, res, next) {
-   // set locals, only providing error in development
+// Middleware para tratamento de erros
+app.use((err, req, res, next) => {
    res.locals.message = err.message;
    res.locals.error = req.app.get("env") === "development" ? err : {};
-
-   // render the error page
    res.status(err.status || 500);
    res.render("error");
 });
 
+// Iniciar servidor
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
-   console.log(`Servidor rodando em http://localhost:${PORT}`);
+   console.log(`🔥 Servidor rodando em http://localhost:${PORT}`);
 });
 
 module.exports = app;
