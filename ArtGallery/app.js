@@ -4,14 +4,14 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 
-const indexRouter = require("./routes/index");
+const indexRouter = require("./routes/index"); // Login
 const userComRouter = require("./routes/userCom");
 const userArtRouter = require("./routes/userArt");
 const adminRouter = require("./routes/admin");
-const cadastroUserComRouter = require("./routes/cadastroUserCom");
-const cadastroUserArtRouter = require("./routes/cadastroUserArt");
-const loginUserComRouter = require("./routes/loginUserCom");
-const loginUserArtRouter = require("./routes/loginUserArt");
+// const cadastroUserComRouter = require("./routes/cadastroUserCom");
+// const cadastroUserArtRouter = require("./routes/cadastroUserArt");
+// const loginUserComRouter = require("./routes/loginUserCom");
+// const loginUserArtRouter = require("./routes/loginUserArt");
 
 const app = express();
 
@@ -42,10 +42,10 @@ app.use("/", indexRouter);
 app.use("/userCom", userComRouter);
 app.use("/userArt", userArtRouter);
 app.use("/admin", adminRouter);
-app.use("/cadastroUserCom", cadastroUserComRouter);
-app.use("/cadastroUserArt", cadastroUserArtRouter);
-app.use("/loginUserCom", loginUserComRouter);
-app.use("/loginUserArt", loginUserArtRouter);
+// app.use("/cadastroUserCom", cadastroUserComRouter);
+// app.use("/cadastroUserArt", cadastroUserArtRouter);
+// app.use("/loginUserCom", loginUserComRouter);
+// app.use("/loginUserArt", loginUserArtRouter);
 
 // Middleware para erros 404
 app.use((req, res, next) => {
