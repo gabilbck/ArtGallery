@@ -15,7 +15,7 @@ router.get("/", (req, res) => {
 
 // Página de login
 router.get("/index", (req, res) => {
-   res.render("index", { title: "Login - ArtGallery", erros: {}, sucesso: null });
+   res.render("index", { title: "Login - ArtGallery", erros: {}, sucessoTit: null, sucessoSub: null, sucesso: null });
 });
 
 // Processar login com banco de dados
@@ -35,7 +35,7 @@ router.post("/index", async (req, res) => {
 
       if (usuario.id_usu) { 
          req.session.usuario = usuario; // Armazena o usuário na sessão
-         return res.render("index", { title: "Login - ArtGallery", erros: {}, sucesso: "Login realizado com sucesso!" });
+         return res.render("index", { title: "Login - ArtGallery", erros: {}, sucessoTit: "Entrou com Sucesso!", sucessoSub: "Aguarde enquanto redirecionamos você...", sucesso: "Seu login foi validado com sucesso!" });
       } else {
          return res.render("index", { title: "Login - ArtGallery", erros: { email: "E-mail ou senha incorretos." }, sucesso: null });
       }
