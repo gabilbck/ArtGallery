@@ -4,29 +4,24 @@ const { buscarUsuario } = require("../banco"); // Importa a função de busca de
 
 // Rota inicial
 router.get("/", (req, res) => {
-   if (global.userComEmail) {
-      return res.redirect("/loginUserCom");
-   } else if (global.userArtEmail) {
-      return res.redirect("/loginUserArt");
-   } else {
-      return res.redirect("/index");
-   }
+   return res.redirect("/index");
 });
 
 // Página de login
 router.get("/index", (req, res) => {
-   res.render("index", { title: "Login - ArtGallery", erros: {}, sucessoTit: null, sucessoSub: null, sucesso: null });
+   res.render("index", { title: "Login - ArtGallery", erros: null, sucesso: null });
 });
 
 // Processar login com banco de dados
 router.post("/index", async (req, res) => {
    const { email, senha } = req.body;
-   let erros = {};
+   let erros = null;
 
-   if (!email) erros.email = "E-mail obrigatório.";
-   if (!senha) erros.senha = "Senha obrigatória.";
+   if ((!email) || (!senha)) {
+      erros = "E-mail e senha são obrigatórios!";
+   }
 
-   if (Object.keys(erros).length > 0) {
+   if (erros) {
       return res.render("index", { title: "Login - ArtGallery", erros, sucesso: null });
    }
 
@@ -35,13 +30,13 @@ router.post("/index", async (req, res) => {
 
       if (usuario.id_usu) { 
          req.session.usuario = usuario; // Armazena o usuário na sessão
-         return res.render("index", { title: "Login - ArtGallery", erros: {}, sucessoTit: "Entrou com Sucesso!", sucessoSub: "Aguarde enquanto redirecionamos você...", sucesso: "Seu login foi validado com sucesso!" });
+         return res.render("index", { title: "Login - ArtGallery", erros: null, sucesso: true });
       } else {
-         return res.render("index", { title: "Login - ArtGallery", erros: { email: "E-mail ou senha incorretos." }, sucesso: null });
+         return res.render("index", { title: "Login - ArtGallery", erros: "E-mail ou senha incorretos.", sucesso: null });
       }
    } catch (error) {
       console.error("Erro ao buscar usuário:", error);
-      return res.render("index", { title: "Login - ArtGallery", erros: { email: "Erro no servidor, tente novamente." }, sucesso: null });
+      return res.render("index", { title: "Login - ArtGallery", erros: "Erro no servidor, tente novamente.", sucesso: null });
    }
 });
 

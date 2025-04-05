@@ -48,8 +48,8 @@ app.use("/admin", adminRouter);
 // app.use("/loginUserArt", loginUserArtRouter);
 
 // Middleware para erros 404
-app.use((req, res, next) => {
-   res.status(404).render("404", { title: "Página Não Encontrada" });
+app.use((req, res) => {
+   res.status(404).send("<h1>404 - Página não encontrada</h1>");
 });
 
 // Middleware para tratamento de erros

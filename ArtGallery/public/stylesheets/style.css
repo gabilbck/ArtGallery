@@ -27,7 +27,7 @@ h1 {
 
 p {
    padding: 0;
-   margin: 0;
+   margin: 5px 0 0 0;
    font-size: 16px;
 }
 
@@ -41,14 +41,30 @@ a {
    padding: 50px;
 }
 
-.sucesso{
+.retorno{
    display: flex;
    justify-content: center;
    align-items: center;
    flex-direction: column;
 }
 
-.sucesso h2, .sucesso p{
+.retorno-container {
+   color: #fff;
+   font-weight: bold;
+   padding: 10px 0;
+   border-radius: 0.5rem;
+   margin: 30px 0;
+   width: 100%;
+   max-width: 500px;
+   min-width: 300px;
+   text-align: center;
+}  
+
+#sucesso {
+   background-color: #6A994E;
+}
+#erro {
+   background-color: #D00000;
    margin: 0;
 }
 
@@ -68,11 +84,11 @@ a {
    justify-content: center;
    align-items: center;
    flex-direction: column;
-   padding: 0, 0, 20px, 0; /* Topo, Direita, Baixo, Esquerda */
+   margin: 50px 0 0 0;
 }
 
 .entrada {
-   margin: 20px 0 20px 0;
+   margin: 20px 0 ;
    display: flex;
    justify-content: center;
    flex-direction: column;
@@ -105,6 +121,7 @@ a {
 }
 
 .envio input[type="submit"] {
+   margin: 20px 0;
    padding: 15px;
    border-radius: 0.5rem;
    border: none;
@@ -133,7 +150,7 @@ a {
    font-size: 16px;
 }
 
-.voltar {
+.voltar a{
    display: flex;
    justify-content: center;
    align-items: center;
