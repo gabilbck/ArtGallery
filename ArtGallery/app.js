@@ -4,7 +4,8 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 
-const indexRouter = require("./routes/index"); // Login
+const indexRouter = require("./routes/index");
+const loginRouter = require("./routes/login"); // Login
 const userComRouter = require("./routes/userCom");
 const userArtRouter = require("./routes/userArt");
 const adminRouter = require("./routes/admin");
@@ -18,7 +19,7 @@ const app = express();
 const session = require('express-session');
 
 app.use(session({
-   secret: 'seuSegredoSuperSecreto', 
+   secret: 'ok', 
    resave: false,
    saveUninitialized: true,
    cookie: { secure: false } // Altere para true se usar HTTPS
@@ -63,7 +64,7 @@ app.use((err, req, res, next) => {
 // Iniciar servidor
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
-   console.log(`🔥 Servidor rodando em http://localhost:${PORT}`);
+   console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
 
 module.exports = app;

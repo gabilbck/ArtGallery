@@ -5,12 +5,10 @@ async function conectarBD()
     if(global.conexao && global.conexao.state !== 'Desconectado') {
         return global.conexao;
     }
-    
     /*
     const connectionString = 'mysql://root:senha@localhost:3306/livraria' 
     const connection= await mysql.createConnection(connectionString)
     */
-    
     const conexao = await mysql.createConnection({ 
             host     : 'localhost', 
             port     : 3306, 
@@ -20,13 +18,11 @@ async function conectarBD()
         }); 
         
     console.log('Conectou no MySQL!'); 
-
     global.conexao = conexao; 
     return global.conexao; 
 } 
 
-async function buscarUsuario(usuario)
-{
+async function buscarUsuario(usuario){
     const conexao = await conectarBD();
     const sql = "select * from usuario where email_usu=? and senha_usu=?;";
     const [usuarioEcontrado] = await conexao.query(sql,[usuario.email, usuario.senha]);
@@ -34,5 +30,4 @@ async function buscarUsuario(usuario)
 }
 
 conectarBD();
-
 module.exports = { buscarUsuario, conectarBD };
