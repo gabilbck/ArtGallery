@@ -1,33 +1,30 @@
 const mysql = require('mysql2/promise'); 
 
-async function conectarBD()
-{ 
-    if(global.conexao && global.conexao.state !== 'Desconectado') {
-        return global.conexao;
-    }
-    /*
-    const connectionString = 'mysql://root:senha@localhost:3306/livraria' 
-    const connection= await mysql.createConnection(connectionString)
-    */
+async function conectarBD() { 
+    if (global.conexao && global.conexao.state !== 'DESCONECTADO') { 
+        return global.conexao; 
+    } 
+
     const conexao = await mysql.createConnection({ 
-            host     : 'localhost', 
-            port     : 3306, 
-            user     : 'root',
-            password : '', 
-            database : 'artg' 
-        }); 
-        
-    console.log('Conectou no MySQL!'); 
+        host: 'localhost', 
+        port: 3306, 
+        user: 'root', 
+        password: '', 
+        database: 'artg' 
+    }); 
+
+    console.log('Conectou ao MySQL!'); 
     global.conexao = conexao; 
-    return global.conexao; 
+    return conexao; 
 } 
 
-async function buscarUsuario(usuario){
-    const conexao = await conectarBD();
-    const sql = "select * from usuario where email_usu=? and senha_usu=?;";
-    const [usuarioEcontrado] = await conexao.query(sql,[usuario.email, usuario.senha]);
-    return usuarioEcontrado && usuarioEcontrado.length>0 ? usuarioEcontrado[0] : {};
-}
+async function buscarUsuario(usuario) { 
+    const conexao = await conectarBD(); 
+    const sql = `SELECT id_usu, nome_usu, email_usu 
+                 FROM usuario 
+                 WHERE email_usu = ? AND senha_usu = ?`; 
+    const [linhas] = await conexao.query(sql, [usuario.email, usuario.senha]); 
+    return linhas.length > 0 ? linhas[0] : null; 
+} 
 
-conectarBD();
-module.exports = { buscarUsuario, conectarBD };
+module.exports = { buscarUsuario, conectarBD }; 

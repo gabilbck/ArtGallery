@@ -1,8 +1,23 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 
-// Define routes
-router.get('/', (req, res) => { /* ... */ });
+// Rota principal: exibe a página index, independentemente do usuário estar logado ou não
+router.get("/", (req, res) => {
+    res.render("index", {
+        title: "Página Inicial - ArtGallery",
+        usuario: req.session.usuario || null
+    });
+});
 
-// Ensure you export the router directly
-module.exports = router; // ✅ Correct export
+// Rota de logout: somente disponível para usuário logado
+router.get("/logout", (req, res) => {
+    if (req.session.usuario) {
+        req.session.destroy(() => {
+            res.redirect("/");
+        });
+    } else {
+        res.redirect("/");
+    }
+});
+
+module.exports = router;
