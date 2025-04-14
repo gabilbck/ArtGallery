@@ -1,5 +1,7 @@
 # ArtGallery
 
+* UTILIZE A BRANCH PRINCIPAL (MAIN) PARA EXECUTAR*
+
 Gabrieli Eduarda Lembeck        
 Julio Bezerra de Mattos Manoel      
 Mileine da Silva de Freitas
