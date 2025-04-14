@@ -1,6 +1,6 @@
 # ArtGallery
 
-* UTILIZE A BRANCH PRINCIPAL (MAIN) PARA EXECUTAR*
+*UTILIZE A BRANCH PRINCIPAL (MAIN) PARA EXECUTAR*
 
 Gabrieli Eduarda Lembeck        
 Julio Bezerra de Mattos Manoel      
