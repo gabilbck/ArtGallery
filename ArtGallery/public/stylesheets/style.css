@@ -2,9 +2,6 @@ body {
    padding: 0;
    margin: 0;
    font: 14px "Inter, Lucida Grande", Helvetica, Arial, sans-serif;
-}
-
-body {
    display: flex;
    align-items: center;
    flex-direction: column;
@@ -35,6 +32,25 @@ a {
    color: black;
    font-weight: bold;
    text-decoration: none;
+}
+
+/* Botões */
+.botao button{
+   background-color: #444;
+   color: #fff;
+   padding: 10px 20px;
+   border: 0;
+   border-radius: 0.5rem;
+   font-size: 16px;
+   font-weight: bold;
+   height: 50px;
+   margin: 50px 0;
+}
+.botao button:hover{
+   transform: scale(1.025);
+   transition: transform 0.3s ease;
+   box-shadow: 0 4px 6px #444;
+   cursor: pointer;
 }
 
 .topo-logo {
@@ -138,7 +154,7 @@ a {
    width: 100%;
 }
 .envio input[type="submit"]:hover {
-   background-color: #333;
+   background-color: #444;
    cursor: pointer;
    transition: background-color 0.3s ease;
 }
@@ -158,25 +174,30 @@ a {
 header{
    display: flex;
    flex-direction: column;
+   justify-content: center;
 }
 .pesquisa{
+   display: flex;
+   flex-direction: row;
    border: 1px solid #000;
    border-radius: 0.5rem;
    display: flex;
    padding: 10px;
+   max-width: 400px;
+   width: 100%;
+   align-self: center;
 }
 .pesquisa input{
    border: 0;
-   width: 250px;
+   width: 100%;
    padding: 0 0 0 10px; 
 }
 .pesquisa input:focus{
    outline: none;
 }
-.navegacao {
+.nav {
    display: flex;
    justify-content: center;
-   align-items: center;
    flex-direction: row;
    margin: 30px 0 0 0;
 }
@@ -186,12 +207,17 @@ header{
    display: flex;
    flex-direction: column;
    justify-content: center;
-   margin: 0 50px 0 50px
+   margin: 0 50px 0 50px;
 }
-.nav-icone svg{
-   width: 50px;
-   height: 50px;
-   margin: 0 auto;
+.nav-icone-img{
+   width: 100%;
+   display: flex;
+   justify-content: center;
+   padding: 0 0 10px 0;
+}
+.nav-icone-img svg{
+   width: 40px;
+   height: 40px;
 }
 .nav-icone a{
    display: flex;
@@ -199,6 +225,13 @@ header{
    align-items: center;
    flex-direction: column;
    text-decoration: none;
+}
+.nav-icone:hover .nav-icone-img,
+.nav-icone:hover a {
+   transform: scale(1.05);
+   transition: transform 0.3s ease;
+   text-shadow: 0 4px 6px rgba(0,0,0,0.1);
+   cursor: pointer;
 }
 
 /* Categorias */
@@ -219,9 +252,9 @@ header{
    border-radius: 0.5rem;
 }
 .cat-container:hover {
-   transform: scale(1.05);
+   transform: scale(1.025);
    transition: transform 0.3s ease;
-   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+   box-shadow: 0 4px 6px #444;
    cursor: pointer;
 }
 .cat-container img {
