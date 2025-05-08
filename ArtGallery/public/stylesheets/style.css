@@ -7,6 +7,18 @@ body {
    flex-direction: column;
 }
 
+section {
+   width: 100%;
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   flex-direction: column;
+ }
+ 
+
 .conteudo {
    /* >NÃO< utilizado nas páginas de acesssos, apenas navegação, */
    max-width: 960px; /* Por padrão, máximo de 960 de largura */
@@ -18,10 +30,8 @@ body {
 }
 
 .espaco-contraste{
-   width: 100%;
    background-color: #333;
    color: #fff;
-   padding: 100px 0;
 }
 
 .grid {
