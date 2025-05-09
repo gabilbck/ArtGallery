@@ -293,3 +293,14 @@ header{
    text-shadow: #000 0px 0px 5px;
    text-transform: uppercase;
 }
+
+
+/* Obras */
+.obras-container{
+   border-radius: 0.5rem;
+   width: 300px;
+   height: 300px;
+}
+.obras-container p{
+   color: #555;
+}
