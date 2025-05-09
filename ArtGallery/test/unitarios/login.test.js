@@ -1,10 +1,10 @@
 const request = require("supertest");
 const express = require("express");
 const session = require("express-session");
-const loginRouter = require("../../../routes/login");
-const banco = require("../../../banco");
+const loginRouter = require("../../routes/login");
+const banco = require("../../banco");
 
-jest.mock("../../../banco", () => ({
+jest.mock("../../banco", () => ({
     buscarUsuario: jest.fn(),
     conectarBD: jest.fn(), // prevenindo conexão real
 }));
