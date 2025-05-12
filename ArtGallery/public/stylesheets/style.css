@@ -17,33 +17,36 @@ section {
    align-items: center;
    flex-direction: column;
  }
- 
-
 .conteudo {
    /* >NÃO< utilizado nas páginas de acesssos, apenas navegação, */
-   max-width: 960px; /* Por padrão, máximo de 960 de largura */
+   max-width: 960px;
    width: 100%;
    display: flex;
-   justify-content: center;
-   align-items: center;
-   flex-direction: column;
+   justify-content: center; /* ou space-around/space-evenly conforme o visual desejado */
+   align-items: flex-start;
+   flex-wrap: wrap; /* permite que quebrem se não couberem */
+   gap: 20px; /* espaçamento entre os cards */
 }
-
 .espaco-contraste{
    background-color: #333;
    color: #fff;
    padding: 100px 0 100px 0;
 }
-
 .grid {
    display: grid;
-   grid-template-columns: repeat(3, 1fr);
+   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Colunas responsivas com largura mínima de 300px */
    gap: 20px;
-   flex-wrap: wrap;
-   justify-content: center;
-   align-items: center;
-   padding: 20px;
+   width: 100%;
+   max-width: 960px; /* Limita a largura máxima para manter o alinhamento */
+   padding: 20px 0; /* Ajuste no padding */
 }
+.grid a {
+   display: flex;
+   justify-content: center;
+   
+}
+
+
 
 h1 {
    padding: 0;
@@ -262,6 +265,17 @@ header{
    cursor: pointer;
 }
 
+/* Rodapé */
+footer {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   flex-direction: column;
+   margin: 100px 0 50px 0;
+}
+
+/* Cards */
+
 /* Categorias */
 .cat-container {
    position: relative;
@@ -295,71 +309,46 @@ header{
    text-transform: uppercase;
 }
 
-
-/* Obras */
-.obras-container{
+.obras-top{
+   text-align: center;
+   margin: 0 0 50px 0;
+}
+.card-obras{
    border-radius: 0.5rem;
    width: 300px;
    height: 300px;
    background-color: #fff;
+   color: #000;
+}
+.card-obras:hover {
+   transform: scale(1.025);
+   transition: transform 0.3s ease;
+   box-shadow: 0 4px 6px #444;
+}
+.card-obras img{
+   width: 100%;
+   height: 100%;
+   object-fit: cover;
+   border-radius: 0.5rem;
+}
+.card-obras img:hover, .card-obras span:hover, .card-obras strong:hover{
+   cursor: pointer;
+}
+.card-obras .card-info{
+   padding: 8px 12px;
    display: flex;
    flex-direction: column;
 }
-.obras-container p{
-   color: #555;
+.card-obras .top-info{
+   display: flex;
+   flex-direction: row;
+   align-items: center;
 }
-.obras-container #obra{   
-   width: 100%;
-   height: 200px;
-   object-fit: cover;
-   border-top-left-radius: 0.5rem;
-   border-top-right-radius: 0.5rem;
-}
-.obras-counts {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 12px;
-    font-size: 14px;
-    color: #333;
+.card-obras .save{
+   margin-left: auto;
 }
 
-.obras-left {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
 
-.obras-left div {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.obras-right {
-    display: flex;
-    align-items: center;
-}
-
-.obras-right a {
-    display: flex;
-    align-items: center;
-}
-
-.obras-descricao {
-    padding: 10px 12px 12px 12px;
-    color: #333;
-}
-
-.obras-descricao h6 {
-    margin: 0;
-    font-size: 14px;
-    font-weight: 600;
-}
-
-.obras-descricao p {
-    margin: 5px 0 0 0;
-    font-size: 14px;
-    color: #666;
-    line-height: 1.4;
+.descubra-container{
+   text-align: center;
 }
