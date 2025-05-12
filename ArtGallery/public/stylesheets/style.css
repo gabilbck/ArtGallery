@@ -343,9 +343,13 @@ footer {
    display: flex;
    flex-direction: row;
    align-items: center;
+   margin: 0 0 8px 0;
 }
 .card-obras .save{
    margin-left: auto;
+}
+.card-obras .bottom-info p{
+   color: #333;
 }
 
 
