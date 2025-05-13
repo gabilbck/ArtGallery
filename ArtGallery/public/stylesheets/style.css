@@ -354,5 +354,35 @@ footer {
 
 
 .descubra-container{
+   position: relative;
+   width: 100%;
+   height: 500px;
+   overflow: hidden;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+}
+.descubra-container img{
+   position: absolute;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   object-fit: cover;
+   z-index: -1;
+}
+.descubra-conteudo{
    text-align: center;
+   color: white;
+   z-index: 1;
+} 
+.link-final{
+   position: absolute;
+   bottom: 30px; /* 30px do fundo */
+   left: 50%;
+   transform: translateX(-50%);
+   color: white;
+   text-decoration: none;
+   font-weight: bold;
+   z-index: 1;
 }
