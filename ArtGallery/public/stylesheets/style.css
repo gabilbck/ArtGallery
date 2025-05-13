@@ -45,6 +45,9 @@ section {
    justify-content: center;
    
 }
+.centralizado{
+   text-align: center;
+}
 
 
 
@@ -272,6 +275,7 @@ footer {
    align-items: center;
    flex-direction: column;
    margin: 100px 0 50px 0;
+   gap: 20px;
 }
 
 /* Cards */
@@ -309,6 +313,7 @@ footer {
    text-transform: uppercase;
 }
 
+/* Obras em Destaque */
 .obras-top{
    text-align: center;
    margin: 0 0 50px 0;
@@ -352,7 +357,7 @@ footer {
    color: #333;
 }
 
-
+/* Descubra */
 .descubra-container{
    position: relative;
    width: 100%;
@@ -361,6 +366,8 @@ footer {
    display: flex;
    align-items: center;
    justify-content: center;
+   text-shadow: #333 0px 0px 5px;
+   cursor: pointer;
 }
 .descubra-container img{
    position: absolute;
@@ -376,6 +383,15 @@ footer {
    color: white;
    z-index: 1;
 } 
+.descubra-conteudo h1{
+   font-size: 40px;
+   font-weight: 300;
+}
+.descubra-conteudo p{
+   font-size: 20px;
+   font-weight: 300;
+  text-transform: uppercase;
+}
 .link-final{
    position: absolute;
    bottom: 30px; /* 30px do fundo */
@@ -385,4 +401,54 @@ footer {
    text-decoration: none;
    font-weight: bold;
    z-index: 1;
+}
+
+/* Seja parte do clube de arte */
+.txt-img{
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   flex-direction: row;
+   max-width: 960px;
+   margin: 50px 0 0 0;
+}
+.img-txt{
+   flex-direction: row-reverse;
+}
+.txt-central{
+   display: flex;
+   flex-direction: column;
+   width: 50%;
+   text-align: center;
+}
+.img-central{
+   width: 50%;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+}
+.txt-img .botao button{
+   margin: 50px 0 0 0;
+}
+.txt-img:last-child{
+   margin: 50px 0 50px 0;
+}
+
+
+/* Devs */
+.dev-tit{
+   margin: 50px 0 0 0;
+}
+.desenvolvedores{
+   display: flex;
+   flex-direction: column;
+}
+.desenvolvedores .dev-linha{
+   display: flex;
+   align-items: center;
+   flex-direction: row;
+   margin: 5px 0;
+}
+.desenvolvedores .github{
+   margin: 0 20px 0 0;
 }
