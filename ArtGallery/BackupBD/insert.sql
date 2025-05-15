@@ -89,6 +89,18 @@ FROM colecao c
 INNER JOIN obra_colecao oco ON c.id_col = oco.id_col
 INNER JOIN obra o ON oco.id_obr = o.id_obr;
 
+-- Retornos da barra de pesquisa
+CREATE VIEW pesquisar AS
+SELECT u.nome_usu, u.nome_comp, NULL AS nome_cat, NULL AS titulo_obr
+FROM usuario u
+WHERE u.tipo_usu = 'art'
+UNION ALL
+SELECT NULL, NULL, c.nome_cat, NULL
+FROM categoria c
+UNION ALL
+SELECT NULL, NULL, NULL, o.titulo_obr
+FROM obra o;
+
 -- Liberação automática ao cadastrar artista
 DELIMITER |
 CREATE TRIGGER adc_liberacao_de_artista
