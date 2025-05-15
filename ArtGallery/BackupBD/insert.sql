@@ -21,6 +21,9 @@
 -- e titulo_obr, descricao_obr, situacao_obr, id_cat, id_art
 -- 3 inner joins :)
 
+-- CREATE VIEW pesquisar
+-- retorna artista ou categoria ou obra
+
 -- CREATE TRIGGER adc_liberacao_de_artista
 -- O usuário cadastrado com tipo_usu="art"
 -- automaticamente cria-se um registro na tabela liberacao_artista
