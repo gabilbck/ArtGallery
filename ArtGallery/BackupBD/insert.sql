@@ -43,6 +43,134 @@
 -- CREATE TRIGGER banir
 -- se id_usu da tabela usuario atingir 2 na advertencia_usu altera ban_usu=1 
 
+-- Quantidade de seguidores por artista
+CREATE VIEW qtd_seguidores AS
+SELECT id_artista, COUNT(*) AS total_seguidores
+FROM seguidor_artista
+GROUP BY id_artista;
+
+-- Quantidade de artistas que cada seguidor segue
+CREATE VIEW qtd_seguindo AS
+SELECT id_seguidor, COUNT(*) AS total_seguindo
+FROM seguidor_artista
+GROUP BY id_seguidor;
+
+-- Quantidade de favoritos por obra
+CREATE VIEW qtd_favoritos AS
+SELECT id_obr, COUNT(*) AS total_favoritos
+FROM favorito_obra
+WHERE ativo = 1
+GROUP BY id_obr;
+
+-- Quantidade de comentários por obra
+CREATE VIEW qtd_comentarios AS
+SELECT id_obr, COUNT(id_com) AS total_comentarios
+FROM comentario
+GROUP BY id_obr;
+
+-- Comentários detalhados de cada obra
+CREATE VIEW comentarios_da_obra AS
+SELECT id_obr, id_usu, texto_com
+FROM comentario;
+
+-- Coleções de usuários com detalhes das obras
+CREATE VIEW colecoes_usuario AS
+SELECT 
+    c.nome_col,
+    c.id_usu,
+    oco.id_obr,
+    oco.id_col,
+    o.titulo_obr,
+    o.descricao_obr,
+    o.situacao_obr,
+    o.id_cat,
+    o.id_art
+FROM colecao c
+INNER JOIN obra_colecao oco ON c.id_col = oco.id_col
+INNER JOIN obra o ON oco.id_obr = o.id_obr;
+
+-- Liberação automática ao cadastrar artista
+DELIMITER |
+CREATE TRIGGER adc_liberacao_de_artista
+AFTER INSERT ON usuario
+FOR EACH ROW
+BEGIN
+    IF NEW.tipo_usu = 'art' THEN
+        INSERT INTO liberacao_artista (status_lib, id_art)
+        VALUES ('pendente', NULL); -- será atualizado ao aprovar
+    END IF;
+END|
+DELIMITER ;
+
+-- Aprovação gera registro na tabela artista
+DELIMITER |
+CREATE TRIGGER adc_artista_apr
+AFTER UPDATE ON liberacao_artista
+FOR EACH ROW
+BEGIN
+    IF NEW.status_lib = 'aprovado' AND OLD.status_lib != 'aprovado' THEN
+        INSERT INTO artista (nome_usu, nome_comp, bio_art, id_usu)
+        SELECT u.nome_usu, u.nome_comp, 
+               CONCAT('Bem-vindo ao perfil do artista ', u.nome_comp, '!'), 
+               u.id_usu
+        FROM usuario u
+        WHERE u.id_usu = (
+            SELECT a.id_usu
+            FROM artista a
+            WHERE a.id_art = NEW.id_art
+        );
+    END IF;
+END|
+DELIMITER ;
+
+-- Marcar e desmarcar favoritos
+DELIMITER |
+CREATE TRIGGER obra_ja_favoritada
+BEFORE INSERT ON favorito_obra
+FOR EACH ROW
+BEGIN
+    DECLARE existe INT;
+    SELECT COUNT(*) INTO existe
+    FROM favorito_obra
+    WHERE id_usu = NEW.id_usu AND id_obr = NEW.id_obr;
+
+    IF existe > 0 THEN
+        UPDATE favorito_obra
+        SET ativo = IF(ativo = 1, 0, 1)
+        WHERE id_usu = NEW.id_usu AND id_obr = NEW.id_obr;
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Atualizado favorito existente'; -- evita INSERT real
+    END IF;
+END|
+DELIMITER ;
+
+-- Adicionar advertência
+DELIMITER |
+CREATE TRIGGER advertencia
+AFTER INSERT ON comentario
+FOR EACH ROW
+BEGIN
+    UPDATE usuario
+    SET advertencia_usu = advertencia_usu + 1
+    WHERE id_usu = NEW.id_usu;
+END|
+DELIMITER ;
+
+-- Banimento automático ao atingir 2 advertências
+DELIMITER |
+CREATE TRIGGER banir
+AFTER UPDATE ON usuario
+FOR EACH ROW
+BEGIN
+    IF NEW.advertencia_usu >= 2 THEN
+        UPDATE usuario
+        SET ban_usu = 1
+        WHERE id_usu = NEW.id_usu;
+    END IF;
+END|
+DELIMITER ;
+
+
+
 INSERT INTO usuario (nome_usu, nome_comp, email_usu, senha_usu, tipo_usu)
 VALUES
 ('ana01', 'Ana Souza', 'ana01@email.com', 'senha123', 'apr'),
