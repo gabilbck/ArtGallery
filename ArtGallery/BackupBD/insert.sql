@@ -1,3 +1,48 @@
+-- CREATE VIEW qtd_seguidores
+-- select id_artista e count quantidade de vezes que aparece na tabela seguidor_artista, 
+-- o que determina a quantidade total de seguidores do artista
+
+-- CREATE VIEW qtd_seguindo
+-- select id_seguidor e count quantidade de vezes que aparece na tabela seguidor_artista, 
+-- o que determina a quantidade total de artistas que o apreciador segue
+
+-- CREATE VIEW qtd_favoritos
+-- select id_obr na tabela favorito_obra e count quantidade de vezes que aparece na tabela
+-- o que determina a quantidade total de favoritos que a obra possui
+
+-- CREATE VIEW qtd_comentarios
+-- select id_obr e faz count da quantidade de id_usu registrados na tabela comentario
+
+-- CREATE VIEW comentarios_da_obra
+-- select id_obr e retorna os id_usu, texto_com especificos da tabela comentario par adeterminada obra
+
+-- CREATE VIEW oolecoes_usuario
+-- select nome_col, id_usu na tabela colecao e id_obr, id_col na tabela obra_colecao
+-- e titulo_obr, descricao_obr, situacao_obr, id_cat, id_art
+-- 3 inner joins :)
+
+-- CREATE TRIGGER adc_liberacao_de_artista
+-- O usuário cadastrado com tipo_usu="art"
+-- automaticamente cria-se um registro na tabela liberacao_artista
+-- status_lib="pendente", id=(ID-DO-ARTISTA)
+
+-- CREATE TRIGGER adc_artista_apr
+-- altera registro de liberação de artista para "aprovado"
+-- automaticamente cria-se um registro na tabela artista
+-- puxa de usuario nome_usu, nome_comp, bio_art, id_usu
+-- bio_art é registrado default "Bem-vindo ao perfil do artista (Nome Completo)!"
+
+-- CREATE TRIGGER obra_ja_favoritada
+-- se o usuário cliar outra vez para desfavoritar a obra, ou seja já estiver regitrado, se não ignora
+-- se houver: id_usu, id_obr, ativo=1, altera ativo para ativo=0,
+-- se houver: id_usu, id_obr, ativo=0, altera ativo para ativo=0
+
+-- CREATE TRIGGER advertencia
+-- selecionar id_usu e somar +1 no valor de advertencia_uru
+
+-- CREATE TRIGGER banir
+-- se id_usu da tabela usuario atingir 2 na advertencia_usu altera ban_usu=1 
+
 INSERT INTO usuario (nome_usu, nome_comp, email_usu, senha_usu, tipo_usu)
 VALUES
 ('ana01', 'Ana Souza', 'ana01@email.com', 'senha123', 'apr'),
@@ -98,18 +143,18 @@ VALUES
 (1, 10, 'Cenário inspirador.');
 
 
-INSERT INTO favorito_obra (id_usu, id_obr)
+INSERT INTO favorito_obra (id_usu, id_obr, ativo)
 VALUES
-(1, 3),
-(2, 4),
-(3, 5),
-(4, 1),
-(5, 2),
-(6, 6),
-(7, 7),
-(8, 8),
-(9, 9),
-(10, 10);
+(1, 3, 1),
+(2, 4, 1),
+(3, 5, 1),
+(4, 1, 1),
+(5, 2, 1),
+(6, 6, 1),
+(7, 7, 1),
+(8, 8, 1),
+(9, 9, 1),
+(10, 10, 1);
 
 
 INSERT INTO liberacao_artista (status_lib, id_art)
@@ -126,7 +171,7 @@ VALUES
 ('aprovado', 10);
 
 
-INSERT INTO seguidor_artista (id_seguidor, id_seguindo)
+INSERT INTO seguidor_artista (id_seguidor, id_artista)
 VALUES
 (1, 2),
 (2, 3),

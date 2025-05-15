@@ -133,6 +133,7 @@ DROP TABLE IF EXISTS `favorito_obra`;
 CREATE TABLE `favorito_obra` (
   `id_usu` int(11) NOT NULL,
   `id_obr` int(11) NOT NULL,
+  `ativo` tinyint(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id_usu`,`id_obr`),
   KEY `id_obr` (`id_obr`),
   CONSTRAINT `favorito_obra_ibfk_1` FOREIGN KEY (`id_usu`) REFERENCES `usuario` (`id_usu`),
@@ -241,11 +242,11 @@ DROP TABLE IF EXISTS `seguidor_artista`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `seguidor_artista` (
   `id_seguidor` int(11) NOT NULL,
-  `id_seguindo` int(11) NOT NULL,
-  PRIMARY KEY (`id_seguidor`,`id_seguindo`),
-  KEY `id_seguindo` (`id_seguindo`),
+  `id_artista` int(11) NOT NULL,
+  PRIMARY KEY (`id_seguidor`,`id_artista`),
+  KEY `id_artista` (`id_artista`),
   CONSTRAINT `seguidor_artista_ibfk_1` FOREIGN KEY (`id_seguidor`) REFERENCES `usuario` (`id_usu`),
-  CONSTRAINT `seguidor_artista_ibfk_2` FOREIGN KEY (`id_seguindo`) REFERENCES `usuario` (`id_usu`)
+  CONSTRAINT `seguidor_artista_ibfk_2` FOREIGN KEY (`id_artista`) REFERENCES `artista` (`id_art`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -299,7 +300,7 @@ CREATE TABLE `usuario` (
   `foto_usu` blob DEFAULT NULL,
   `bio_usu` text DEFAULT NULL,
   `tipo_usu` varchar(3) NOT NULL DEFAULT 'apr',
-  `advertencia_usu` int(11) DEFAULT 0,
+  `advertencia_usu` smallint(2) DEFAULT 0,
   `ban_usu` tinyint(1) DEFAULT 0,
   PRIMARY KEY (`id_usu`),
   UNIQUE KEY `email_usu` (`email_usu`)
