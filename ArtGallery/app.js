@@ -7,6 +7,9 @@ const session = require("express-session");
 
 const indexRouter = require("./routes/index");
 const loginRouter = require("./routes/login");
+// const cadastroRouter = require("./routes/cadastro");
+// const 
+const imagemRouter = require("./routes/imagem");
 
 const app = express();
 
@@ -29,6 +32,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // As rotas: “/” aponta para a página index e “/login” para autenticação
 app.use("/", indexRouter);
 app.use("/login", loginRouter);
+app.use("/imagem", imagemRouter);
 
 // 404
 app.use((req, res) => {
@@ -47,5 +51,16 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
+
+app.get('/', async (req, res) => {
+  try {
+    const [categorias] = await conexao.promise().query('SELECT id_cat, nome_cat FROM categoria');
+    res.render('index', { categorias });
+  } catch (error) {
+    console.error('Erro ao buscar categorias:', error);
+    res.render('index', { categorias: [] }); // evita erro no template
+  }
+});
+
 
 module.exports = app;

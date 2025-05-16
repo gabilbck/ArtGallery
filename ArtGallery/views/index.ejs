@@ -61,12 +61,14 @@
      <section>
         <div class="conteudo">
             <div class="grid">
-                <a href="/categorias/id=#">
+                <% categorias.forEach(c => { %>
+                <a href="/categorias/id=<%= c.id_categoria %>">
                     <div class="cat-container">
-                        <img src="https://placehold.co/300x200/png" alt="Categoria 1">
-                        <span>Categoria 1</span>
+                    <img src="/imagem/<%= c.id_categoria %>" alt="<%= c.nome %>">
+                    <span><%= c.nome %></span>
                     </div>
                 </a>
+                <% }) %>
                 <a href="/categorias/id=#">
                     <div class="cat-container">
                         <img src="https://placehold.co/300x200/png" alt="Categoria 2">

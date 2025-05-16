@@ -29,12 +29,11 @@ async function conectarBD() {
     } 
 
 // Categorias
-    async function buscarTodasCategorias(){
+    async function buscarTodasCategorias() {
         const conexao = await conectarBD();
-        const sql = `select id_cat, nome_cat, descricao_cat, foto_cat
-                    from categoria`;
-        const [linhas] = await conexao.query(sql, [categoria.nome, categoria.foto]);
-        return linhas.length > 0 ? linhas[0] : null;
+        const sql = `SELECT id_cat AS id_categoria, nome_cat AS nome, foto_cat AS id_imagem FROM categoria`;
+        const [linhas] = await conexao.query(sql);
+        return linhas;
     }
     async function buscarCategoria(){
         const conexao = await conectarBD();
@@ -53,4 +52,21 @@ async function conectarBD() {
 
 // Comentários
 
-module.exports = { buscarUsuario, conectarBD, buscarTodasCategorias, buscarCategoria }; 
+// Imagens
+async function buscarImagemPorId(id) {
+    const sql = "SELECT foto_cat FROM categoria WHERE id_cat = ?";
+    const [rows] = await conexao.promise().query(sql, [id]);
+    if (rows.length > 0) {
+        return rows[0].foto_cat;  // Isso será um Buffer com o binário da imagem
+        } else {
+        throw new Error("Imagem não encontrada");
+    }
+}
+
+module.exports = { 
+    buscarUsuario, 
+    conectarBD, 
+    buscarTodasCategorias, buscarCategoria,
+    buscarTodasObras,
+    buscarImagemPorId
+ }; 
