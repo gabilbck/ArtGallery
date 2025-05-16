@@ -18,13 +18,39 @@ async function conectarBD() {
     return conexao; 
 } 
 
-async function buscarUsuario(usuario) { 
-    const conexao = await conectarBD(); 
-    const sql = `SELECT id_usu, nome_usu, email_usu 
-                 FROM usuario 
-                 WHERE email_usu = ? AND senha_usu = ?`; 
-    const [linhas] = await conexao.query(sql, [usuario.email, usuario.senha]); 
-    return linhas.length > 0 ? linhas[0] : null; 
-} 
+// Usuários
+    async function buscarUsuario(usuario) { 
+        const conexao = await conectarBD(); 
+        const sql = `SELECT id_usu, nome_usu, email_usu 
+                    FROM usuario 
+                    WHERE email_usu = ? AND senha_usu = ?`; 
+        const [linhas] = await conexao.query(sql, [usuario.email, usuario.senha]); 
+        return linhas.length > 0 ? linhas[0] : null; 
+    } 
 
-module.exports = { buscarUsuario, conectarBD }; 
+// Categorias
+    async function buscarTodasCategorias(){
+        const conexao = await conectarBD();
+        const sql = `select id_cat, nome_cat, descricao_cat, foto_cat
+                    from categoria`;
+        const [linhas] = await conexao.query(sql, [categoria.nome, categoria.foto]);
+        return linhas.length > 0 ? linhas[0] : null;
+    }
+    async function buscarCategoria(){
+        const conexao = await conectarBD();
+        const sql = `select id_cat, nome_cat, descricao_cat, foto_cat
+                    from categoria
+                    where id_cat= ?`;
+        const [linhas] = await conexao.query(sql, [categoria.nome,  categoria.descricao, categoria.foto]);
+        return linhas.length > 0 ? linhas[0] : null;
+    }
+
+// Obras
+    async function buscarTodasObras(){
+        const conecao = await conectarBD();
+        const sql = `select id_obr`;
+    }
+
+// Comentários
+
+module.exports = { buscarUsuario, conectarBD, buscarTodasCategorias, buscarCategoria }; 
