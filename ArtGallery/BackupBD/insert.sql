@@ -112,7 +112,7 @@ FOR EACH ROW
 BEGIN
     IF NEW.tipo_usu = 'art' THEN
         INSERT INTO liberacao_artista (status_lib, id_art)
-        VALUES ('pendente', NULL); -- será atualizado ao aprovar
+        VALUES ('p', NULL); -- será atualizado ao aprovar
     END IF;
 END|
 DELIMITER ;
@@ -123,7 +123,7 @@ CREATE TRIGGER adc_artista_apr
 AFTER UPDATE ON liberacao_artista
 FOR EACH ROW
 BEGIN
-    IF NEW.status_lib = 'aprovado' AND OLD.status_lib != 'aprovado' THEN
+    IF NEW.status_lib = 'a' AND OLD.status_lib != 'a' THEN
         INSERT INTO artista (nome_usu, nome_comp, bio_art, id_usu)
         SELECT u.nome_usu, u.nome_comp, 
                CONCAT('Bem-vindo ao perfil do artista ', u.nome_comp, '!'), 
@@ -302,16 +302,16 @@ VALUES
 
 INSERT INTO liberacao_artista (status_lib, id_art)
 VALUES
-('aprovado', 1),
-('aprovado', 2),
-('pendente', 3),
-('aprovado', 4),
-('rejeitado', 5),
-('pendente', 6),
-('aprovado', 7),
-('pendente', 8),
-('aprovado', 9),
-('aprovado', 10);
+('a', 1),
+('a', 2),
+('p', 3),
+('a', 4),
+('r', 5),
+('p', 6),
+('a', 7),
+('p', 8),
+('a', 9),
+('a', 10);
 
 
 INSERT INTO seguidor_artista (id_seguidor, id_artista)
@@ -342,7 +342,8 @@ VALUES
 ('juliana10@email.com', 'Reportar bug', 'Encontrei um erro no envio de obras.');
 
 
-
+update categoria set 
+foto_cat="\xff\xd8\xff\xe0\x00\x10JFIF\x00\x01\x01\x01\x00`\x00`\x00\x00\xff\xdb\x00C\x00\x02\x01\x01\x02\x01\x01\x02\x02\x02\x02\x02\x02\x02\x02\x03\x05\x03\x03\x03\x03\x03\x06\x04\x04\x03\x05\x07\x06\x07\x07\x07\x06\x07\x07\x08\t\x0b\t\x08\x08\n\x08\x07\x07\n\r\n\n\x0b\x0c\x0c\x0c\x0c\x07\t\x0e\x0f\r\x0c\x0e\x0b\x0c\x0c\x0c\xff\xdb\x00C\x01\x02\x02\x02\x03\x03\x03"
 
 
 

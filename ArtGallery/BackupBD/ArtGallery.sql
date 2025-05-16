@@ -160,7 +160,7 @@ DROP TABLE IF EXISTS `liberacao_artista`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `liberacao_artista` (
   `id_lib` int(11) NOT NULL AUTO_INCREMENT,
-  `status_lib` varchar(15) NOT NULL DEFAULT 'pendente',
+  `status_lib` char(1) NOT NULL DEFAULT 'p',
   `id_art` int(11) DEFAULT NULL,
   PRIMARY KEY (`id_lib`),
   UNIQUE KEY `id_art` (`id_art`),
