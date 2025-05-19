@@ -39,8 +39,10 @@ async function conectarBD() {
 
 // Obras
     async function buscarTodasObras(){
-        const conecao = await conectarBD();
-        const sql = `select id_obr`;
+        const conexao = await conectarBD();
+        const sql = `SELECT id_obr AS id, titulo_obr AS nome FROM obra`;
+        const [linhas] = await conexao.query(sql);
+        return linhas;
     }
 
 // Comentários
@@ -61,7 +63,6 @@ async function buscarImagem(tabela, idColuna, id, blobColuna) {
   if (linhas.length === 0 || !linhas[0][blobColuna]) return null;
   return linhas[0][blobColuna];
 }
-
 /**
  * Insere/atualiza um campo BLOB em uma tabela.
  * @param {string} tabela    Nome da tabela

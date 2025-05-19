@@ -57,26 +57,22 @@
         </div>
     </header>
 
-    
-
     <!-- Categorias -->
     <section>
     <div class="conteudo">
         <div class="grid">
-        <% itens.forEach(item => { %>
-            <a href="/<%= item.tabela %>/id=<%= item.id %>">
+        <% itens.forEach(c => { %>
+            <a href="/<%= c.tabela %>/id=<%= c.id %>">
             <div class="cat-container">
-                <img
-                src="/imagem/<%= item.tabela %>/<%= item.id %>"
-                alt="<%= item.nome %>"
-                >
-                <span><%= item.nome %></span>
+                <img src="/imagem/<%= c.tabela %>/<%= c.id %>" alt="<%= c.nome %>">
+                <span><%= c.nome %></span>
             </div>
             </a>
         <% }) %>
         </div>
     </div>
     </section>
+
 
     
     <!-- Destaques -->

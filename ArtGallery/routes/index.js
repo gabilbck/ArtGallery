@@ -4,6 +4,7 @@ const router = express.Router();
 const {
   buscarTodasCategorias,
   buscarTodosProdutos,
+  buscarTodasObras,
   // importe aqui outras funções futuras...
 } = require("../banco");
 
@@ -12,9 +13,11 @@ router.get("/", async (req, res) => {
   try {
     // busca de cada tipo
     const categorias = await buscarTodasCategorias();
+    const obras = await buscarTodasObras();
     // monte um array unificado de “itens”
     const itens = [
       ...categorias.map(c => ({ id: c.id, nome: c.nome, tabela: "categoria" })),
+      ...obras.map(o => ({ id: o.id, nome: o.nome, tabela: "obra" })),
       // ...peça para adicionar outros tipos aqui
     ];
 
