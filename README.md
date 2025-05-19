@@ -30,6 +30,8 @@ O ArtGallery é uma plataforma para artistas exporem suas obras digitais, onde u
 
 ``` npm install mysql2 ```
 
+``` npm install multer mysql2 ```
+
 ### 3. Banco de dados
 * Dump para banco de dados se encontra disponível no caminho: ArtGallery > BackupBD > ArtGallery.sql
 * Crie um banco de dados com o nome ``` artg ``` para importar dump 

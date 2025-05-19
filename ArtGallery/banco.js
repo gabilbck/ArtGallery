@@ -31,18 +31,11 @@ async function conectarBD() {
 // Categorias
     async function buscarTodasCategorias() {
         const conexao = await conectarBD();
-        const sql = `SELECT id_cat AS id_categoria, nome_cat AS nome, foto_cat AS id_imagem FROM categoria`;
+        const sql = `SELECT id_cat AS id, nome_cat AS nome FROM categoria`;
         const [linhas] = await conexao.query(sql);
         return linhas;
     }
-    async function buscarCategoria(){
-        const conexao = await conectarBD();
-        const sql = `select id_cat, nome_cat, descricao_cat, foto_cat
-                    from categoria
-                    where id_cat= ?`;
-        const [linhas] = await conexao.query(sql, [categoria.nome,  categoria.descricao, categoria.foto]);
-        return linhas.length > 0 ? linhas[0] : null;
-    }
+
 
 // Obras
     async function buscarTodasObras(){
@@ -53,20 +46,44 @@ async function conectarBD() {
 // Comentários
 
 // Imagens
-async function buscarImagemPorId(id) {
-    const sql = "SELECT foto_cat FROM categoria WHERE id_cat = ?";
-    const [rows] = await conexao.promise().query(sql, [id]);
-    if (rows.length > 0) {
-        return rows[0].foto_cat;  // Isso será um Buffer com o binário da imagem
-        } else {
-        throw new Error("Imagem não encontrada");
-    }
+/**
+ * Busca BLOB de imagem em qualquer tabela.
+ * @param {string} tabela    Nome da tabela.
+ * @param {string} idColuna Nome da coluna de ID.
+ * @param {number|string} id Valor do ID.
+ * @param {string} blobColuna Nome da coluna BLOB.
+ * @returns {Buffer|null}
+ */
+async function buscarImagem(tabela, idColuna, id, blobColuna) {
+  const conexao = await conectarBD();
+  const sql = `SELECT \`${blobColuna}\` FROM \`${tabela}\` WHERE \`${idColuna}\` = ?`;
+  const [linhas] = await conexao.query(sql, [id]);
+  if (linhas.length === 0 || !linhas[0][blobColuna]) return null;
+  return linhas[0][blobColuna];
+}
+
+/**
+ * Insere/atualiza um campo BLOB em uma tabela.
+ * @param {string} tabela    Nome da tabela
+ * @param {string} idColuna    Nome da coluna de ID
+ * @param {number} id       Valor do ID
+ * @param {string} blobColuna  Nome da coluna BLOB
+ * @param {Buffer} buffer   Buffer da imagem
+ */
+async function inserirImagem(tabela, idColuna, id, blobColuna, buffer) {
+  const conexao = await conectarBD();
+  const sql = `
+    UPDATE \`${tabela}\` 
+    SET \`${blobColuna}\` = ? 
+    WHERE \`${idColuna}\` = ?
+  `;
+  await conexao.query(sql, [buffer, id]);
 }
 
 module.exports = { 
-    buscarUsuario, 
     conectarBD, 
-    buscarTodasCategorias, buscarCategoria,
+    buscarUsuario, 
+    buscarTodasCategorias,
     buscarTodasObras,
-    buscarImagemPorId
+    buscarImagem, inserirImagem
  }; 

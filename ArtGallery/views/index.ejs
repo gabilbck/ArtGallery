@@ -57,56 +57,27 @@
         </div>
     </header>
 
+    
+
     <!-- Categorias -->
-     <section>
-        <div class="conteudo">
-            <div class="grid">
-                <% categorias.forEach(c => { %>
-                <a href="/categorias/id=<%= c.id_categoria %>">
-                    <div class="cat-container">
-                    <img src="/imagem/<%= c.id_categoria %>" alt="<%= c.nome %>">
-                    <span><%= c.nome %></span>
-                    </div>
-                </a>
-                <% }) %>
-                <a href="/categorias/id=#">
-                    <div class="cat-container">
-                        <img src="https://placehold.co/300x200/png" alt="Categoria 2">
-                        <span>Categoria 2</span>
-                    </div>
-                </a>
-                <a href="/categorias/id=#">
-                    <div class="cat-container">
-                        <img src="https://placehold.co/300x200/png" alt="Categoria 3">
-                        <span>Categoria 3</span>
-                    </div>
-                </a>
-                <a href="/categorias/id=#">
-                    <div class="cat-container">
-                        <img src="https://placehold.co/300x200/png" alt="Categoria 4">
-                        <span>Categoria 4</span>
-                    </div>
-                </a>
-                <a href="/categorias/id=#">
-                    <div class="cat-container">
-                        <img src="https://placehold.co/300x200/png" alt="Categoria 5">
-                        <span>Categoria 5</span>
-                    </div>
-                </a>
-                <a href="/categorias/id=#">
-                    <div class="cat-container">
-                        <img src="https://placehold.co/300x200/png" alt="Categoria 6">
-                        <span>Categoria 6</span>
-                    </div>
-                </a>
+    <section>
+    <div class="conteudo">
+        <div class="grid">
+        <% itens.forEach(item => { %>
+            <a href="/<%= item.tabela %>/id=<%= item.id %>">
+            <div class="cat-container">
+                <img
+                src="/imagem/<%= item.tabela %>/<%= item.id %>"
+                alt="<%= item.nome %>"
+                >
+                <span><%= item.nome %></span>
             </div>
-            <div class="botao">
-                <a href="/categorias">
-                    <button>Descubra Mais!</button>
-                </a>
-            </div>
+            </a>
+        <% }) %>
         </div>
+    </div>
     </section>
+
     
     <!-- Destaques -->
     <section class="espaco-contraste">
