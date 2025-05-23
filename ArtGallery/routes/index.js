@@ -2,8 +2,7 @@
 const express = require("express");
 const router = express.Router();
 const {
-  buscarTodasCategorias,
-  buscarTodosProdutos,
+  buscarInicioCategorias,
   buscarTodasObras,
   // importe aqui outras funções futuras...
 } = require("../banco");
@@ -12,19 +11,21 @@ const {
 router.get("/", async (req, res) => {
   try {
     // busca de cada tipo
-    const categorias = await buscarTodasCategorias();
+    const categorias = await buscarInicioCategorias();
     const obras = await buscarTodasObras();
     // monte um array unificado de “itens”
-    const itens = [
+    const itensC = [
       ...categorias.map(c => ({ id: c.id, nome: c.nome, tabela: "categoria" })),
-      ...obras.map(o => ({ id: o.id, nome: o.nome, tabela: "obra" })),
       // ...peça para adicionar outros tipos aqui
+    ];
+    const itensO = [
+      ...obras.map(o => ({ id: o.id, nome: o.nome, tabela: "obra" })),
     ];
 
     res.render("index", {
       title: "Página Inicial - ArtGallery",
       usuario: req.session.usuario || null,
-      itens: itens,          // agora passa “itens” em vez de “categorias”
+      itens: itensC, itensO,   
     });
   } catch (erro) {
     console.error("Erro ao buscar dados:", erro);

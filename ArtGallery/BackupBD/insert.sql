@@ -214,18 +214,18 @@ VALUES
 ('daniel04', 'Daniel Rocha', 'Fotografia artística', 4);
 
 
-INSERT INTO categoria (nome_cat, descricao_cat)
+INSERT INTO categoria (nome_cat, descricao_cat, foto)
 VALUES
-('Pintura', 'Obras feitas com tinta'),
-('Escultura', 'Obras em 3D esculpidas'),
-('Fotografia', 'Capturas fotográficas'),
-('Arte Digital', 'Obras criadas digitalmente'),
-('Desenho', 'Obras em grafite/lápis'),
-('Abstrata', 'Arte não figurativa'),
-('Surrealismo', 'Obras surreais e oníricas'),
-('Retrato', 'Foco em pessoas'),
-('Paisagem', 'Foco em cenários naturais'),
-('Minimalista', 'Composições simples');
+('Pintura', 'Obras feitas com tinta', '/uploads/imagem.png'),
+('Escultura', 'Obras em 3D esculpidas', '/uploads/imagem.png'),
+('Fotografia', 'Capturas fotográficas', '/uploads/imagem.png'),
+('Arte Digital', 'Obras criadas digitalmente', '/uploads/imagem.png'),
+('Desenho', 'Obras em grafite/lápis', '/uploads/imagem.png'),
+('Abstrata', 'Arte não figurativa', '/uploads/imagem.png'),
+('Surrealismo', 'Obras surreais e oníricas', '/uploads/imagem.png'),
+('Retrato', 'Foco em pessoas', '/uploads/imagem.png'),
+('Paisagem', 'Foco em cenários naturais', '/uploads/imagem.png'),
+('Minimalista', 'Composições simples', '/uploads/imagem.png');
 
 
 INSERT INTO obra (titulo_obr, descricao_obr, situacao_obr, id_cat, id_art)

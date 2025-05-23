@@ -35,7 +35,12 @@ async function conectarBD() {
         const [linhas] = await conexao.query(sql);
         return linhas;
     }
-
+    async function buscarInicioCategorias() {
+        const conexao = await conectarBD();
+        const sql = `SELECT id_cat AS id, nome_cat AS nome FROM categoria LIMIT 6`;
+        const [linhas] = await conexao.query(sql);
+        return linhas;
+    }
 
 // Obras
     async function buscarTodasObras(){
@@ -84,7 +89,7 @@ async function inserirImagem(tabela, idColuna, id, blobColuna, buffer) {
 module.exports = { 
     conectarBD, 
     buscarUsuario, 
-    buscarTodasCategorias,
+    buscarTodasCategorias, buscarInicioCategorias,
     buscarTodasObras,
     buscarImagem, inserirImagem
  }; 
