@@ -10,6 +10,7 @@ const indexRouter = require("./routes/index");
 const loginRouter = require("./routes/login");
 // const cadastroRouter = require("./routes/cadastro");
 const uploadRouter = require('./routes/upload');
+const categoriasRouter = require("./routes/categorias");
 
 const app = express();
 
@@ -57,6 +58,7 @@ const upload = multer({
 app.use("/", indexRouter);
 app.use("/login", loginRouter);
 app.use('/upload', uploadRouter);
+app.use("/categorias", categoriasRouter);
 
 // 404
 app.use((req, res) => {

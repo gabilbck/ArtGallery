@@ -31,13 +31,19 @@ async function conectarBD() {
 // Categorias
     async function buscarTodasCategorias() {
         const conexao = await conectarBD();
-        const sql = `SELECT id_cat AS id, nome_cat AS nome FROM categoria`;
+        const sql = `SELECT id_cat AS id, nome_cat AS nome, foto_cat AS foto FROM categoria`;
         const [linhas] = await conexao.query(sql);
         return linhas;
     }
+    async function buscarUmaCategoria(id) {
+        const conexao = await conectarBD();
+        const sql = `SELECT id_cat AS id, nome_cat AS nome, descricao_cat AS \`desc\`, foto_cat AS foto FROM categoria WHERE id_cat = ?`;
+        const [linhas] = await conexao.query(sql, [id]);
+        return linhas.length > 0 ? linhas[0] : null;
+    }
     async function buscarInicioCategorias() {
         const conexao = await conectarBD();
-        const sql = `SELECT id_cat AS id, nome_cat AS nome FROM categoria LIMIT 6`;
+        const sql = `SELECT id_cat AS id, nome_cat AS nome, foto_cat AS foto FROM categoria LIMIT 6`;
         const [linhas] = await conexao.query(sql);
         return linhas;
     }
@@ -49,47 +55,24 @@ async function conectarBD() {
         const [linhas] = await conexao.query(sql);
         return linhas;
     }
+    async function buscarUmaObra() {
+        const conexao = await conectarBD();
+        const sql = `SELECT id_obr AS id, titulo_obr AS nome FROM obra WHERE id_obr = ?`;
+        const [linhas] = await conexao.query(sql, [id]);
+        return linhas.length > 0 ? linhas[0] : null;
+    }
+    async function buscarObrasPorCategoria(id) {
+        const conexao = await conectarBD();
+        const sql = `SELECT id_obr AS id, titulo_obr AS nome FROM obra WHERE id_cat = ?`;
+        const [linhas] = await conexao.query(sql, [id]);
+        return linhas;
+    }
 
 // Comentários
-
-// Imagens
-/**
- * Busca BLOB de imagem em qualquer tabela.
- * @param {string} tabela    Nome da tabela.
- * @param {string} idColuna Nome da coluna de ID.
- * @param {number|string} id Valor do ID.
- * @param {string} blobColuna Nome da coluna BLOB.
- * @returns {Buffer|null}
- */
-async function buscarImagem(tabela, idColuna, id, blobColuna) {
-  const conexao = await conectarBD();
-  const sql = `SELECT \`${blobColuna}\` FROM \`${tabela}\` WHERE \`${idColuna}\` = ?`;
-  const [linhas] = await conexao.query(sql, [id]);
-  if (linhas.length === 0 || !linhas[0][blobColuna]) return null;
-  return linhas[0][blobColuna];
-}
-/**
- * Insere/atualiza um campo BLOB em uma tabela.
- * @param {string} tabela    Nome da tabela
- * @param {string} idColuna    Nome da coluna de ID
- * @param {number} id       Valor do ID
- * @param {string} blobColuna  Nome da coluna BLOB
- * @param {Buffer} buffer   Buffer da imagem
- */
-async function inserirImagem(tabela, idColuna, id, blobColuna, buffer) {
-  const conexao = await conectarBD();
-  const sql = `
-    UPDATE \`${tabela}\` 
-    SET \`${blobColuna}\` = ? 
-    WHERE \`${idColuna}\` = ?
-  `;
-  await conexao.query(sql, [buffer, id]);
-}
 
 module.exports = { 
     conectarBD, 
     buscarUsuario, 
-    buscarTodasCategorias, buscarInicioCategorias,
-    buscarTodasObras,
-    buscarImagem, inserirImagem
+    buscarTodasCategorias, buscarInicioCategorias, buscarUmaCategoria,
+    buscarTodasObras, buscarUmaObra, buscarObrasPorCategoria
  }; 

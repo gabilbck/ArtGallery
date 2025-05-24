@@ -4,6 +4,8 @@ const router = express.Router();
 const {
   buscarInicioCategorias,
   buscarTodasObras,
+  buscarTodasCategorias,
+  buscarUsuario
   // importe aqui outras funções futuras...
 } = require("../banco");
 
@@ -15,7 +17,7 @@ router.get("/", async (req, res) => {
     const obras = await buscarTodasObras();
     // monte um array unificado de “itens”
     const itensC = [
-      ...categorias.map(c => ({ id: c.id, nome: c.nome, tabela: "categoria" })),
+      ...categorias.map(c => ({ id: c.id, nome: c.nome, foto: c.foto, tabela: "categoria" })),
       // ...peça para adicionar outros tipos aqui
     ];
     const itensO = [

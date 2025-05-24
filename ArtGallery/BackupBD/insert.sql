@@ -46,6 +46,9 @@
 -- CREATE TRIGGER banir
 -- se id_usu da tabela usuario atingir 2 na advertencia_usu altera ban_usu=1 
 
+
+-- VIEWS & TRIGGERS
+
 -- Quantidade de seguidores por artista
 CREATE VIEW qtd_seguidores AS
 SELECT id_artista, COUNT(*) AS total_seguidores
@@ -186,6 +189,8 @@ DELIMITER ;
 
 
 
+-- INSERÇÃO DE DADOS
+
 INSERT INTO usuario (nome_usu, nome_comp, email_usu, senha_usu, tipo_usu)
 VALUES
 ('ana01', 'Ana Souza', 'ana01@email.com', 'senha123', 'apr'),
@@ -198,7 +203,6 @@ VALUES
 ('helen08', 'Helen Teixeira', 'helen08@email.com', 'senha123', 'apr'),
 ('igor09', 'Igor Fernandes', 'igor09@email.com', 'senha123', 'apr'),
 ('juliana10', 'Juliana Ribeiro', 'juliana10@email.com', 'senha123', 'apr');
-
 
 INSERT INTO artista (nome_usu, nome_comp, bio_art, id_usu)
 VALUES
@@ -213,20 +217,18 @@ VALUES
 ('juliana10', 'Juliana Ribeiro', 'Abstracionismo', 10),
 ('daniel04', 'Daniel Rocha', 'Fotografia artística', 4);
 
-
-INSERT INTO categoria (nome_cat, descricao_cat, foto)
+INSERT INTO categoria (nome_cat, descricao_cat, foto_cat)
 VALUES
-('Pintura', 'Obras feitas com tinta', '/uploads/imagem.png'),
-('Escultura', 'Obras em 3D esculpidas', '/uploads/imagem.png'),
-('Fotografia', 'Capturas fotográficas', '/uploads/imagem.png'),
-('Arte Digital', 'Obras criadas digitalmente', '/uploads/imagem.png'),
-('Desenho', 'Obras em grafite/lápis', '/uploads/imagem.png'),
-('Abstrata', 'Arte não figurativa', '/uploads/imagem.png'),
-('Surrealismo', 'Obras surreais e oníricas', '/uploads/imagem.png'),
-('Retrato', 'Foco em pessoas', '/uploads/imagem.png'),
-('Paisagem', 'Foco em cenários naturais', '/uploads/imagem.png'),
-('Minimalista', 'Composições simples', '/uploads/imagem.png');
-
+('Pintura', 'Obras feitas com tinta', '/uploads/categorias/1.jpg'),
+('Escultura', 'Obras em 3D esculpidas', '/uploads/categorias/2.jpg'),
+('Fotografia', 'Capturas fotográficas', '/uploads/categorias/3.jpg'),
+('Arte Digital', 'Obras criadas digitalmente', '/uploads/categorias/4.jpg'),
+('Desenho', 'Obras em grafite/lápis', '/uploads/categorias/5.jpg'),
+('Abstrata', 'Arte não figurativa', '/uploads/categorias/6.jpg'),
+('Surrealismo', 'Obras surreais e oníricas', '/uploads/categorias/7.jpg'),
+('Retrato', 'Foco em pessoas', '/uploads/categorias/8.jpg'),
+('Paisagem', 'Foco em cenários naturais', '/uploads/categorias/9.jpg'),
+('Minimalista', 'Composições simples', '/uploads/categorias/10.jpg');
 
 INSERT INTO obra (titulo_obr, descricao_obr, situacao_obr, id_cat, id_art)
 VALUES
@@ -241,8 +243,6 @@ VALUES
 ('Horizonte Vazio', 'Desenho monocromático', 'disponível', 5, 3),
 ('Vento Norte', 'Paisagem montanhosa', 'disponível', 9, 2);
 
-
-
 INSERT INTO colecao (nome_col, id_usu)
 VALUES
 ('Coleção Aquarela', 3),
@@ -255,8 +255,6 @@ VALUES
 ('Coleção Digital', 7),
 ('Coleção Retrato', 6),
 ('Coleção Experimental', 4);
-
-
 
 INSERT INTO obra_colecao (id_obr, id_col)
 VALUES
@@ -271,7 +269,6 @@ VALUES
 (9, 1),
 (10, 7);
 
-
 INSERT INTO comentario (id_usu, id_obr, texto_com)
 VALUES
 (2, 1, 'Obra fantástica!'),
@@ -284,7 +281,6 @@ VALUES
 (9, 8, 'Surreal mesmo!'),
 (10, 9, 'Muito expressivo.'),
 (1, 10, 'Cenário inspirador.');
-
 
 INSERT INTO favorito_obra (id_usu, id_obr, ativo)
 VALUES
@@ -299,7 +295,6 @@ VALUES
 (9, 9, 1),
 (10, 10, 1);
 
-
 INSERT INTO liberacao_artista (status_lib, id_art)
 VALUES
 ('a', 1),
@@ -312,7 +307,6 @@ VALUES
 ('p', 8),
 ('a', 9),
 ('a', 10);
-
 
 INSERT INTO seguidor_artista (id_seguidor, id_artista)
 VALUES
@@ -327,7 +321,6 @@ VALUES
 (9, 10),
 (10, 1);
 
-
 INSERT INTO suporte (email_sup, assunto_sup, descricao_sup)
 VALUES
 ('ana01@email.com', 'Erro no login', 'Não consigo acessar minha conta.'),
@@ -340,11 +333,3 @@ VALUES
 ('helen08@email.com', 'Dados errados', 'Meu nome está errado.'),
 ('igor09@email.com', 'Revisar perfil', 'Atualizei o perfil, mas não aparece.'),
 ('juliana10@email.com', 'Reportar bug', 'Encontrei um erro no envio de obras.');
-
-
-update categoria set 
-foto_cat="\xff\xd8\xff\xe0\x00\x10JFIF\x00\x01\x01\x01\x00`\x00`\x00\x00\xff\xdb\x00C\x00\x02\x01\x01\x02\x01\x01\x02\x02\x02\x02\x02\x02\x02\x02\x03\x05\x03\x03\x03\x03\x03\x06\x04\x04\x03\x05\x07\x06\x07\x07\x07\x06\x07\x07\x08\t\x0b\t\x08\x08\n\x08\x07\x07\n\r\n\n\x0b\x0c\x0c\x0c\x0c\x07\t\x0e\x0f\r\x0c\x0e\x0b\x0c\x0c\x0c\xff\xdb\x00C\x01\x02\x02\x02\x03\x03\x03"
-
-
-
-
