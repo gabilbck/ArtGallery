@@ -43,7 +43,7 @@ async function conectarBD() {
     }
     async function buscarInicioCategorias() {
         const conexao = await conectarBD();
-        const sql = `SELECT id_cat AS id, nome_cat AS nome, foto_cat AS foto FROM categoria LIMIT 6`;
+        const sql = `SELECT id_cat AS id, nome_cat AS nome, foto_cat AS foto FROM categoria ORDER BY RAND() LIMIT 6`;
         const [linhas] = await conexao.query(sql);
         return linhas;
     }
@@ -67,6 +67,33 @@ async function conectarBD() {
         const [linhas] = await conexao.query(sql, [id]);
         return linhas;
     }
+    async function buscarInicioObras(id) {
+        const conexao = await conectarBD();
+        const sql = `
+        SELECT 
+        o.id_obr AS id,
+        o.titulo_obr AS nome,
+        a.nome_usu AS art,
+        COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto,
+        (
+            SELECT COUNT(*) 
+            FROM comentario c 
+            WHERE c.id_obr = o.id_obr
+        ) AS qcom,
+        (
+            SELECT COUNT(*) 
+            FROM favorito_obra f 
+            WHERE f.id_obr = o.id_obr AND f.ativo = 1
+        ) AS qfav,
+        o.descricao_obr AS des
+        FROM obra o
+        INNER JOIN artista a ON o.id_art = a.id_art
+        WHERE o.situacao_obr = 1
+        ORDER BY RAND()
+        LIMIT 3`
+        const [linhas] = await conexao.query(sql, [id]);
+        return linhas;
+    };
 
 // Comentários
 
@@ -74,5 +101,5 @@ module.exports = {
     conectarBD, 
     buscarUsuario, 
     buscarTodasCategorias, buscarInicioCategorias, buscarUmaCategoria,
-    buscarTodasObras, buscarUmaObra, buscarObrasPorCategoria
+    buscarTodasObras, buscarUmaObra, buscarObrasPorCategoria, buscarInicioObras
  }; 

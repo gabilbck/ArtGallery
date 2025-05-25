@@ -1,194 +1,3 @@
--- CREATE VIEW qtd_seguidores
--- select id_artista e count quantidade de vezes que aparece na tabela seguidor_artista, 
--- o que determina a quantidade total de seguidores do artista
-
--- CREATE VIEW qtd_seguindo
--- select id_seguidor e count quantidade de vezes que aparece na tabela seguidor_artista, 
--- o que determina a quantidade total de artistas que o apreciador segue
-
--- CREATE VIEW qtd_favoritos
--- select id_obr na tabela favorito_obra e count quantidade de vezes que aparece na tabela
--- o que determina a quantidade total de favoritos que a obra possui
-
--- CREATE VIEW qtd_comentarios
--- select id_obr e faz count da quantidade de id_usu registrados na tabela comentario
-
--- CREATE VIEW comentarios_da_obra
--- select id_obr e retorna os id_usu, texto_com especificos da tabela comentario par adeterminada obra
-
--- CREATE VIEW oolecoes_usuario
--- select nome_col, id_usu na tabela colecao e id_obr, id_col na tabela obra_colecao
--- e titulo_obr, descricao_obr, situacao_obr, id_cat, id_art
--- 3 inner joins :)
-
--- CREATE VIEW pesquisar
--- retorna artista ou categoria ou obra
-
--- CREATE TRIGGER adc_liberacao_de_artista
--- O usuário cadastrado com tipo_usu="art"
--- automaticamente cria-se um registro na tabela liberacao_artista
--- status_lib="pendente", id=(ID-DO-ARTISTA)
-
--- CREATE TRIGGER adc_artista_apr
--- altera registro de liberação de artista para "aprovado"
--- automaticamente cria-se um registro na tabela artista
--- puxa de usuario nome_usu, nome_comp, bio_art, id_usu
--- bio_art é registrado default "Bem-vindo ao perfil do artista (Nome Completo)!"
-
--- CREATE TRIGGER obra_ja_favoritada
--- se o usuário cliar outra vez para desfavoritar a obra, ou seja já estiver regitrado, se não ignora
--- se houver: id_usu, id_obr, ativo=1, altera ativo para ativo=0,
--- se houver: id_usu, id_obr, ativo=0, altera ativo para ativo=0
-
--- CREATE TRIGGER advertencia
--- selecionar id_usu e somar +1 no valor de advertencia_uru
-
--- CREATE TRIGGER banir
--- se id_usu da tabela usuario atingir 2 na advertencia_usu altera ban_usu=1 
-
-
--- VIEWS & TRIGGERS
-
--- Quantidade de seguidores por artista
-CREATE VIEW qtd_seguidores AS
-SELECT id_artista, COUNT(*) AS total_seguidores
-FROM seguidor_artista
-GROUP BY id_artista;
-
--- Quantidade de artistas que cada seguidor segue
-CREATE VIEW qtd_seguindo AS
-SELECT id_seguidor, COUNT(*) AS total_seguindo
-FROM seguidor_artista
-GROUP BY id_seguidor;
-
--- Quantidade de favoritos por obra
-CREATE VIEW qtd_favoritos AS
-SELECT id_obr, COUNT(*) AS total_favoritos
-FROM favorito_obra
-WHERE ativo = 1
-GROUP BY id_obr;
-
--- Quantidade de comentários por obra
-CREATE VIEW qtd_comentarios AS
-SELECT id_obr, COUNT(id_com) AS total_comentarios
-FROM comentario
-GROUP BY id_obr;
-
--- Comentários detalhados de cada obra
-CREATE VIEW comentarios_da_obra AS
-SELECT id_obr, id_usu, texto_com
-FROM comentario;
-
--- Coleções de usuários com detalhes das obras
-CREATE VIEW colecoes_usuario AS
-SELECT 
-    c.nome_col,
-    c.id_usu,
-    oco.id_obr,
-    oco.id_col,
-    o.titulo_obr,
-    o.descricao_obr,
-    o.situacao_obr,
-    o.id_cat,
-    o.id_art
-FROM colecao c
-INNER JOIN obra_colecao oco ON c.id_col = oco.id_col
-INNER JOIN obra o ON oco.id_obr = o.id_obr;
-
--- Retornos da barra de pesquisa
-CREATE VIEW pesquisar AS
-SELECT u.nome_usu, u.nome_comp, NULL AS nome_cat, NULL AS titulo_obr
-FROM usuario u
-WHERE u.tipo_usu = 'art'
-UNION ALL
-SELECT NULL, NULL, c.nome_cat, NULL
-FROM categoria c
-UNION ALL
-SELECT NULL, NULL, NULL, o.titulo_obr
-FROM obra o;
-
--- Liberação automática ao cadastrar artista
-DELIMITER |
-CREATE TRIGGER adc_liberacao_de_artista
-AFTER INSERT ON usuario
-FOR EACH ROW
-BEGIN
-    IF NEW.tipo_usu = 'art' THEN
-        INSERT INTO liberacao_artista (status_lib, id_art)
-        VALUES ('p', NULL); -- será atualizado ao aprovar
-    END IF;
-END|
-DELIMITER ;
-
--- Aprovação gera registro na tabela artista
-DELIMITER |
-CREATE TRIGGER adc_artista_apr
-AFTER UPDATE ON liberacao_artista
-FOR EACH ROW
-BEGIN
-    IF NEW.status_lib = 'a' AND OLD.status_lib != 'a' THEN
-        INSERT INTO artista (nome_usu, nome_comp, bio_art, id_usu)
-        SELECT u.nome_usu, u.nome_comp, 
-               CONCAT('Bem-vindo ao perfil do artista ', u.nome_comp, '!'), 
-               u.id_usu
-        FROM usuario u
-        WHERE u.id_usu = (
-            SELECT a.id_usu
-            FROM artista a
-            WHERE a.id_art = NEW.id_art
-        );
-    END IF;
-END|
-DELIMITER ;
-
--- Marcar e desmarcar favoritos
-DELIMITER |
-CREATE TRIGGER obra_ja_favoritada
-BEFORE INSERT ON favorito_obra
-FOR EACH ROW
-BEGIN
-    DECLARE existe INT;
-    SELECT COUNT(*) INTO existe
-    FROM favorito_obra
-    WHERE id_usu = NEW.id_usu AND id_obr = NEW.id_obr;
-
-    IF existe > 0 THEN
-        UPDATE favorito_obra
-        SET ativo = IF(ativo = 1, 0, 1)
-        WHERE id_usu = NEW.id_usu AND id_obr = NEW.id_obr;
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Atualizado favorito existente'; -- evita INSERT real
-    END IF;
-END|
-DELIMITER ;
-
--- Adicionar advertência
-DELIMITER |
-CREATE TRIGGER advertencia
-AFTER INSERT ON comentario
-FOR EACH ROW
-BEGIN
-    UPDATE usuario
-    SET advertencia_usu = advertencia_usu + 1
-    WHERE id_usu = NEW.id_usu;
-END|
-DELIMITER ;
-
--- Banimento automático ao atingir 2 advertências
-DELIMITER |
-CREATE TRIGGER banir
-AFTER UPDATE ON usuario
-FOR EACH ROW
-BEGIN
-    IF NEW.advertencia_usu >= 2 THEN
-        UPDATE usuario
-        SET ban_usu = 1
-        WHERE id_usu = NEW.id_usu;
-    END IF;
-END|
-DELIMITER ;
-
-
-
 -- INSERÇÃO DE DADOS
 
 INSERT INTO usuario (nome_usu, nome_comp, email_usu, senha_usu, tipo_usu)
@@ -230,18 +39,18 @@ VALUES
 ('Paisagem', 'Foco em cenários naturais', '/uploads/categorias/9.jpg'),
 ('Minimalista', 'Composições simples', '/uploads/categorias/10.jpg');
 
-INSERT INTO obra (titulo_obr, descricao_obr, situacao_obr, id_cat, id_art)
+INSERT INTO obra (titulo_obr, descricao_obr, situacao_obr, foto_obr, id_cat, id_art)
 VALUES
-('Sonho Azul', 'Pintura surreal', 'disponível', 7, 1),
-('Cidade Cinza', 'Grafite urbano', 'vendida', 8, 9),
-('Reflexos', 'Foto noturna', 'disponível', 3, 10),
-('Rostos', 'Retratos expressivos', 'vendida', 8, 6),
-('Natureza Bruta', 'Escultura em pedra', 'disponível', 2, 5),
-('Luz e Sombra', 'Arte minimalista', 'em análise', 10, 8),
-('Chamas Digitais', 'Arte digital em vermelho', 'disponível', 4, 7),
-('Jardim Invisível', 'Pintura surrealista', 'em análise', 1, 1),
-('Horizonte Vazio', 'Desenho monocromático', 'disponível', 5, 3),
-('Vento Norte', 'Paisagem montanhosa', 'disponível', 9, 2);
+('Sonho Azul', 'Pintura surreal', 1, '/uploads/imagem.png', 7, 1),
+('Cidade Cinza', 'Grafite urbano', 1, '/uploads/imagem.png', 8, 9),
+('Reflexos', 'Foto noturna', 1, '/uploads/imagem.png', 3, 10),
+('Rostos', 'Retratos expressivos', 1, '/uploads/imagem.png', 8, 6),
+('Natureza Bruta', 'Escultura em pedra', 1, '/uploads/imagem.png', 2, 5),
+('Luz e Sombra', 'Arte minimalista', 1, '/uploads/imagem.png', 10, 8),
+('Chamas Digitais', 'Arte digital em vermelho', 1, '/uploads/imagem.png', 4, 7),
+('Jardim Invisível', 'Pintura surrealista', 1, '/uploads/imagem.png', 1, 1),
+('Horizonte Vazio', 'Desenho monocromático', 1, '/uploads/imagem.png', 5, 3),
+('Vento Norte', 'Paisagem montanhosa', 1, '/uploads/imagem.png', 9, 2);
 
 INSERT INTO colecao (nome_col, id_usu)
 VALUES
@@ -333,3 +142,156 @@ VALUES
 ('helen08@email.com', 'Dados errados', 'Meu nome está errado.'),
 ('igor09@email.com', 'Revisar perfil', 'Atualizei o perfil, mas não aparece.'),
 ('juliana10@email.com', 'Reportar bug', 'Encontrei um erro no envio de obras.');
+
+
+-- VIEWS & TRIGGERS
+
+-- Quantidade de seguidores por artista
+CREATE VIEW qtd_seguidores AS
+SELECT id_artista, COUNT(*) AS total_seguidores
+FROM seguidor_artista
+GROUP BY id_artista;
+
+-- Quantidade de artistas que cada seguidor segue
+CREATE VIEW qtd_seguindo AS
+SELECT id_seguidor, COUNT(*) AS total_seguindo
+FROM seguidor_artista
+GROUP BY id_seguidor;
+
+-- Quantidade de favoritos por obra
+CREATE VIEW qtd_favoritos AS
+SELECT id_obr, COUNT(*) AS total_favoritos
+FROM favorito_obra
+WHERE ativo = 1
+GROUP BY id_obr;
+
+-- Quantidade de comentários por obra
+CREATE VIEW qtd_comentarios AS
+SELECT id_obr, COUNT(id_com) AS total_comentarios
+FROM comentario
+GROUP BY id_obr;
+
+-- Comentários detalhados de cada obra
+CREATE VIEW comentarios_da_obra AS
+SELECT id_obr, id_usu, texto_com
+FROM comentario;
+
+-- Coleções de usuários com detalhes das obras
+CREATE VIEW colecoes_usuario AS
+SELECT 
+    c.nome_col,
+    c.id_usu,
+    oco.id_obr,
+    oco.id_col,
+    o.titulo_obr,
+    o.descricao_obr,
+    o.situacao_obr,
+    o.id_cat,
+    o.id_art
+FROM colecao c
+INNER JOIN obra_colecao oco ON c.id_col = oco.id_col
+INNER JOIN obra o ON oco.id_obr = o.id_obr;
+
+-- Retornos da barra de pesquisa
+CREATE VIEW pesquisar AS
+SELECT u.nome_usu, u.nome_comp, NULL AS nome_cat, NULL AS titulo_obr
+FROM usuario u
+WHERE u.tipo_usu = 'art'
+UNION ALL
+SELECT NULL, NULL, c.nome_cat, NULL
+FROM categoria c
+UNION ALL
+SELECT NULL, NULL, NULL, o.titulo_obr
+FROM obra o;
+
+-- Advertência de usuários
+CREATE VIEW advertencia_usuarios AS
+SELECT u.id_usu, u.nome_usu, u.nome_comp, u.advertencia_usu
+FROM usuario u
+WHERE u.advertencia_usu > 0;
+
+-- Banimento de usuários
+CREATE VIEW banimento_usuarios AS
+SELECT u.id_usu, u.nome_usu, u.nome_comp, u.ban_usu
+FROM usuario u
+WHERE u.ban_usu = 1;
+
+-- Liberação automática ao cadastrar artista
+DELIMITER |
+CREATE TRIGGER adc_liberacao_de_artista
+AFTER INSERT ON usuario
+FOR EACH ROW
+BEGIN
+    IF NEW.tipo_usu = 'art' THEN
+        INSERT INTO liberacao_artista (status_lib, id_art)
+        VALUES ('p', NULL); -- será atualizado ao aprovar
+    END IF;
+END|
+DELIMITER ;
+
+-- Aprovação gera registro na tabela artista
+DELIMITER |
+CREATE TRIGGER adc_artista_apr
+AFTER UPDATE ON liberacao_artista
+FOR EACH ROW
+BEGIN
+    IF NEW.status_lib = 'a' AND OLD.status_lib != 'a' THEN
+        INSERT INTO artista (nome_usu, nome_comp, bio_art, id_usu)
+        SELECT u.nome_usu, u.nome_comp, 
+               CONCAT('Bem-vindo ao perfil do artista ', u.nome_comp, '!'), 
+               u.id_usu
+        FROM usuario u
+        WHERE u.id_usu = (
+            SELECT a.id_usu
+            FROM artista a
+            WHERE a.id_art = NEW.id_art
+        );
+    END IF;
+END|
+DELIMITER ;
+
+-- Marcar e desmarcar favoritos
+DELIMITER |
+CREATE TRIGGER obra_ja_favoritada
+BEFORE INSERT ON favorito_obra
+FOR EACH ROW
+BEGIN
+    DECLARE existe INT;
+    SELECT COUNT(*) INTO existe
+    FROM favorito_obra
+    WHERE id_usu = NEW.id_usu AND id_obr = NEW.id_obr;
+
+    IF existe > 0 THEN
+        UPDATE favorito_obra
+        SET ativo = IF(ativo = 1, 0, 1)
+        WHERE id_usu = NEW.id_usu AND id_obr = NEW.id_obr;
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Atualizado favorito existente'; -- evita INSERT real
+    END IF;
+END|
+DELIMITER ;
+
+-- Adicionar advertência
+DELIMITER |
+CREATE TRIGGER advertencia
+AFTER INSERT ON comentario
+FOR EACH ROW
+BEGIN
+    UPDATE usuario
+    SET advertencia_usu = advertencia_usu + 1
+    WHERE id_usu = NEW.id_usu;
+END|
+DELIMITER ;
+
+-- Banimento automático ao atingir 2 advertências
+DELIMITER |
+CREATE TRIGGER banir
+AFTER UPDATE ON usuario
+FOR EACH ROW
+BEGIN
+    IF NEW.advertencia_usu >= 2 THEN
+        UPDATE usuario
+        SET ban_usu = 1
+        WHERE id_usu = NEW.id_usu;
+    END IF;
+END|
+DELIMITER ;
