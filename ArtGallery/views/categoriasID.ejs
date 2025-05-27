@@ -65,7 +65,6 @@
         </div>
     </header>
 
-    <!-- Conteúdo Principal -->
     <section>
         <div class="conteudo linha-a-linha">
             <h1 class="tit-grande"><%= categoria.nome %></h1>
@@ -93,7 +92,27 @@
                 
     </section>
 
-    <section class="">
+    <section class="espaco-contraste">
+        <div class="obras-top">
+            <h1>TODA ARTE, EM UM SÓ LUGAR!</h1>
+            <p>Confira a essas obras inspiradoras:</p>
+        </div>
+        <div class="conteudo">
+            <div class="grid">
+                <% artistas3.forEach(a => { %>
+                <div class="artista-container">
+                    <a href="/artistas/id=<%= a.id %>">
+                        <% if (a.foto) { %>
+                            <img src="<%= a.foto %>" alt="<%= a.nome %>">
+                        <% } else { %>
+                            <img src="/uploads/imagem.png" alt="<%= a.nome %>">
+                        <% } %>
+                        <a><%= a.nomec %></a>
+                    </a>
+                </div>
+                <% }) %>
+            </div>
+        </div>
 
     </section>
 

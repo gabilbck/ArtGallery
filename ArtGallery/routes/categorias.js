@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { buscarTodasCategorias, buscarUmaCategoria, buscarObrasPorCategoria9 } = require("../banco");
+const { buscarTodasCategorias, buscarUmaCategoria, buscarObrasPorCategoria9, buscarArtistasPorCategoriaDeObra } = require("../banco");
 
 
 router.get("/", async (req, res) => {
@@ -36,6 +36,7 @@ router.get("/:id", async (req, res) => {
         return res.status(404).send("Categoria não encontrada");
       }
       const obras9 = await buscarObrasPorCategoria9(id);
+      const artistas3 = await buscarArtistasPorCategoriaDeObra(id);
       res.render("categoriasID", {
         title: `Categoria: ${categoria.nome} – ArtGallery`,
         usuario: req.session.usuario,
@@ -51,6 +52,13 @@ router.get("/:id", async (req, res) => {
           art: o.art,
           foto: o.foto,
           tabela: "obra"
+        })),
+        artistas3: artistas3.map(a => ({
+          id: a.id,
+          nome: a.nome,
+          nomec: a.nomec,
+          foto: a.foto,
+          tabela: "artista"
         }))
       });
     } catch (err) {

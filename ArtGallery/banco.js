@@ -35,6 +35,18 @@ async function conectarBD() {
         const [linhas] = await conexao.query(sql, [id_art]);
         return linhas.length > 0 ? linhas[0] : null;
     }
+    async function buscarArtistasPorCategoriaDeObra(id_cat) {
+        const conexao = await conectarBD();
+        const sql = `
+            SELECT DISTINCT a.id_art AS id, a.nome_usu AS nome, a.nome_comp AS nomec, a.foto_art AS foto
+            FROM artista a
+            INNER JOIN obra o ON a.id_art = o.id_art
+            WHERE o.id_cat = ? AND o.situacao_obr = 1
+            LiMIT 3;
+        `;
+        const [linhas] = await conexao.query(sql, [id_cat]);
+        return linhas;
+    }
 
 // Categorias
     async function buscarTodasCategorias() {
@@ -227,7 +239,7 @@ async function conectarBD() {
 module.exports = { 
     conectarBD, 
     buscarUsuario, 
-    buscarArtista,
+    buscarArtista, buscarArtistasPorCategoriaDeObra,
     buscarTodasCategorias, buscarInicioCategorias, buscarUmaCategoria,
     buscarTodasObras, buscarUmaObra, buscarUmaObraDetalhada, buscarObrasPorCategoria, buscarObrasPorCategoria9, buscarInicioObras, buscarObraAletoria,
     buscarComentariosPorObra, comentarObra,

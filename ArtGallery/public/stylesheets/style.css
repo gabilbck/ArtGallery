@@ -435,6 +435,31 @@ footer {
    z-index: 1;
 }
 
+/* Artistas */
+.artista-container {
+   display: flex;
+   width: 300px;
+   height: 300px;
+   justify-content: center;
+}
+.artista-container img{
+   width: 200px;
+   height: 200px;
+   border-radius: 50%;
+}
+.artista-container span{
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+   color: #fff;
+   font-size: 20px;
+   font-weight: bold;
+   text-align: center;
+   text-shadow: #000 2px 2px 4px;
+   text-transform: uppercase;
+}
+
 /* Seja parte do clube de arte */
 .txt-img{
    display: flex;
