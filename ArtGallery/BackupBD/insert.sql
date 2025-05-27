@@ -143,6 +143,16 @@ VALUES
 ('igor09@email.com', 'Revisar perfil', 'Atualizei o perfil, mas não aparece.'),
 ('juliana10@email.com', 'Reportar bug', 'Encontrei um erro no envio de obras.');
 
+UPDATE categoria SET descricao_cat = 'Obras visuais criadas com tinta sobre tela, papel ou outros suportes, explorando cores, formas e texturas.' WHERE id_cat = 1;
+UPDATE categoria SET descricao_cat = 'Representações tridimensionais esculpidas em pedra, madeira, argila ou materiais modernos, com valor estético e simbólico.' WHERE id_cat = 2;
+UPDATE categoria SET descricao_cat = 'Imagens captadas por câmeras que registram momentos, expressões, paisagens e cenas com composição artística.' WHERE id_cat = 3;
+UPDATE categoria SET descricao_cat = 'Obras produzidas com ferramentas digitais como softwares gráficos, IA, renderizações 3D e manipulações de imagem.' WHERE id_cat = 4;
+UPDATE categoria SET descricao_cat = 'Representações feitas com grafite, lápis, carvão ou tinta, geralmente em papel, com foco em linhas, formas e sombreamento.' WHERE id_cat = 5;
+UPDATE categoria SET descricao_cat = 'Arte sem representação direta da realidade, usando formas, cores e gestos para transmitir ideias ou emoções.' WHERE id_cat = 6;
+UPDATE categoria SET descricao_cat = 'Obras que exploram o inconsciente, os sonhos e o imaginário, com elementos fantásticos e composições oníricas.' WHERE id_cat = 7;
+UPDATE categoria SET descricao_cat = 'Representações artísticas de pessoas, com foco no rosto, expressões faciais e personalidade do retratado.' WHERE id_cat = 8;
+UPDATE categoria SET descricao_cat = 'Obras que retratam ambientes naturais como montanhas, florestas, praias e campos, com foco na beleza do cenário.' WHERE id_cat = 9;
+UPDATE categoria SET descricao_cat = 'Composições simples e diretas que valorizam o essencial, com poucos elementos, cores neutras e formas geométricas.' WHERE id_cat = 10;
 
 -- VIEWS & TRIGGERS
 
