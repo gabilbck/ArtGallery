@@ -28,40 +28,213 @@ async function conectarBD() {
         return linhas.length > 0 ? linhas[0] : null; 
     } 
 
+// Artistas
+    async function buscarArtista(id_art) {
+        const conexao = await conectarBD();
+        const sql = `SELECT id_art AS id, nome_usu AS nome, foto_art AS foto FROM artista WHERE id_art = ?`;
+        const [linhas] = await conexao.query(sql, [id_art]);
+        return linhas.length > 0 ? linhas[0] : null;
+    }
+    async function buscarArtistasPorCategoriaDeObra(id_cat) {
+        const conexao = await conectarBD();
+        const sql = `
+            SELECT DISTINCT a.id_art AS id, a.nome_usu AS nome, a.nome_comp AS nomec, a.foto_art AS foto
+            FROM artista a
+            INNER JOIN obra o ON a.id_art = o.id_art
+            WHERE o.id_cat = ? AND o.situacao_obr = 1
+            LiMIT 3;
+        `;
+        const [linhas] = await conexao.query(sql, [id_cat]);
+        return linhas;
+    }
+
 // Categorias
     async function buscarTodasCategorias() {
         const conexao = await conectarBD();
-        const sql = `SELECT id_cat AS id_categoria, nome_cat AS nome, foto_cat AS id_imagem FROM categoria`;
+        const sql = `SELECT id_cat AS id, nome_cat AS nome, foto_cat AS foto FROM categoria`;
         const [linhas] = await conexao.query(sql);
         return linhas;
     }
-    async function buscarCategoria(){
+    async function buscarUmaCategoria(id) {
         const conexao = await conectarBD();
-        const sql = `select id_cat, nome_cat, descricao_cat, foto_cat
-                    from categoria
-                    where id_cat= ?`;
-        const [linhas] = await conexao.query(sql, [categoria.nome,  categoria.descricao, categoria.foto]);
+        const sql = `SELECT id_cat AS id, nome_cat AS nome, descricao_cat AS \`desc\`, foto_cat AS foto FROM categoria WHERE id_cat = ?`;
+        const [linhas] = await conexao.query(sql, [id]);
         return linhas.length > 0 ? linhas[0] : null;
+    }
+    async function buscarInicioCategorias() {
+        const conexao = await conectarBD();
+        const sql = `SELECT id_cat AS id, nome_cat AS nome, foto_cat AS foto FROM categoria ORDER BY RAND() LIMIT 6`;
+        const [linhas] = await conexao.query(sql);
+        return linhas;
     }
 
 // Obras
     async function buscarTodasObras(){
-        const conecao = await conectarBD();
-        const sql = `select id_obr`;
+        const conexao = await conectarBD();
+        const sql = `SELECT id_obr AS id, titulo_obr AS nome FROM obra`;
+        const [linhas] = await conexao.query(sql);
+        return linhas;
+    }
+    async function buscarUmaObra(id_obr) {
+        const conexao = await conectarBD();
+        const sql = `
+            SELECT 
+                o.id_obr AS id,
+                o.titulo_obr AS nome,
+                a.nome_usu AS art,
+                COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto,
+                o.descricao_obr AS des,
+                (
+                    SELECT COUNT(*) 
+                    FROM comentario c 
+                    WHERE c.id_obr = o.id_obr
+                ) AS qcom,
+                (
+                    SELECT COUNT(*) 
+                    FROM favorito_obra f 
+                    WHERE f.id_obr = o.id_obr AND f.ativo = 1
+                ) AS qfav
+            FROM obra o
+            INNER JOIN artista a ON o.id_art = a.id_art
+            WHERE o.id_obr = ? AND o.situacao_obr = 1
+            LIMIT 1
+        `;
+        const [linhas] = await conexao.query(sql, [id_obr]);
+        return linhas.length > 0 ? linhas[0] : null;
+    }
+    async function buscarUmaObraDetalhada(id_obr, id_usu = 0) {
+        const conexao = await conectarBD();
+        const sql = `
+            SELECT 
+                o.id_obr AS id,
+                o.titulo_obr AS nome,
+                a.nome_usu AS art,
+                COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto,
+                o.descricao_obr AS des,
+                (
+                    SELECT COUNT(*) 
+                    FROM comentario c 
+                    WHERE c.id_obr = o.id_obr
+                ) AS qcom,
+                (
+                    SELECT COUNT(*) 
+                    FROM favorito_obra f 
+                    WHERE f.id_obr = o.id_obr AND f.ativo = 1
+                ) AS qfav,
+                (
+                    SELECT COUNT(*)
+                    FROM favorito_obra f
+                    WHERE f.id_obr = o.id_obr AND f.id_usu = ? AND f.ativo = 1
+                ) > 0 AS favoritou
+            FROM obra o
+            INNER JOIN artista a ON o.id_art = a.id_art
+            WHERE o.id_obr = ? AND o.situacao_obr = 1
+            LIMIT 1
+        `;
+        const [linhas] = await conexao.query(sql, [id_usu, id_obr]);
+        return linhas.length > 0 ? linhas[0] : null;
+    }
+    async function buscarObrasPorCategoria(id) {
+        const conexao = await conectarBD();
+        const sql = `SELECT id_obr AS id, titulo_obr AS nome, foto_obr AS foto FROM obra WHERE id_cat = ?`;
+        const [linhas] = await conexao.query(sql, [id]);
+        return linhas;
+    }
+    async function buscarObrasPorCategoria9(id) {
+        const conexao = await conectarBD();
+        const sql = `
+            SELECT 
+                o.id_obr AS id,
+                o.titulo_obr AS nome,
+                a.nome_usu AS art,
+                COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto
+            FROM obra o
+            INNER JOIN artista a ON o.id_art = a.id_art
+            WHERE o.id_cat = ? AND o.situacao_obr = 1
+            ORDER BY RAND()
+            LIMIT 9
+        `;
+        const [linhas] = await conexao.query(sql, [id]);
+        return linhas;
+    }
+    async function buscarInicioObras(id) {
+        const conexao = await conectarBD();
+        const sql = `
+        SELECT 
+        o.id_obr AS id,
+        o.titulo_obr AS nome,
+        a.id_art AS id_art,
+        a.nome_usu AS art,
+        o.foto_obr AS foto,
+        (
+            SELECT COUNT(*) 
+            FROM comentario c 
+            WHERE c.id_obr = o.id_obr
+        ) AS qcom,
+        (
+            SELECT COUNT(*) 
+            FROM favorito_obra f 
+            WHERE f.id_obr = o.id_obr AND f.ativo = 1
+        ) AS qfav,
+        o.descricao_obr AS des
+        FROM obra o
+        INNER JOIN artista a ON o.id_art = a.id_art
+        WHERE o.situacao_obr = 1
+        ORDER BY RAND()
+        LIMIT 3`
+        const [linhas] = await conexao.query(sql, [id]);
+        return linhas;
+    };
+    async function buscarObraAletoria() {
+        const conexao = await conectarBD();
+        const sql = `
+            SELECT 
+                o.id_obr AS id,
+                o.titulo_obr AS nome,
+                a.nome_comp AS art,
+                COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto
+            FROM obra o
+            INNER JOIN artista a ON o.id_art = a.id_art
+            WHERE o.situacao_obr = 1
+            ORDER BY RAND()
+            LIMIT 1
+        `;
+        const [linhas] = await conexao.query(sql);
+        return linhas.length > 0 ? linhas[0] : null;
+    };
+
+// Favoritos
+    async function favoritarObra(id_usu, id_obr) {
+        const conexao = await conectarBD();
+        const sql = `INSERT INTO favorito_obra (id_usu, id_obr, ativo) VALUES (?, ?, 1)`;
+        await conexao.query(sql, [id_usu, id_obr]);
     }
 
 // Comentários
-
-// Imagens
-async function buscarImagemPorId(id) {
-    const sql = "SELECT foto_cat FROM categoria WHERE id_cat = ?";
-    const [rows] = await conexao.promise().query(sql, [id]);
-    if (rows.length > 0) {
-        return rows[0].foto_cat;  // Isso será um Buffer com o binário da imagem
-        } else {
-        throw new Error("Imagem não encontrada");
+    async function buscarComentariosPorObra(id_obr) {
+        const conexao = await conectarBD();
+        const sql = `SELECT id_com, id_usu, comentario, data_com FROM comentario WHERE id_obr = ?`;
+        const [linhas] = await conexao.query(sql, [id_obr]);
+        return linhas;
     }
-}
+    async function comentarObra(id_usu, id_obr, comentario) {
+        const conexao = await conectarBD();
+        const sql = `INSERT INTO comentario (id_usu, id_obr, comentario) VALUES (?, ?, ?)`;
+        await conexao.query(sql, [id_usu, id_obr, comentario]);
+    }
+
+// Suporte
+    async function buscarSuporte() {
+        const conexao = await conectarBD();
+        const sql = `SELECT id_sup, email_sup, assunto_sup, descricao_sup FROM suporte`;
+        const [linhas] = await conexao.query(sql);
+        return linhas;
+    }
+    async function inserirSuporte(suporte) {
+        const conexao = await conectarBD();
+        const sql = `INSERT INTO suporte (email_sup, assunto_sup, descricao_sup) VALUES (?, ?, ?)`;
+        await conexao.query(sql, [suporte.email, suporte.assunto, suporte.descricao]);
+    }
 
 // Inserir usuario no banco
 const conexao = require('./conexao');
@@ -85,10 +258,19 @@ async function registrarUsuario(dadosUsuario) {
 
 
 module.exports = { 
-    buscarUsuario, 
     conectarBD, 
+<<<<<<< HEAD
     buscarTodasCategorias, buscarCategoria,
     buscarTodasObras,
     buscarImagemPorId,
     registrarUsuario,
+=======
+    buscarUsuario, 
+    buscarArtista, buscarArtistasPorCategoriaDeObra,
+    buscarTodasCategorias, buscarInicioCategorias, buscarUmaCategoria,
+    buscarTodasObras, buscarUmaObra, buscarUmaObraDetalhada, buscarObrasPorCategoria, buscarObrasPorCategoria9, buscarInicioObras, buscarObraAletoria,
+    buscarComentariosPorObra, comentarObra,
+    favoritarObra,
+    buscarSuporte, inserirSuporte
+>>>>>>> 88f66cd98d4af2d1da5428f4d73d40f3b0e2b33a
  }; 

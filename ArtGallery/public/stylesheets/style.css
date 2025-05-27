@@ -48,6 +48,10 @@ section {
 .centralizado{
    text-align: center;
 }
+.linha-a-linha{
+   display: flex;
+   flex-direction: column;
+}
 
 
 
@@ -55,17 +59,19 @@ h1 {
    padding: 0;
    margin: 0;
 }
-
 p {
    padding: 0;
    margin: 5px 0 0 0;
    font-size: 16px;
 }
-
 a {
    color: black;
    font-weight: bold;
    text-decoration: none;
+}
+.tit-grande{
+   font-size: 36px;
+   font-weight: bolder;
 }
 
 /* Botões */
@@ -209,6 +215,7 @@ header{
    display: flex;
    flex-direction: column;
    justify-content: center;
+   padding: 0 0 50px 0;
 }
 .pesquisa{
    display: flex;
@@ -253,7 +260,7 @@ header{
    width: 40px;
    height: 40px;
 }
-.nav-icone a{
+.nav-icone #tit{
    display: flex;
    justify-content: center;
    align-items: center;
@@ -261,7 +268,7 @@ header{
    text-decoration: none;
 }
 .nav-icone:hover .nav-icone-img,
-.nav-icone:hover a {
+.nav-icone:hover #tit {
    transform: scale(1.05);
    transition: transform 0.3s ease;
    text-shadow: 0 4px 6px rgba(0,0,0,0.1);
@@ -280,6 +287,19 @@ footer {
 
 /* Cards */
 
+/* Obras */
+.obr-container {
+   position: relative;
+   width: 300px;
+   height: 300px;
+   overflow: hidden;
+   border-radius: 0.5rem;
+}
+.cat-container img{
+   filter: brightness(0.7);
+   
+}
+
 /* Categorias */
 .cat-container {
    position: relative;
@@ -288,29 +308,41 @@ footer {
    overflow: hidden;
    border-radius: 0.5rem;
 }
-.cat-container:hover {
+
+.cat-container:hover, .obr-container:hover {
    transform: scale(1.025);
    transition: transform 0.3s ease;
    box-shadow: 0 4px 6px #444;
    cursor: pointer;
 }
-.cat-container img {
+.cat-container img, .obr-container img {
    width: 100%;
    height: 100%;
    object-fit: cover;
    display: block;
+   border-radius: 0.5rem;
 }
-.cat-container span {
+.cat-container span, .obr-container span {
    position: absolute;
    top: 50%;
    left: 50%;
    transform: translate(-50%, -50%);
-   color: white;
+   color: #fff;
    font-size: 20px;
    font-weight: bold;
    text-align: center;
-   text-shadow: #000 0px 0px 5px;
+   text-shadow: #000 2px 2px 4px;
    text-transform: uppercase;
+}
+.obr-container span {
+   display: none;
+}
+.obr-container:hover img{
+   filter: brightness(0.7);
+}
+.obr-container:hover span{ 
+   cursor: pointer;
+   display: block;
 }
 
 /* Obras em Destaque */
@@ -401,6 +433,31 @@ footer {
    text-decoration: none;
    font-weight: bold;
    z-index: 1;
+}
+
+/* Artistas */
+.artista-container {
+   display: flex;
+   width: 300px;
+   height: 300px;
+   justify-content: center;
+}
+.artista-container img{
+   width: 200px;
+   height: 200px;
+   border-radius: 50%;
+}
+.artista-container span{
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+   color: #fff;
+   font-size: 20px;
+   font-weight: bold;
+   text-align: center;
+   text-shadow: #000 2px 2px 4px;
+   text-transform: uppercase;
 }
 
 /* Seja parte do clube de arte */
