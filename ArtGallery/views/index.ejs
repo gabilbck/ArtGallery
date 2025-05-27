@@ -160,12 +160,14 @@
 
     <section> <!-- Você Conhece? -->
         <div class="descubra-container">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/500px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg">
+            <% obraArtDest.forEach(oa => { %>
+            <img src="<%= oa.foto %>" alt="<%= oa.nome %>" title="<%= oa.nome %>">
             <div class="descubra-conteudo">
                 <h1>Você Conhece</h1>
-                <p>Nome do Artista?</p>
+                <p><%= oa.art %>?</p>
             </div>
-            <a href="#" class="link-final">Veja mais sobre</a>
+            <a href="/obraID/id=<%= oa.id %>" class="link-final">Veja mais sobre</a>
+            <% }) %>
         </div>
     </section>
 
@@ -183,7 +185,9 @@
                 </div>
             </div>
             <div class="img-central">
-                <img src="https://placehold.co/300x200/png" alt="">
+                <% obraArtDest.forEach(oa => { %>
+                <img src="<%= oa.foto %>" alt="<%= oa.nome %>" width="300" height="200">
+                <% }) %>
             </div>
         </div>
         <div class="txt-img img-txt">
@@ -199,7 +203,9 @@
                 </div>
             </div>
             <div class="img-central">
-                <img src="https://placehold.co/300x200/png" alt="">
+                <% obraArtDest.forEach(oa => { %>
+                <img src="<%= oa.foto %>" alt="<%= oa.nome %>" width="300" height="200">
+                <% }) %>
             </div>
         </div>
     </section>

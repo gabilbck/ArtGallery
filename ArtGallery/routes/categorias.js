@@ -2,7 +2,11 @@ const express = require("express");
 const router = express.Router();
 const { buscarTodasCategorias, buscarUmaCategoria, buscarObrasPorCategoria } = require("../banco");
 
+
 router.get("/", async (req, res) => {
+  if (!req.session.usuario) {
+    return res.redirect("/login");
+  }
   try {
     const categorias = await buscarTodasCategorias();
     res.render("categorias", {
@@ -18,31 +22,36 @@ router.get("/", async (req, res) => {
 
 // Rota para exibir obras de uma categoria específica   UE CArrega NA PÁGINA categoriasID.ejs
 router.get("/:id", async (req, res) => {
-  // Extrai apenas o valor numérico se vier no formato "id=2"
-  const id = req.params.id.includes('=') 
-    ? req.params.id.split('=')[1] 
-    : req.params.id;
-  
-  try {
-    const categoria = await buscarUmaCategoria(id);
-    if (!categoria) {
-      return res.status(404).send("Categoria não encontrada");
+  if (!req.session.usuario) {
+    return res.redirect("/login");
+  }
+  else {
+    // Extrai apenas o valor numérico se vier no formato "id=2"
+    const id = req.params.id.includes('=') 
+      ? req.params.id.split('=')[1] 
+      : req.params.id;
+    
+    try {
+      const categoria = await buscarUmaCategoria(id);
+      if (!categoria) {
+        return res.status(404).send("Categoria não encontrada");
+      }
+      const obras = await buscarObrasPorCategoria(id);
+      res.render("categoriasID", {
+        title: `Categoria: ${categoria.nome} – ArtGallery`,
+        usuario: req.session.usuario || null,
+        categoria: { 
+          id: categoria.id, 
+          nome: categoria.nome, 
+          desc: categoria.desc, 
+          foto: categoria.foto 
+        },
+        obras: obras.map(o => ({ id: o.id, nome: o.nome }))
+      });
+    } catch (err) {
+      console.error("Erro ao buscar categoria ou obras:", err);
+      res.status(500).send("Erro ao carregar categoria ou obras");
     }
-    const obras = await buscarObrasPorCategoria(id);
-    res.render("categoriasID", {
-      title: `Categoria: ${categoria.nome} – ArtGallery`,
-      usuario: req.session.usuario || null,
-      categoria: { 
-        id: categoria.id, 
-        nome: categoria.nome, 
-        desc: categoria.desc, 
-        foto: categoria.foto 
-      },
-      obras: obras.map(o => ({ id: o.id, nome: o.nome }))
-    });
-  } catch (err) {
-    console.error("Erro ao buscar categoria ou obras:", err);
-    res.status(500).send("Erro ao carregar categoria ou obras");
   }
 });
 
