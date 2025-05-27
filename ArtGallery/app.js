@@ -13,6 +13,16 @@ const imagemRouter = require("./routes/imagem");
 
 const app = express();
 
+app.set('view engine', 'ejs');
+
+
+
+//rota do cadastro
+const cadastroRouter = require("./routes/cadastro");
+app.use("/cadastro", cadastroRouter);
+
+
+
 app.use(session({
     secret: 'ok',
     resave: false,
@@ -61,6 +71,9 @@ app.get('/', async (req, res) => {
     res.render('index', { categorias: [] }); // evita erro no template
   }
 });
+
+const registerRouter = require('./routes/register');
+app.use('/register', registerRouter);
 
 
 module.exports = app;
