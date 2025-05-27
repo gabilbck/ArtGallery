@@ -134,6 +134,7 @@ async function conectarBD() {
         SELECT 
         o.id_obr AS id,
         o.titulo_obr AS nome,
+        a.id_art AS id_art,
         a.nome_usu AS art,
         COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto,
         (
@@ -161,7 +162,7 @@ async function conectarBD() {
             SELECT 
                 o.id_obr AS id,
                 o.titulo_obr AS nome,
-                a.nome_usu AS art,
+                a.nome_comp AS art,
                 COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto
             FROM obra o
             INNER JOIN artista a ON o.id_art = a.id_art
@@ -193,6 +194,19 @@ async function conectarBD() {
         await conexao.query(sql, [id_usu, id_obr, comentario]);
     }
 
+// Suporte
+    async function buscarSuporte() {
+        const conexao = await conectarBD();
+        const sql = `SELECT id_sup, email_sup, assunto_sup, descricao_sup FROM suporte`;
+        const [linhas] = await conexao.query(sql);
+        return linhas;
+    }
+    async function inserirSuporte(suporte) {
+        const conexao = await conectarBD();
+        const sql = `INSERT INTO suporte (email_sup, assunto_sup, descricao_sup) VALUES (?, ?, ?)`;
+        await conexao.query(sql, [suporte.email, suporte.assunto, suporte.descricao]);
+    }
+
 module.exports = { 
     conectarBD, 
     buscarUsuario, 
@@ -200,5 +214,6 @@ module.exports = {
     buscarTodasCategorias, buscarInicioCategorias, buscarUmaCategoria,
     buscarTodasObras, buscarUmaObra, buscarUmaObraDetalhada, buscarObrasPorCategoria, buscarInicioObras, buscarObraAletoria,
     buscarComentariosPorObra, comentarObra,
-    favoritarObra
+    favoritarObra,
+    buscarSuporte, inserirSuporte
  }; 

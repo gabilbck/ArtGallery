@@ -21,7 +21,7 @@ router.get("/", async (req, res) => {
       ...categorias.map(c => ({ id: c.id, nome: c.nome, foto: c.foto, tabela: "categoria" })),
     ];
     const itensO = [
-      ...obras.map(o => ({ id: o.id, nome: o.nome, art: o.art, foto: o.foto, qfav: o.qfav, qcom: o.qcom, des: o.des, tabela: "obra" })),
+      ...obras.map(o => ({ id: o.id, nome: o.nome, idArt: o.idArt, art: o.art, foto: o.foto, qfav: o.qfav, qcom: o.qcom, des: o.des, tabela: "obra" })),
     ];
     const itensOArtDest = obraArtDest ? [{
       id: obraArtDest.id,
@@ -30,19 +30,13 @@ router.get("/", async (req, res) => {
       foto: obraArtDest.foto,
       tabela: "obra"
     }] : [];
-
-
-    if (!req.session.usuario) {
-    return res.redirect("/login");
-    } else{
     res.render("index", {
       title: "Página Inicial - ArtGallery",
       usuario: req.session.usuario || null,
       categorias: itensC,
       obras: itensO,
       obraArtDest: itensOArtDest,
-      });
-    }
+    });
   } catch (erro) {
     console.error("Erro ao buscar dados:", erro);
     res.status(500).send("Erro ao carregar dados");

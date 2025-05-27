@@ -13,6 +13,8 @@ const uploadRouter = require('./routes/upload');
 const explorarRouter = require("./routes/explorar");
 const categoriasRouter = require("./routes/categorias");
 const perfilRouter = require("./routes/perfil");
+const obrasRouter = require("./routes/obras");
+const suporteRouter = require("./routes/suporte");
 
 const app = express();
 
@@ -63,6 +65,8 @@ app.use('/upload', uploadRouter);
 app.use("/explorar", explorarRouter);
 app.use("/categorias", categoriasRouter);
 app.use("/perfil", perfilRouter);
+app.use("/obras", obrasRouter);
+app.use("/suporte", suporteRouter);
 
 // 404
 app.use((req, res) => {
