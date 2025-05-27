@@ -288,12 +288,16 @@ footer {
 /* Cards */
 
 /* Obras */
-.obr-contianer {
+.obr-container {
    position: relative;
    width: 300px;
    height: 300px;
    overflow: hidden;
    border-radius: 0.5rem;
+}
+.cat-container img{
+   object-fit: cover;
+   display: block;
 }
 
 /* Categorias */
@@ -305,21 +309,19 @@ footer {
    border-radius: 0.5rem;
 }
 
-.cat-container:hover, .obr-contianer:hover {
+.cat-container:hover, .obr-container:hover {
    transform: scale(1.025);
    transition: transform 0.3s ease;
    box-shadow: 0 4px 6px #444;
    cursor: pointer;
 }
-.cat-container img, .obr-contianer img {
+.cat-container img, .obr-container img {
    width: 100%;
    height: 100%;
-   object-fit: cover;
-   display: block;
    filter: brightness(0.7);
    border-radius: 0.5rem;
 }
-.cat-container span, .obr-contianer span {
+.cat-container span, .obr-container span {
    position: absolute;
    top: 50%;
    left: 50%;
@@ -330,6 +332,13 @@ footer {
    text-align: center;
    text-shadow: #000 2px 2px 4px;
    text-transform: uppercase;
+}
+.obr-container span {
+   display: none;
+}
+.obr-container:hover span{ 
+   cursor: pointer;
+   display: block;
 }
 
 /* Obras em Destaque */

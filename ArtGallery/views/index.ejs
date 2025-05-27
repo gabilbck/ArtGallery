@@ -71,14 +71,14 @@
         <div class="grid">
         <% categorias.forEach(c => { %>
             <a href="/categorias/id=<%= c.id %>">
-            <div class="cat-container">
-                <% if (c.foto) { %>
-                    <img src="<%= c.foto %>" alt="<%= c.nome %>">
-                <% } else { %>
-                    <img src="/uploads/imagem.png" alt="<%= c.nome %>">
-                <% } %>
-                <span><%= c.nome %></span>
-            </div>
+                <div class="cat-container">
+                    <% if (c.foto) { %>
+                        <img src="<%= c.foto %>" alt="<%= c.nome %>">
+                    <% } else { %>
+                        <img src="/uploads/imagem.png" alt="<%= c.nome %>">
+                    <% } %>
+                    <span><%= c.nome %></span>
+                </div>
             </a>
         <% }) %>
         </div>
