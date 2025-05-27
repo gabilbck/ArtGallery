@@ -96,3 +96,29 @@ INSERT INTO obra (titulo_obr, descricao_obr, situacao_obr, foto_obr, id_cat, id_
 ('Retrato Urbano', 'Pessoa em ambiente da cidade', 1, '/uploads/obras/retrato8.jpg', 8, 8),
 ('Múltiplas Faces', 'Retrato com sobreposição', 1, '/uploads/obras/retrato9.jpg', 8, 9),
 ('Vozes Silenciosas', 'Rostos anônimos', 1, '/uploads/obras/retrato10.jpg', 8, 10);
+
+INSERT INTO obra (titulo_obr, descricao_obr, situacao_obr, foto_obr, id_cat, id_art) VALUES
+('Horizonte Dourado', 'Paisagem ao pôr do sol', 1, '/uploads/obras/paisagem1.jpg', 9, 1),
+('Caminho Verde', 'Trilha em floresta', 1, '/uploads/obras/paisagem2.jpg', 9, 2),
+('Vista de Montanha', 'Paisagem natural elevada', 1, '/uploads/obras/paisagem3.jpg', 9, 3),
+('Praia Serena', 'Mar e areia ao amanhecer', 1, '/uploads/obras/paisagem4.jpg', 9, 4),
+('Campo Aberto', 'Vegetação rasteira e céu azul', 1, '/uploads/obras/paisagem5.jpg', 9, 5),
+('Lago Silencioso', 'Reflexo da natureza na água', 1, '/uploads/obras/paisagem6.jpg', 9, 6),
+('Jardim de Outono', 'Folhas caídas em trilha', 1, '/uploads/obras/paisagem7.jpg', 9, 7),
+('Céu Estrelado', 'Paisagem noturna rural', 1, '/uploads/obras/paisagem8.jpg', 9, 8),
+('Cachoeira Secreta', 'Natureza escondida', 1, '/uploads/obras/paisagem9.jpg', 9, 9),
+('Riacho Calmo', 'Curso de água em floresta', 1, '/uploads/obras/paisagem10.jpg', 9, 10);
+
+INSERT INTO obra (titulo_obr, descricao_obr, situacao_obr, foto_obr, id_cat, id_art) VALUES
+('Espaço em Branco', 'Composição com poucos elementos', 1, '/uploads/obras/minimalista1.jpg', 10, 1),
+('Um Só Traço', 'Arte reduzida ao essencial', 1, '/uploads/obras/minimalista2.jpg', 10, 2),
+('Geometria Limpa', 'Formas básicas e harmonia', 1, '/uploads/obras/minimalista3.jpg', 10, 3),
+('Silêncio Visual', 'Composição contemplativa', 1, '/uploads/obras/minimalista4.jpg', 10, 4),
+('Elemento Único', 'Foco em um objeto central', 1, '/uploads/obras/minimalista5.jpg', 10, 5),
+('Contraste Simples', 'Preto e branco puro', 1, '/uploads/obras/minimalista6.jpg', 10, 6),
+('Sombra Essencial', 'Exploração de luz e sombra', 1, '/uploads/obras/minimalista7.jpg', 10, 7),
+('Forma e Vazio', 'Composição baseada em espaços', 1, '/uploads/obras/minimalista8.jpg', 10, 8),
+('Serenidade Visual', 'Minimalismo contemplativo', 1, '/uploads/obras/minimalista9.jpg', 10, 9),
+('Simplesmente Arte', 'Estética do menos é mais', 1, '/uploads/obras/minimalista10.jpg', 10, 10);
+
+update obra set foto_obr = '/uploads/imagem.png';
