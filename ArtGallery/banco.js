@@ -136,7 +136,7 @@ async function conectarBD() {
         o.titulo_obr AS nome,
         a.id_art AS id_art,
         a.nome_usu AS art,
-        COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto,
+        o.foto_obr AS foto,
         (
             SELECT COUNT(*) 
             FROM comentario c 

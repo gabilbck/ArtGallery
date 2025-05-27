@@ -1,9 +1,6 @@
 const express = require("express");
 const { inserirSuporte } = require("../banco");
 const router = express.Router();
-const { 
-    inserirSuporte
-} = require("../banco");
 
 router.get("/", (req, res) => {
     res.render("suporte", {
@@ -30,3 +27,5 @@ router.post("/", async (req, res) => {
         return res.render("suporte", { title: "Suporte - ArtGallery", erros: "Erro no servidor, tente novamente.", sucesso: false });
     }
 });
+
+module.exports = router;
