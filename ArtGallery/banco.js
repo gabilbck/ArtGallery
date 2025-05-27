@@ -27,6 +27,18 @@ async function conectarBD() {
         const [linhas] = await conexao.query(sql, [usuario.email, usuario.senha]); 
         return linhas.length > 0 ? linhas[0] : null; 
     } 
+    async function registrarUsuario(dadosUsuario) {
+        const{ email, nome, usuario, senha, tipo_usu} = dadosUsuario;
+        const sql = 'INSERT INTO usuario (email, nome, usuario, senha, tipo_usu) VALUES (?, ?, ?, ?, ?)';
+        try{
+            const [resultado] = await conexao.promise().execute(sql, [email, nome, usuario, senha, tipo_usu]);
+            console.log('Usuario cadastrado com sucesso: ', resultado);
+            return resultado;
+        }catch (erro){
+            console.erro('Erro ao cadastrar usuario:', erro);
+            throw erro;
+        }
+    };
 
 // Artistas
     async function buscarArtista(id_art) {
@@ -236,41 +248,17 @@ async function conectarBD() {
         await conexao.query(sql, [suporte.email, suporte.assunto, suporte.descricao]);
     }
 
-// Inserir usuario no banco
-const conexao = require('./conexao');
 
-async function registrarUsuario(dadosUsuario) {
-    const{ email, nome, usuario, senha, tipo_usu} = dadosUsuario;
-
-    const sql = 'INSERT INTO usuario (email, nome, usuario, senha, tipo_usu) VALUES (?, ?, ?, ?, ?)';
-
-    try{
-        const [resultado] = await conexao.promise().execute(sql, [email, nome, usuario, senha, tipo_usu]);
-        console.log('Usuario cadastrado com sucesso: ', resultado);
-        return resultado;
-    }catch (erro){
-        console.erro('Erro ao cadastrar usuario:', erro);
-        throw erro;
-    }
-    
-};
 
 
 
 module.exports = { 
     conectarBD, 
-<<<<<<< HEAD
-    buscarTodasCategorias, buscarCategoria,
-    buscarTodasObras,
-    buscarImagemPorId,
-    registrarUsuario,
-=======
-    buscarUsuario, 
+    buscarUsuario, registrarUsuario,
     buscarArtista, buscarArtistasPorCategoriaDeObra,
     buscarTodasCategorias, buscarInicioCategorias, buscarUmaCategoria,
     buscarTodasObras, buscarUmaObra, buscarUmaObraDetalhada, buscarObrasPorCategoria, buscarObrasPorCategoria9, buscarInicioObras, buscarObraAletoria,
     buscarComentariosPorObra, comentarObra,
     favoritarObra,
     buscarSuporte, inserirSuporte
->>>>>>> 88f66cd98d4af2d1da5428f4d73d40f3b0e2b33a
  }; 

@@ -17,10 +17,6 @@
       "jest": "^29.7.0",
       "morgan": "~1.9.1",
       "multer": "^1.4.5-lts.1",
-<<<<<<< HEAD
-      "mysql": "^2.18.1",
-=======
->>>>>>> 88f66cd98d4af2d1da5428f4d73d40f3b0e2b33a
       "mysql2": "^3.14.1"
    },
    "devDependencies": {
