@@ -70,14 +70,24 @@
         <div class="conteudo linha-a-linha">
             <h1 class="tit-grande"><%= categoria.nome %></h1>
             <p><%= categoria.desc %></p>
-            
-            <h2>Obras nesta categoria:</h2>
-            <ul>
-                <% obras.forEach(obra => { %>
-                    <li><%= obra.nome %></li>
-                <% }) %>
-            </ul>
         </div>
+        <div class="conteudo">
+            <div class="grid">
+            <% obras.forEach(o => { %>
+             <a href="/obrras/id=<%= o.id %>">
+                <div class="obr-container">
+                    <% if (o.foto) { %>
+                        <img src="<%= o.foto %>" alt="<%= o.nome %>">
+                    <% } else { %>
+                        <img src="/uploads/imagem.png" alt="<%= o.nome %>">
+                    <% } %>
+                    <span><%= o.nome %></span>
+                </div>
+            </a>
+            <% }) %>
+            </div>
+        </div>
+                
     </section>
 
 </body>

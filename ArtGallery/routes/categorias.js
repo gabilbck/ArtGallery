@@ -26,7 +26,6 @@ router.get("/:id", async (req, res) => {
     return res.redirect("/login");
   }
   else {
-    // Extrai apenas o valor numérico se vier no formato "id=2"
     const id = req.params.id.includes('=') 
       ? req.params.id.split('=')[1] 
       : req.params.id;
@@ -39,14 +38,20 @@ router.get("/:id", async (req, res) => {
       const obras = await buscarObrasPorCategoria(id);
       res.render("categoriasID", {
         title: `Categoria: ${categoria.nome} – ArtGallery`,
-        usuario: req.session.usuario || null,
+        usuario: req.session.usuario,
         categoria: { 
           id: categoria.id, 
           nome: categoria.nome, 
           desc: categoria.desc, 
           foto: categoria.foto 
         },
-        obras: obras.map(o => ({ id: o.id, nome: o.nome }))
+        obras: obras.map(o => ({
+          id: o.id,
+          nome: o.nome,
+          art: o.art,
+          foto: o.foto,
+          tabela: "obra"
+        }))
       });
     } catch (err) {
       console.error("Erro ao buscar categoria ou obras:", err);

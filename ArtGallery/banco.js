@@ -124,7 +124,24 @@ async function conectarBD() {
     }
     async function buscarObrasPorCategoria(id) {
         const conexao = await conectarBD();
-        const sql = `SELECT id_obr AS id, titulo_obr AS nome FROM obra WHERE id_cat = ?`;
+        const sql = `SELECT id_obr AS id, titulo_obr AS nome, foto_obr AS foto FROM obra WHERE id_cat = ?`;
+        const [linhas] = await conexao.query(sql, [id]);
+        return linhas;
+    }
+    async function buscarObrasPorCategoria9(id) {
+        const conexao = await conectarBD();
+        const sql = `
+            SELECT 
+                o.id_obr AS id,
+                o.titulo_obr AS nome,
+                a.nome_usu AS art,
+                COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto
+            FROM obra o
+            INNER JOIN artista a ON o.id_art = a.id_art
+            WHERE o.id_cat = ? AND o.situacao_obr = 1
+            ORDER BY RAND()
+            LIMIT 9
+        `;
         const [linhas] = await conexao.query(sql, [id]);
         return linhas;
     }
@@ -212,7 +229,7 @@ module.exports = {
     buscarUsuario, 
     buscarArtista,
     buscarTodasCategorias, buscarInicioCategorias, buscarUmaCategoria,
-    buscarTodasObras, buscarUmaObra, buscarUmaObraDetalhada, buscarObrasPorCategoria, buscarInicioObras, buscarObraAletoria,
+    buscarTodasObras, buscarUmaObra, buscarUmaObraDetalhada, buscarObrasPorCategoria, buscarObrasPorCategoria9, buscarInicioObras, buscarObraAletoria,
     buscarComentariosPorObra, comentarObra,
     favoritarObra,
     buscarSuporte, inserirSuporte
