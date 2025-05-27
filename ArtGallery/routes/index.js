@@ -32,13 +32,17 @@ router.get("/", async (req, res) => {
     }] : [];
 
 
+    if (!req.session.usuario) {
+    return res.redirect("/login");
+    } else{
     res.render("index", {
       title: "Página Inicial - ArtGallery",
       usuario: req.session.usuario || null,
       categorias: itensC,
       obras: itensO,
       obraArtDest: itensOArtDest,
-    });
+      });
+    }
   } catch (erro) {
     console.error("Erro ao buscar dados:", erro);
     res.status(500).send("Erro ao carregar dados");
