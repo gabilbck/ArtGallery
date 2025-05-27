@@ -1,9 +1,7 @@
 // routes/perfil.js
 const express = require("express");
 const router = express.Router();
-const {
-  // importe aqui outras funções futuras...
-} = require("../banco")
+const { buscarUsuario } = require("../banco"); // <- ajuste aqui
 
 router.get("/", async (req, res) => {
   if (!req.session.usuario) {
