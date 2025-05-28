@@ -519,3 +519,51 @@ footer {
 .desenvolvedores .github{
    margin: 0 20px 0 0;
 }
+
+/* Explorar */
+/* ----- CARROSSEL DINÂMICO ----- */
+.carousel {
+  position: relative;
+  width: 100%;
+  max-width: 960px;
+  overflow: hidden;
+  border-radius: 12px;
+}
+.slides {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+}
+.slide {
+  min-width: 100%;
+  position: relative;
+}
+.slide img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.overlay {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  color: #fff;
+  text-shadow: 0 0 8px #000;
+}
+.carrossel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 56px;
+  height: 56px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(6px);
+  font-size: 28px;
+  cursor: pointer;
+}
+.carrossel-prev { left: 24px; }
+.carrossel-next { right: 24px; }
+.carrossel-btn:hover { background: rgba(255,255,255,0.9); }

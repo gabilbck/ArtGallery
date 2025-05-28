@@ -214,6 +214,84 @@ async function conectarBD() {
         const [linhas] = await conexao.query(sql);
         return linhas.length > 0 ? linhas[0] : null;
     };
+    async function buscarObraMaisComentada() {
+        const conexao = await conectarBD();
+        const sql = `
+            SELECT 
+                o.id_obr AS id,
+                o.titulo_obr AS nome,
+                a.nome_comp AS art,
+                COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto,
+                COUNT(c.id_com) AS qcom
+            FROM obra o
+            INNER JOIN artista a ON o.id_art = a.id_art
+            LEFT JOIN comentario c ON o.id_obr = c.id_obr
+            WHERE o.situacao_obr = 1
+            GROUP BY o.id_obr
+            ORDER BY qcom DESC
+            LIMIT 1
+        `;
+        const [linhas] = await conexao.query(sql);
+        return linhas.length > 0 ? linhas[0] : null;
+    }
+    async function buscarObraMaisFavoritada() {
+        const conexao = await conectarBD();
+        // precisa levar em consideração que a chavbe primaria de favorito_obra é composta por id_usu e id_obr, então precisamos contar os favoritos de cada obra
+        const sql = `
+        SELECT
+            o.id_obr AS id,
+            o.titulo_obr AS nome,
+            a.nome_comp AS art,
+            COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto,
+            COUNT(f.id_usu) AS qfav
+        FROM obra o
+        INNER JOIN artista a ON o.id_art = a.id_art
+        LEFT JOIN favorito_obra f ON o.id_obr = f.id_obr AND f.ativo = 1
+        WHERE o.situacao_obr = 1
+        GROUP BY o.id_obr
+        ORDER BY qfav DESC
+        LIMIT 1
+    `;
+        const [linhas] = await conexao.query(sql);
+        return linhas.length > 0 ? linhas[0] : null;
+    }
+    async function buscarObraMaisFavoritadaDoArtistaMaisSeguido() {
+        const conexao = await conectarBD();
+
+        // 1. Busca o artista com mais seguidores
+        const [artistaMaisSeguido] = await conexao.query(`
+            SELECT a.id_art
+            FROM artista a
+            LEFT JOIN seguidor_artista sa ON a.id_art = sa.id_artista
+            GROUP BY a.id_art
+            ORDER BY COUNT(sa.id_seguidor) DESC
+            LIMIT 1
+        `);
+
+        if (!artistaMaisSeguido.length) return null;
+
+        const idArtista = artistaMaisSeguido[0].id_art;
+
+        // 2. Busca a obra mais favoritada desse artista
+        const [obras] = await conexao.query(`
+            SELECT 
+                o.id_obr AS id,
+                o.titulo_obr AS nome,
+                a.nome_comp AS art,
+                COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto,
+                COUNT(f.id_usu) AS qfav
+            FROM obra o
+            INNER JOIN artista a ON o.id_art = a.id_art
+            LEFT JOIN favorito_obra f ON o.id_obr = f.id_obr AND f.ativo = 1
+            WHERE o.situacao_obr = 1 AND o.id_art = ?
+            GROUP BY o.id_obr
+            ORDER BY qfav DESC
+            LIMIT 1
+        `, [idArtista]);
+
+        return obras.length > 0 ? obras[0] : null;
+    }
+
 
 // Favoritos
     async function favoritarObra(id_usu, id_obr) {
@@ -257,7 +335,7 @@ module.exports = {
     buscarUsuario, registrarUsuario,
     buscarArtista, buscarArtistasPorCategoriaDeObra,
     buscarTodasCategorias, buscarInicioCategorias, buscarUmaCategoria,
-    buscarTodasObras, buscarUmaObra, buscarUmaObraDetalhada, buscarObrasPorCategoria, buscarObrasPorCategoria9, buscarInicioObras, buscarObraAletoria,
+    buscarTodasObras, buscarUmaObra, buscarUmaObraDetalhada, buscarObrasPorCategoria, buscarObrasPorCategoria9, buscarInicioObras, buscarObraAletoria, buscarObraMaisComentada, buscarObraMaisFavoritada, buscarObraMaisFavoritadaDoArtistaMaisSeguido,
     buscarComentariosPorObra, comentarObra,
     favoritarObra,
     buscarSuporte, inserirSuporte
