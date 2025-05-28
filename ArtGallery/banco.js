@@ -92,8 +92,10 @@ async function conectarBD() {
         const sql = `
             SELECT 
                 o.id_obr AS id,
-                o.titulo_obr AS nome,
-                a.nome_usu AS art,
+                o.titulo_obr AS titulo,
+                a.id_art AS id_art,
+                a.nome_usu AS artU,
+                a.nome_comp AS artC,
                 COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto,
                 o.descricao_obr AS des,
                 (
@@ -305,11 +307,36 @@ async function conectarBD() {
         const [linhas] = await conexao.query(sql, [idObra]);
         return linhas[0].total;
     }
+    async function jaFavoritou(id_usu, id_obr) {
+        const conexao = await conectarBD();
+        const sql = `SELECT COUNT(*) AS total FROM favorito_obra WHERE id_usu = ? AND id_obr = ? AND ativo = 1`;
+        const [linhas] = await conexao.query(sql, [id_usu, id_obr]);
+        return linhas[0].total > 0;
+    }
+    async function desfavoritarObra(id_usu, id_obr) {
+        const conexao = await conectarBD();
+        const sql = `UPDATE favorito_obra SET ativo = 0 WHERE id_usu = ? AND id_obr = ?`;
+        await conexao.query(sql, [id_usu, id_obr]);
+    }
+    async function favoritarObraComDesbloqueio(id_usu, id_obr) {
+        const conexao = await conectarBD();
+        const sql = `INSERT INTO favorito_obra (id_usu, id_obr, ativo) VALUES (?, ?, 1) ON DUPLICATE KEY UPDATE ativo = 1`;
+        await conexao.query(sql, [id_usu, id_obr]);
+    }
 
 // Comentários
     async function buscarComentariosPorObra(id_obr) {
         const conexao = await conectarBD();
-        const sql = `SELECT id_com, id_usu, comentario, data_com FROM comentario WHERE id_obr = ?`;
+        const sql = `
+            SELECT 
+            c.id_com AS id_com, 
+            c.id_usu AS id_usu, 
+            c.id_obr AS id_obr,
+            texto_com,
+            u.nome_usu AS nome_usu
+            FROM comentario c
+            INNER JOIN usuario u ON C.id_usu = u.id_usu
+            WHERE id_obr = ?`;
         const [linhas] = await conexao.query(sql, [id_obr]);
         return linhas;
     }
@@ -343,6 +370,6 @@ module.exports = {
     buscarTodasCategorias, buscarInicioCategorias, buscarUmaCategoria,
     buscarTodasObras, buscarUmaObra, buscarUmaObraDetalhada, buscarObrasPorCategoria, buscarObrasPorCategoria9, buscarInicioObras, buscarObraAletoria, buscarObraMaisComentada, buscarObraMaisFavoritada, buscarObraMaisFavoritadaDoArtistaMaisSeguido,
     buscarComentariosPorObra, comentarObra,
-    favoritarObra, contarFavoritos,
+    favoritarObra, contarFavoritos, jaFavoritou, desfavoritarObra, favoritarObraComDesbloqueio,
     buscarSuporte, inserirSuporte
  }; 

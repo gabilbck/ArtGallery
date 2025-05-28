@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="icon" href="/uploads/icon-ag.svg" type="image/x-icon" />
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+  </head>
+  <body>
+    <div class="topo-logo">
+      <h1>ArtGallery</h1>
+    </div>
+
+    <!-- Navegação -->
+    <header>
+      <div class="pesquisa">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          fill="currentColor"
+          class="bi bi-search"
+          viewBox="0 0 16 16"
+        >
+          <path
+            d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"
+          />
+        </svg>
+        <input
+          type="text"
+          placeholder="Encontre seus artistas favoritos aqui"
+          id="pesquisa"
+        />
+      </div>
+      <div class="nav">
+        <div class="nav-icone">
+          <a href="/">
+            <div class="nav-icone-img">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-house-fill"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L8 2.207l6.646 6.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293z"
+                />
+                <path
+                  d="m8 3.293 6 6V13.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5V9.293z"
+                />
+              </svg>
+            </div>
+            <a id="tit">Início</a>
+          </a>
+        </div>
+        <div class="nav-icone">
+          <a href="/explorar">
+            <div class="nav-icone-img">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-palette-fill"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M12.433 10.07C14.133 10.585 16 11.15 16 8a8 8 0 1 0-8 8c1.996 0 1.826-1.504 1.649-3.08-.124-1.101-.252-2.237.351-2.92.465-.527 1.42-.237 2.433.07M8 5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m4.5 3a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3M5 6.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m.5 6.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3"
+                />
+              </svg>
+            </div>
+            <a id="tit">Explorar</a>
+          </a>
+        </div>
+        <div class="nav-icone">
+          <a href="/categorias">
+            <div class="nav-icone-img">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-tag-fill"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M2 1a1 1 0 0 0-1 1v4.586a1 1 0 0 0 .293.707l7 7a1 1 0 0 0 1.414 0l4.586-4.586a1 1 0 0 0 0-1.414l-7-7A1 1 0 0 0 6.586 1zm4 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"
+                />
+              </svg>
+            </div>
+            <a id="tit">Categorias</a>
+          </a>
+        </div>
+        <div class="nav-icone">
+          <a href="/perfil">
+            <div class="nav-icone-img">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-person-fill"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"
+                />
+              </svg>
+            </div>
+            <a id="tit">Perfis</a>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <section>
+      <div class="conteudo">
+        <div class="obr-view">
+          <div class="obr-view-top">
+            <span><!-- SETA --></span>
+            <div class="obr-view-top-info">
+              <h1><%= obra.titulo %></h1>
+              <p>Por: <%= obra.artC %></p>
+            </div>
+          </div>
+          <div class="obr-view-img">
+            <img
+              src="<%= obra.foto %>"
+              alt="<%= obra.titulo %> - <%= obra.artC %>"
+            />
+          </div>
+          <div class="obr-view-info">
+            <div class="esquerda">
+              <div class="estrela">
+                <% if (jaFavoritou) { %>
+                <a href="/desfavoritar/<%= obra.id_obra %>">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="30"
+                    height="30"
+                    fill="currentColor"
+                    class="bi bi-star-fill"
+                    viewBox="0 0 30 "
+                  >
+                    <path
+                      d="M3.612 15.443c-.386.204-.832-.149-.746-.586l.73-4.25-3.09-3.01c-.308-.3-.147-.822.283-.89l4.27-.622 1.91-3.87c.18-.36.69-.36.87 0l1.91 3.87 4.27.622c.
+                      43.068.068.591.59.283.89l-3.09 3.01.73 4.25c.086.437-.36.79-.746.586L8 13.187l-3.388 1.256z"
+                    />
+                  </svg>
+                </a>
+                <% } else { %>
+                <a href="/favoritar/<%= obra.id_obra %>">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="50"
+                    height="50"
+                    fill="currentColor"
+                    class="bi bi-star"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      d="M3.612 15.443c-.386.204-.832-.149-.746-.586l.73-4.25-3.09-3.01c-.308-.3-.147-.822.283-.89l4.27-.622 1.91-3.87c.18-.36.69-.36.87 0l1.91 3.87 4.27.622c.43.068.591.59.283.89l-3.09 3.01.73 4.25c.086.437-.36.79-.746.586L8 13.187l-3.388 1.256z"
+                    />
+                  </svg>
+                </a>
+                <% } %>
+                <span><%= obra.qfav %></span>
+              </div>
+              <div class="comentario">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  fill="currentColor"
+                  class="bi bi-chat-left-text-fill"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    d="M1 2.5A1.5 1.5 0 0 1 2.5 1h11A1.5 1.5 0 0 1 15 2.5v7A1.5 1.5 0 0 1 13.5 11H4l-3 3V2.5zM3 6a1 1 0 1 0-2 0 .999.999 0 0 0 .894.993L2 .993A1.001 1.001 0 0 0 3 .993zm4-2a1 1 0 1 0-2 0 .999.999 0 0 0 .894.993L6 .993A1.001 1.001 0 0 0 7 .993zm4-2a1 1 0 1 0-2 0 .999.999 0 0 0 .894.993L10 .993A1.001 1.001 0 0 011 .993z"
+                  />
+                </svg>
+                <span><%= obra.qcom %></span>
+              </div>
+            </div>
+            <div class="direita">
+              <div class="colecao">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  fill="currentColor"
+                  class="bi bi-collection-fill"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    d="M2.5 1A1.5 1.5 0 0 0 1 2.5v11A1.5 1.5 0 0 0 2.5 15h11A1.5 1.5 0 0 0 15 13.5v-11A1.5 1.5 0 0 0 13.5 1h-11zM4.5 4a1.5 1.5 0 1 1-3 0A1.5 1.5 0 0 1 4.5 4zm3-2a1.5 1.5 0 1 1-3 0A1.5 1.5 0 0 1 7.5 2zm3-2a1.5 1.5 0 1 1-3 .001A1.5 1.5 0 0 1 10.5 .001zM14 .001a1.499 
+                    " />
+                </svg>
+                <span><%= obra.qcol %></span>
+              </div>
+            </div>
+          </div>
+          <div class="obr-view-artobr">
+            <a href="/perfil/id=<%= obra.id_art %>"><%= obra.artU %></a>
+            <p><%= obra.des %></p>
+          </div>
+        </div>
+        
+        <div class="com-view">
+          <form action="/obras/comentar" method="post">
+            <input type="text" class="text" name="comentario" placeholder="Adicionar novo comentário à obra...." required />
+            <input type="submit" class="botao" value="&#8594;" />
+          </form>
+          <% comentarios.forEach((c) => { %>
+          <div class="com-view-info">
+            <div class="com-view-info-top">
+              <img src="/uploads/id=<%= id_usu %>" alt="Usuário" />
+              <span><%= c.nome_usu %></span>
+            </div>
+            <p><%= c.texto_com %></p>
+          </div>
+          <% }); %>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p>
+        Precisa de ajuda? Contate nosso <a href="/suporte"><b>SUPORTE</b></a>
+      </p>
+      <a href="/">ArtGallery - 2025</a>
+    </footer>
+
+    <div>
+      <!-- Para remover posteriormente -->
+      <% if (usuario && usuario.nome_usu) { %>
+      <p>Bem-vindo, <%= usuario.nome_usu %>!</p>
+      <a href="/logout">Sair</a>
+      <% } else { %>
+      <p>Bem-vindo, Visitante!</p>
+      <a href="/login">Login</a>
+      <% } %>
+    </div>
+  </body>
+</html>

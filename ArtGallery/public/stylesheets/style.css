@@ -593,3 +593,132 @@ footer {
   z-index: 1;
 }
 
+/* View Obras */
+.obr-view {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   flex-direction: column;
+   max-width: 960px;
+   width: 100%;
+   margin: 50px 0;
+}
+.obr-view img {
+   width: 100%;
+   height: auto;
+   border-radius: 0.5rem;
+}
+.obr-view-top{
+   margin: 20px 0;
+   text-align: center;
+}
+.obr-view-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+}
+.esquerda,
+.direita {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+.estrela,
+.comentario,
+.colecao {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.estrela svg,
+.comentario svg,
+.colecao svg {
+  width: 24px;
+  height: 24px;
+}
+span {
+  font-size: 16px;
+}
+.obr-view-top-info h1 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+.obr-view-top-info p {
+  font-size: 16px;
+  color: #666;
+  margin: 0;
+}
+.obr-view-img {
+  width: 100%;
+  max-width: 600px;
+  margin: 20px 0;
+  background-color: #ccc;
+  border-radius: 0.5rem;
+  aspect-ratio: 4 / 3; /* para manter proporção mesmo sem imagem */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.obr-view-img img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 0.5rem;
+  object-fit: contain;
+}
+.obr-view-info {
+  display: flex;
+  justify-content: space-between; /* separa esquerda ↔ direita */
+  align-items: center;
+  padding: 12px 0;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.esquerda, .direita {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.estrela, .comentario, .colecao {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.obr-view-info svg {
+  width: 20px;
+  height: 20px;
+}
+.obr-view-info span {
+  font-size: 16px;
+}
+.obr-view-artobr {
+  display: flex;
+  justify-content: left;
+  flex-direction: column;
+  width: 600px;
+}
+
+.com-view{
+   max-width: 600px;
+   width: 100%;
+}
+.com-view form .text {
+   width: 100%;
+   padding: 15px;
+   border-radius: 0.5rem;
+   border: 1px solid #ccc;
+}
+.com-view form .text::placeholder {
+   font-size: 14px;
+}
+.com-view form .botao{
+   display: flex;
+   justify-content: center;
+   margin: 20px 0;
+   border-radius: 25%;
+   width: 40px;
+   height: 40px;
+   background-color: #6A994E;
+}

@@ -99,7 +99,7 @@
         <div class="conteudo">
             <% obras.forEach(o => { %>
             <div class="card-obras">
-                <a href="/categorias/id=#">
+                <a href="/obras/id=<%= o.id %>">
                     <div class="card-img">
                         <% if (o.foto) { %>
                         <img src="<%= o.foto %>" alt="<%= o.nome %>">
