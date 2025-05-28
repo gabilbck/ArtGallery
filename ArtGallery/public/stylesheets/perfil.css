@@ -38,16 +38,15 @@
    flex-direction: column;
    justify-content: center;
    align-items: center;
-
 }
-.profile-actions{
+.profile-actions {
    display: flex;
    justify-content: center;
    align-items: center;
    gap: 1rem;
    margin-top: 1rem;
 }
-.profile-user{
+.profile-user {
    flex-direction: column;
    align-items: center;
    text-align: center;
@@ -59,18 +58,18 @@
       color: #000;
       cursor: pointer;
    }
-   h1{
+   h1 {
       font-size: 1.75rem;
       margin: 0.5rem 0;
       color: #000;
       align-items: start;
    }
-   p{
+   p {
       margin: 0.5rem 0;
       font-size: 1rem;
       color: #333;
    }
-   span{
+   span {
       font-weight: bold;
       color: #000;
    }
@@ -137,21 +136,38 @@
 .tab.active {
    border-bottom: 3px solid #000;
 }
-
-.add-button {
-   display: block;
-   margin-top: 50px;
-   margin-bottom: 50px;
-   margin-left: 15px;
-   margin-right: 15px;
+.profile-buttons {
+   display: flex;
    width: 100%;
-   height: 80%;
-   text-align: center;
-   padding: 5px;
+   align-items: center;
+   margin-top: 20px;
+   margin-bottom: 20px;
+}
+
+.tab-button {
+   flex: 1;
+   padding: 0.75rem 1rem;
+   border: 1px solid black;
+   border-radius: 10px;
+   background-color: white;
+   color: black;
+   font-weight: bold;
+   cursor: pointer;
+   transition: all 0.3s ease;
+}
+.add-button-wrapper {
+   width: 100%;
+   padding: 1rem;
    border: 1px solid #000;
    background: #f9f9f9;
    color: #000;
+   font-size: 1rem;
+   font-weight: bold;
+   text-align: center;
    cursor: pointer;
+   border-radius: 10px;
+   margin-top: 20px;
+   margin-bottom: 20px;
 }
 
 .grid {
@@ -169,14 +185,6 @@
    justify-content: center;
    font-weight: bold;
    color: #555;
-}
-.profile-buttons {
-   display: flex;
-   width: 100%;
-   margin: 10px;
-   padding: 5px;
-   justify-content: space-between;
-   flex-direction: row;
 }
 
 .tab-button {
