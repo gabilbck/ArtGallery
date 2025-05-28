@@ -197,6 +197,22 @@ async function conectarBD() {
         const sql = `INSERT INTO favorito_obra (id_usu, id_obr, ativo) VALUES (?, ?, 1)`;
         await conexao.query(sql, [id_usu, id_obr]);
     }
+    async function buscarObrasFavoritas(id_usu) {
+        const conexao = await conectarBD();
+        const sql = `
+            SELECT 
+                o.id_obr AS id,
+                o.titulo_obr AS nome,
+                a.nome_usu AS art,
+                COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto
+            FROM favorito_obra f
+            INNER JOIN obra o ON f.id_obr = o.id_obr
+            INNER JOIN artista a ON o.id_art = a.id_art
+            WHERE f.id_usu = ? AND f.ativo = 1
+        `;
+        const [linhas] = await conexao.query(sql, [id_usu]);
+        return linhas;
+    }
 
 // Comentários
     async function buscarComentariosPorObra(id_obr) {
@@ -232,5 +248,5 @@ module.exports = {
     buscarTodasObras, buscarUmaObra, buscarUmaObraDetalhada, buscarObrasPorCategoria, buscarObrasPorCategoria9, buscarInicioObras, buscarObraAletoria,
     buscarComentariosPorObra, comentarObra,
     favoritarObra,
-    buscarSuporte, inserirSuporte
+    buscarSuporte, inserirSuporte, buscarObrasFavoritas
  }; 
