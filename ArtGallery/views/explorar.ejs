@@ -115,8 +115,43 @@
     </script>
     </section>
 
+    <br><br>
 
+    <section class="espaco-contraste">
+        <div class="obras-top">
+            <h1>OBRAS FAVORITAS</h1>
+            <p>Confira às obras mais favoritadas do ArtGallery:</p>
+        </div>
+        <div class="favoritas-container">
+            <% destaques.forEach(obra => { %>
+            <a href="/obras/<%= obra.id %>" class="favorita-link">
+                <div class="favorita-card" style="background-image: url('<%= obra.foto %>');"></div>
+            </a>
+            <% }) %>
+        </div>
+    </section>
 
+    <section>
+        <div class="tit">
+            EXPLORE MAIS OBRAS:
+        </div>
+        <div class="conteudo">
+            <div class="grid">
+                <% obras.forEach(o => { %>
+                <a href="/obrras/id=<%= o.id %>">
+                    <div class="obr-container">
+                        <% if (o.foto) { %>
+                            <img src="<%= o.foto %>" alt="<%= o.nome %>">
+                        <% } else { %>
+                            <img src="/uploads/imagem.png" alt="<%= o.nome %>">
+                        <% } %>
+                        <span><%= o.nome %></span>
+                    </div>
+                </a>
+                <% }) %>
+            </div>
+        </div>
+    </section>
 
     <section> <!-- Desenvolvedores -->
         <div class="dev-tit">

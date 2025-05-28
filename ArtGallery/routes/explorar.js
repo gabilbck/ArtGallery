@@ -5,7 +5,9 @@ const router  = express.Router();
 const {
   buscarObraMaisComentada,
   buscarObraMaisFavoritada,
-  buscarObraMaisFavoritadaDoArtistaMaisSeguido
+  buscarObraMaisFavoritadaDoArtistaMaisSeguido,
+  contarFavoritos,
+  buscarTodasObras
 } = require("../banco");
 
 router.get("/", async (req, res) => {
@@ -26,11 +28,20 @@ router.get("/", async (req, res) => {
     const vistos = new Set();
     const destaques = [maisComentada, maisFavoritada, doArtistaMaisSeguido]
       .filter(o => o && !vistos.has(o.id) && vistos.add(o.id));
+    const obras = await buscarTodasObras();
+
 
     res.render("explorar", {
       title: "Explorar - ArtGallery",
       usuario,
-      destaques               //  <<<<  será usado no EJS
+      destaques,               //  <<<<  será usado no EJS
+      obras: obras.map(o => ({
+        id: o.id,
+        nome: o.nome,
+        art: o.art,
+        foto: o.foto,
+        tabela: "obra"
+      }))
     });
   } catch (err) {
     console.error("Erro ao carregar explorar:", err);

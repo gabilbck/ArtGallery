@@ -299,6 +299,12 @@ async function conectarBD() {
         const sql = `INSERT INTO favorito_obra (id_usu, id_obr, ativo) VALUES (?, ?, 1)`;
         await conexao.query(sql, [id_usu, id_obr]);
     }
+    async function contarFavoritos(idObra) {
+        const conexao = await conectarBD();
+        const sql = `SELECT COUNT(*) AS total FROM favorito_obra WHERE id_obr = ? AND ativo = 1`;
+        const [linhas] = await conexao.query(sql, [idObra]);
+        return linhas[0].total;
+    }
 
 // Comentários
     async function buscarComentariosPorObra(id_obr) {
@@ -337,6 +343,6 @@ module.exports = {
     buscarTodasCategorias, buscarInicioCategorias, buscarUmaCategoria,
     buscarTodasObras, buscarUmaObra, buscarUmaObraDetalhada, buscarObrasPorCategoria, buscarObrasPorCategoria9, buscarInicioObras, buscarObraAletoria, buscarObraMaisComentada, buscarObraMaisFavoritada, buscarObraMaisFavoritadaDoArtistaMaisSeguido,
     buscarComentariosPorObra, comentarObra,
-    favoritarObra,
+    favoritarObra, contarFavoritos,
     buscarSuporte, inserirSuporte
  }; 
