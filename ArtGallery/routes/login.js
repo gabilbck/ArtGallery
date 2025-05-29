@@ -29,8 +29,12 @@ router.post("/", async (req, res) => {
         const usuario = await buscarUsuario({ email, senha });
 
         if (usuario) {
-            req.session.usuario = usuario;
-            // Renderiza o login com a flag sucesso ativada
+            req.session.usuario = {
+                id_usu: usuario.id_usu,
+                nome_usu: usuario.nome_usu,
+                email_usu: usuario.email_usu
+            };
+            console.log("Sessão após login:", req.session);
             return res.render("login", { title: "Login - ArtGallery", erros: null, sucesso: true });
         } else {
             return res.render("login", {

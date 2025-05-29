@@ -314,9 +314,35 @@ async function conectarBD() {
     }
     async function contarFavoritos(idObra) {
         const conexao = await conectarBD();
-        const sql = `SELECT COUNT(*) AS total FROM favorito_obra WHERE id_obr = ? AND ativo = 1`;
-        const [linhas] = await conexao.query(sql, [idObra]);
-        return linhas[0].total;
+        const sql = `
+        SELECT 
+            o.id_obr AS id,
+            o.titulo_obr AS nome,
+            a.id_art AS id_art,
+            a.nome_usu AS art,
+            COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto,
+            o.descricao_obr AS des,
+            (
+            SELECT COUNT(*) 
+            FROM comentario c 
+            WHERE c.id_obr = o.id_obr
+            ) AS qcom,
+            (
+            SELECT COUNT(*) 
+            FROM favorito_obra f 
+            WHERE f.id_obr = o.id_obr AND f.ativo = 1
+            ) AS qfav,
+            (
+            SELECT COUNT(*)
+            FROM favorito_obra f
+            WHERE f.id_obr = o.id_obr AND f.id_usu = ? AND f.ativo = 1
+            ) > 0 AS favoritou
+        FROM obra o
+        INNER JOIN artista a ON o.id_art = a.id_art
+        WHERE o.situacao_obr = 1
+        ORDER BY o.titulo_obr
+        `;
+        const [obras] = await conexao.query(sql, [usuario]);
     }
     async function jaFavoritou(id_usu, id_obr) {
         const conexao = await conectarBD();

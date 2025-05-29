@@ -71,7 +71,7 @@
         <div class="carousel">
         <div class="slides">
             <% destaques.forEach((obra, i) => { %>
-            <a href="/obra/<%= obra.id %>" class="slide" data-index="<%= i %>">
+            <a href="/obras/<%= obra.id %>" class="slide" data-index="<%= i %>">
                 <img src="<%= obra.foto %>" alt="Capa de <%= obra.nome %>">
                 <div class="overlay">
                 <h2><%= obra.nome %></h2>
@@ -140,7 +140,7 @@
             </h1>
             <div class="grid">
                 <% obras.forEach(o => { %>
-                <a href="/obrras/id=<%= o.id %>">
+                <a href="/obras/id=<%= o.id %>">
                     <div class="obr-container">
                         <% if (o.foto) { %>
                             <img src="<%= o.foto %>" alt="<%= o.nome %>">

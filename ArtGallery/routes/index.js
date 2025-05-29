@@ -32,7 +32,6 @@ router.get("/", async (req, res) => {
     }] : [];
     res.render("index", {
       title: "Página Inicial - ArtGallery",
-      usuario: req.session.usuario || null,
       categorias: itensC,
       obras: itensO,
       obraArtDest: itensOArtDest,

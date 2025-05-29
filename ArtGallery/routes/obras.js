@@ -88,7 +88,7 @@ router.get("/favoritar/:id", async (req, res) => {
 
   if (agora - ultimoClique < 5000) {
     console.log("Clique bloqueado por 5s");
-    return res.redirect("back"); // volta para a mesma página
+    return res.redirect(req.get("Referrer") || "/");
   }
 
   // Atualiza a marca de tempo
@@ -104,8 +104,8 @@ router.get("/favoritar/:id", async (req, res) => {
     } else {
       await favoritarObraComDesbloqueio(usuario, obraId);
     }
-
-    res.redirect("back"); // volta para a página anterior
+    console.log("Favoreitou");
+    res.redirect(req.get("Referrer") || "/");
   } catch (err) {
     console.error("Erro ao favoritar:", err);
     res.status(500).send("Erro ao favoritar obra");
@@ -162,7 +162,7 @@ router.get("/comentar/:id", async (req, res) => {
 
   if (agora - ultimoClique < 5000) {
     console.log("Clique bloqueado por 5s");
-    return res.redirect("back"); // volta para a mesma página
+    return res.redirect("back", {usuario: req.session.usuario || null}); // volta para a mesma página
   }
 
   // Atualiza a marca de tempo
@@ -198,7 +198,7 @@ router.get("/colecionar/:id", async (req, res) => {
 
   if (agora - ultimoClique < 5000) {
     console.log("Clique bloqueado por 5s");
-    return res.redirect("back"); // volta para a mesma página
+    return res.redirect("back", {usuario: req.session.usuario || null}); // volta para a mesma página
   }
 
   // Atualiza a marca de tempo
@@ -211,7 +211,7 @@ router.get("/colecionar/:id", async (req, res) => {
     // Aqui você deve implementar a lógica para colecionar a obra
     // Exemplo: await colecionar(usuario, obraId);
 
-    res.redirect("back"); // volta para a página anterior
+    res.redirect("back", {usuario: req.session.usuario || null}); // volta para a página anterior
   } catch (err) {
     console.error("Erro ao colecionar:", err);
     res.status(500).send("Erro ao colecionar obra");

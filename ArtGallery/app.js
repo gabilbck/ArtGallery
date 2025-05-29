@@ -25,7 +25,10 @@ app.use(session({
     secret: 'ok',
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false }
+    cookie: { 
+      maxAge: 1000 * 60 * 60 * 24, // 1 dia
+      secure: false 
+    }
 }));
 
 app.use(logger("dev"));
@@ -33,6 +36,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+
+app.use((req, res, next) => {
+    res.locals.usuario = req.session.usuario || null;
+    next();
+});
 
 // Configuração do Multer para upload de arquivos 
 const storage = multer.diskStorage({ 

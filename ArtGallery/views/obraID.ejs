@@ -136,7 +136,7 @@
             <div class="esquerda">
               <div class="estrela">
                 <% if (jaFavoritou) { %>
-                <a href="/desfavoritar/<%= obra.id_obra %>">
+                <a href="obras/desfavoritar/<%= obra.id_obra %>">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="30"
@@ -152,7 +152,7 @@
                   </svg>
                 </a>
                 <% } else { %>
-                <a href="/favoritar/<%= obra.id_obra %>">
+                <a href="/obras/favoritar/<%= obra.id_obra %>">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="50"
@@ -209,23 +209,7 @@
           </div>
         </div>
         
-        <div class="com-view">
-          <form action="/obras/comentar" method="post">
-            <input type="text" class="text" name="comentario" placeholder="Adicionar novo comentário à obra...." required />
-            <input type="submit" class="botao" value="&#8594;" />
-          </form>
-          <% comentarios.forEach((c) => { %>
-          <div class="com-view-info">
-            <div class="com-view-info-top">
-              <img src="/uploads/id=<%= id_usu %>" alt="Usuário" />
-              <span><%= c.nome_usu %></span>
-            </div>
-            <p><%= c.texto_com %></p>
-          </div>
-          <% }); %>
-        </div>
-      </div>
-    </section>
+
 
     <footer>
       <p>
