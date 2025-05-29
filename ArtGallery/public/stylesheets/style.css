@@ -73,6 +73,9 @@ a {
    font-size: 36px;
    font-weight: bolder;
 }
+.up-font{
+   text-transform: uppercase;
+}
 
 /* Botões */
 .botao button {
@@ -86,7 +89,7 @@ a {
    height: 50px;
    margin: 50px 0;
 }
-.botao button:hover {
+.botao button:hover, .envio input:hover {
    transform: scale(1.025);
    transition: transform 0.3s ease;
    box-shadow: 0 4px 6px #444;
@@ -174,6 +177,12 @@ a {
 .entrada p {
    margin: 5px 0 0 0;
    font-size: 14px;
+}
+.entrada textarea {
+   padding: 15px;
+   border-radius: 0.5rem;
+   border: 1px solid #ccc;
+   resize: none; /* Permite redimensionar apenas verticalmente */
 }
 .envio {
    display: flex;
@@ -410,6 +419,7 @@ footer {
    height: 100%;
    object-fit: cover;
    z-index: -1;
+   filter: brightness(0.7);
 }
 .descubra-conteudo {
    text-align: center;
