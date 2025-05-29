@@ -117,17 +117,30 @@ router.get('/favoritar', async (req, res) => {
   if (!req.session.usuario) {
     return res.redirect('/login');
   }
+  const obraId = req.params.id;
   try {
     const usuario = req.session.usuario.id;
-    const obra;
-    const comentario;
+    const obra = await buscarUmaObraDetalhada(ObraId, usuario);
+    const favorito = await jaFavoritou(usuario, ObraId);
+    if (jaFavoritou > 0){
+      await favoritarObra(usuario, obraId);
+
+    } else {
+      await desfavoritarObra(usuario, obraId);
+     
+    }
+
     res.send({
       sucesso: true,
       mensagem: "Favoritos atualizados com sucesso",
       obra,
-      comentario
+      favorito
     });
   } catch (err) {
+    res.send({
+      sucesso: false,
+      mensagem
+    })
   }
   res.redirect('/obras');
 });
