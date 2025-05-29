@@ -8,12 +8,21 @@
     <link rel="stylesheet" href="/stylesheets/styleCadArt.css">
 </head>
 <body>
-   <div class="container">
+    <% if (!sucesso) { %>
+    <div class="container">
         <h1 class="logo">ArtGallery</h1>
         <h2 class="titulo">Cadastrar Uma Nova Conta</h2>
         <p class="subtitulo">Insira as informacoes solicitadas e cadastre-se no ArtGallery</p>
 
-        <form action="/register" method="POST" class="form">
+        <% if (erros) { %>
+        <div class="retorno">
+            <div class="retorno-container" id="erro">
+                <%= erros %>
+            </div>
+        </div>
+        <% } %>
+
+        <form action="/cadastro/apreciador" method="POST" class="form">
             <label for="email">E-mail</label>
             <input type="email" id="email" name="email" placeholder="email@dominio.com" required>
 
@@ -35,5 +44,19 @@
 
         <a href="/" class="voltar">&#8592; Voltar</a>   
    </div>
+   <% } else { %>
+    <div class="retorno">
+        <h1>Cadastro realizado com sucesso!</h1>
+        <p>Aguarde enquanto redirecionamos você...</p>
+        <div class="retorno-container" id="sucesso">
+           Seu Cadastro foi realizado com sucesso!
+        </div>
+    </div>
+    <script>
+        setTimeout(() => { 
+            window.location.href = "/login";
+        }, 3001);
+    </script>
+    <% } %>
 </body>
 </html>

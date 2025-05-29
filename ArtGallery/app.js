@@ -15,7 +15,6 @@ const categoriasRouter = require("./routes/categorias");
 const perfilRouter = require("./routes/perfil");
 const obrasRouter = require("./routes/obras");
 const suporteRouter = require("./routes/suporte");
-const registerRouter = require('./routes/register');
 
 const app = express();
 
@@ -69,7 +68,6 @@ app.use("/categorias", categoriasRouter);
 app.use("/perfil", perfilRouter);
 app.use("/obras", obrasRouter);
 app.use("/suporte", suporteRouter);
-app.use('/register', registerRouter);
 
 // Rota index com busca de categorias
 const conexao = require('./banco');  // Suponho que está no banco.js

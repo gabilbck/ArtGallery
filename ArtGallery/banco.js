@@ -29,11 +29,8 @@ async function conectarBD() {
     } 
     async function registrarUsuario(dadosUsuario) {
         const{ email, nome, usuario, senha, tipo_usu} = dadosUsuario;
-
         const conexao = await conectarBD();
-
         const sql = 'INSERT INTO usuario (email_usu, nome_comp, nome_usu, senha_usu, tipo_usu) VALUES (?, ?, ?, ?, ?)';
-    
 
         try{
             const [resultado] = await conexao.execute(sql, [email, nome, usuario, senha, tipo_usu]);
@@ -44,6 +41,14 @@ async function conectarBD() {
             throw erro;
         }
     };
+    async function buscarUsuarioPorEmail(email){
+        const conexao = await conectarDB();
+        const sql = `
+            select id_usu from usuario where email_usu = ?
+        `;
+        const [linhas] = await conexao.query(sql, [email]);
+        return linhas.length > 0 ? linhas[0] : null;
+    }
 
 // Artistas
     async function buscarArtista(id_art) {
@@ -387,7 +392,7 @@ async function conectarBD() {
 
 module.exports = { 
     conectarBD, 
-    buscarUsuario, registrarUsuario,
+    buscarUsuario, registrarUsuario, buscarUsuarioPorEmail,
     buscarArtista, buscarArtistasPorCategoriaDeObra,
     buscarTodasCategorias, buscarInicioCategorias, buscarUmaCategoria,
     buscarTodasObras, buscarUmaObra, buscarUmaObraDetalhada, buscarObrasPorCategoria, buscarObrasPorCategoria9, buscarInicioObras, buscarObraAletoria, buscarObraMaisComentada, buscarObraMaisFavoritada, buscarObraMaisFavoritadaDoArtistaMaisSeguido,

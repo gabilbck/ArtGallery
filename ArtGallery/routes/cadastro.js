@@ -9,30 +9,39 @@ router.get('/', (req, res) => {
 });
 
 router.get('/artista', (req, res) => {
-    res.render('cadArtista');
+    res.render('cadArtista', {sucesso: false, erros: null});
 });
 
 router.get('/apreciador', (req, res) => {
-    res.render('cadApreciador');
+    res.render('cadApreciador', {sucesso: false, erros: null});
 });
 
 //recebe cadastro do artista
+//recebe cadastro do artista
 router.post('/artista', async (req, res) => {
-    try{
-    const dadosUsuario = {
-        email: req.body.email,
-        nome: req.body.nome,
-        usuario: req.body.usuario,
-        senha: req.body.senha,
-        tipo_usu: 'artista'
-    };
+    try {
+        const dadosUsuario = {
+            email: req.body.email,
+            nome: req.body.nome,
+            usuario: req.body.usuario,
+            senha: req.body.senha,
+            tipo_usu: 'artista'
+        };
 
-    await registrarUsuario(dadosUsuario);
-    res.redirect('/login');
+        await registrarUsuario(dadosUsuario);
 
-    } catch(erro){
-        console.erro('Erro ao cadastrrar artista', erro);
-        res.status(500).send('Erro no cadastro do artista');
+        // Exibe tela de sucesso com redirecionamento
+        res.render('cadArtista', {
+            sucesso: true,
+            erros: null
+        });
+
+    } catch (erro) {
+        console.error('Erro ao cadastrar artista:', erro);
+        res.render('cadArtista', {
+            sucesso: false,
+            erros: 'Erro ao cadastrar artista. Tente novamente.'
+        });
     }
 });
 
@@ -45,14 +54,23 @@ router.post('/apreciador', async (req, res) => {
             senha: req.body.senha,
             tipo_usu: 'apreciador'
         };
-    await registrarUsuario(dadosUsuario);
-    res.redirect('/login');
+
+        await registrarUsuario(dadosUsuario);
+
+        res.render('cadApreciador', {
+            sucesso: true,
+            erros: null
+        });
 
     } catch(erro){
-        console.erro('Erro ao cadastrar aprecidor:', erro);
-        res.status(500).send('Erro ao cadastrar apreciador');
+        console.error('Erro ao cadastrar apreciador:', erro);
+        res.render('cadApreciador', {
+            sucesso: false,
+            erros: 'Erro ao cadastrar apreciador. Tente novamente.'
+        });
     }
 });
+
 
 
 
