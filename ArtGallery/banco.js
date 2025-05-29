@@ -29,9 +29,14 @@ async function conectarBD() {
     } 
     async function registrarUsuario(dadosUsuario) {
         const{ email, nome, usuario, senha, tipo_usu} = dadosUsuario;
-        const sql = 'INSERT INTO usuario (email, nome, usuario, senha, tipo_usu) VALUES (?, ?, ?, ?, ?)';
+
+        const conexao = await conectarBD();
+
+        const sql = 'INSERT INTO usuario (email_usu, nome_comp, nome_usu, senha_usu, tipo_usu) VALUES (?, ?, ?, ?, ?)';
+    
+
         try{
-            const [resultado] = await conexao.promise().execute(sql, [email, nome, usuario, senha, tipo_usu]);
+            const [resultado] = await conexao.execute(sql, [email, nome, usuario, senha, tipo_usu]);
             console.log('Usuario cadastrado com sucesso: ', resultado);
             return resultado;
         }catch (erro){
