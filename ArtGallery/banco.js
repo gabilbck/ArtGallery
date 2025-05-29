@@ -155,49 +155,8 @@ async function conectarBD() {
         return linhas;
     }
     async function buscarObrasPorCategoria9(id) {
-        const conexao = await conectarBD();
-        const sql = `
-            SELECT 
-                o.id_obr AS id,
-                o.titulo_obr AS nome,
-                a.nome_usu AS art,
-                COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto
-            FROM obra o
-            INNER JOIN artista a ON o.id_art = a.id_art
-            WHERE o.id_cat = ? AND o.situacao_obr = 1
-            ORDER BY RAND()
-            LIMIT 9
-        `;
-        const [linhas] = await conexao.query(sql, [id]);
-        return linhas;
     }
     async function buscarInicioObras(id) {
-        const conexao = await conectarBD();
-        const sql = `
-        SELECT 
-        o.id_obr AS id,
-        o.titulo_obr AS nome,
-        a.id_art AS id_art,
-        a.nome_usu AS art,
-        o.foto_obr AS foto,
-        (
-            SELECT COUNT(*) 
-            FROM comentario c 
-            WHERE c.id_obr = o.id_obr
-        ) AS qcom,
-        (
-            SELECT COUNT(*) 
-            FROM favorito_obra f 
-            WHERE f.id_obr = o.id_obr AND f.ativo = 1
-        ) AS qfav,
-        o.descricao_obr AS des
-        FROM obra o
-        INNER JOIN artista a ON o.id_art = a.id_art
-        WHERE o.situacao_obr = 1
-        ORDER BY RAND()
-        LIMIT 3`
-        const [linhas] = await conexao.query(sql, [id]);
-        return linhas;
     };
     async function buscarObraAletoria() {
         const conexao = await conectarBD();
@@ -295,6 +254,7 @@ async function conectarBD() {
     }
 
 
+
 // Favoritos
     async function favoritarObra(id_usu, id_obr) {
         const conexao = await conectarBD();
@@ -322,6 +282,22 @@ async function conectarBD() {
         const conexao = await conectarBD();
         const sql = `INSERT INTO favorito_obra (id_usu, id_obr, ativo) VALUES (?, ?, 1) ON DUPLICATE KEY UPDATE ativo = 1`;
         await conexao.query(sql, [id_usu, id_obr]);
+    }
+    async function buscarObrasFavoritas(id_usu) {
+        const conexao = await conectarBD();
+        const sql = `
+            SELECT 
+                o.id_obr AS id,
+                o.titulo_obr AS nome,
+                a.nome_usu AS art,
+                COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto
+            FROM favorito_obra f
+            INNER JOIN obra o ON f.id_obr = o.id_obr
+            INNER JOIN artista a ON o.id_art = a.id_art
+            WHERE f.id_usu = ? AND f.ativo = 1
+        `;
+        const [linhas] = await conexao.query(sql, [id_usu]);
+        return linhas;
     }
 
 // Comentários
@@ -368,8 +344,9 @@ module.exports = {
     buscarUsuario, registrarUsuario,
     buscarArtista, buscarArtistasPorCategoriaDeObra,
     buscarTodasCategorias, buscarInicioCategorias, buscarUmaCategoria,
-    buscarTodasObras, buscarUmaObra, buscarUmaObraDetalhada, buscarObrasPorCategoria, buscarObrasPorCategoria9, buscarInicioObras, buscarObraAletoria, buscarObraMaisComentada, buscarObraMaisFavoritada, buscarObraMaisFavoritadaDoArtistaMaisSeguido,
+    buscarTodasObras, buscarUmaObra, buscarUmaObraDetalhada, buscarObrasPorCategoria, buscarObrasPorCategoria9, buscarInicioObras, buscarObraAletoria, buscarObraMaisComentada, buscarObraMaisFavoritada, buscarObraAleatoriaDoArtistaMaisSeguido, buscarObraMaisFavoritadaDoArtistaMaisSeguido,
     buscarComentariosPorObra, comentarObra,
+    buscarSuporte, inserirSuporte, buscarObrasFavoritas,
     favoritarObra, contarFavoritos, jaFavoritou, desfavoritarObra, favoritarObraComDesbloqueio,
     buscarSuporte, inserirSuporte
  }; 

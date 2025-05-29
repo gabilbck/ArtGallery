@@ -4,20 +4,25 @@ const { buscarTodasCategorias, buscarUmaCategoria, buscarObrasPorCategoria9, bus
 
 
 router.get("/", async (req, res) => {
-  if (!req.session.usuario) {
-    return res.redirect("/login");
-  }
-  try {
-    const categorias = await buscarTodasCategorias();
-    res.render("categorias", {
-      title: "Categorias – ArtGallery",
-      usuario: req.session.usuario || null,
-      itens: categorias.map(c => ({ id: c.id, nome: c.nome, foto: c.foto, tabela: "categoria" })),
-    });
-  } catch (err) {
-    console.error("Erro ao buscar categorias:", err);
-    res.status(500).send("Erro ao carregar categorias");
-  }
+   if (!req.session.usuario) {
+      return res.redirect("/login");
+   }
+   try {
+      const categorias = await buscarTodasCategorias();
+      res.render("categorias", {
+         title: "Categorias – ArtGallery",
+         usuario: req.session.usuario || null,
+         itens: categorias.map((c) => ({
+            id: c.id,
+            nome: c.nome,
+            foto: c.foto,
+            tabela: "categoria",
+         })),
+      });
+   } catch (err) {
+      console.error("Erro ao buscar categorias:", err);
+      res.status(500).send("Erro ao carregar categorias");
+   }
 });
 
 // Rota para exibir obras de uma categoria específica   UE CArrega NA PÁGINA categoriasID.ejs
@@ -75,6 +80,5 @@ router.get("/:id", async (req, res) => {
     }
   }
 });
-
 
 module.exports = router;
