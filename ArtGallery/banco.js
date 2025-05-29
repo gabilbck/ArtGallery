@@ -153,10 +153,51 @@ async function conectarBD() {
         const sql = `SELECT id_obr AS id, titulo_obr AS nome, foto_obr AS foto FROM obra WHERE id_cat = ?`;
         const [linhas] = await conexao.query(sql, [id]);
         return linhas;
-    }
+    }  
     async function buscarObrasPorCategoria9(id) {
+        const conexao = await conectarBD();
+        const sql = `
+            SELECT 
+                o.id_obr AS id,
+                o.titulo_obr AS nome,
+                a.nome_usu AS art,
+                COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto
+            FROM obra o
+            INNER JOIN artista a ON o.id_art = a.id_art
+            WHERE o.id_cat = ? AND o.situacao_obr = 1
+            ORDER BY RAND()
+            LIMIT 9
+        `;
+        const [linhas] = await conexao.query(sql, [id]);
+        return linhas;
     }
     async function buscarInicioObras(id) {
+        const conexao = await conectarBD();
+        const sql = `
+        SELECT 
+        o.id_obr AS id,
+        o.titulo_obr AS nome,
+        a.id_art AS id_art,
+        a.nome_usu AS art,
+        o.foto_obr AS foto,
+        (
+            SELECT COUNT(*) 
+            FROM comentario c 
+            WHERE c.id_obr = o.id_obr
+        ) AS qcom,
+        (
+            SELECT COUNT(*) 
+            FROM favorito_obra f 
+            WHERE f.id_obr = o.id_obr AND f.ativo = 1
+        ) AS qfav,
+        o.descricao_obr AS des
+        FROM obra o
+        INNER JOIN artista a ON o.id_art = a.id_art
+        WHERE o.situacao_obr = 1
+        ORDER BY RAND()
+        LIMIT 3`
+        const [linhas] = await conexao.query(sql, [id]);
+        return linhas;
     };
     async function buscarObraAletoria() {
         const conexao = await conectarBD();
@@ -344,7 +385,7 @@ module.exports = {
     buscarUsuario, registrarUsuario,
     buscarArtista, buscarArtistasPorCategoriaDeObra,
     buscarTodasCategorias, buscarInicioCategorias, buscarUmaCategoria,
-    buscarTodasObras, buscarUmaObra, buscarUmaObraDetalhada, buscarObrasPorCategoria, buscarObrasPorCategoria9, buscarInicioObras, buscarObraAletoria, buscarObraMaisComentada, buscarObraMaisFavoritada, buscarObraAleatoriaDoArtistaMaisSeguido, buscarObraMaisFavoritadaDoArtistaMaisSeguido,
+    buscarTodasObras, buscarUmaObra, buscarUmaObraDetalhada, buscarObrasPorCategoria, buscarObrasPorCategoria9, buscarInicioObras, buscarObraAletoria, buscarObraMaisComentada, buscarObraMaisFavoritada, buscarObraMaisFavoritadaDoArtistaMaisSeguido,
     buscarComentariosPorObra, comentarObra,
     buscarSuporte, inserirSuporte, buscarObrasFavoritas,
     favoritarObra, contarFavoritos, jaFavoritou, desfavoritarObra, favoritarObraComDesbloqueio,
