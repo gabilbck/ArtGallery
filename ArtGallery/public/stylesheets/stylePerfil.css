@@ -7,8 +7,7 @@ body {
 
 /* Container principal mais largo */
 .perfil-container {
-  width: 100%;
-  max-width: 1280px;       /* Limite elegante para telas grandes */
+  width: 85%;
   margin: 0 auto;           /* Centraliza */
   background: white;
   border-radius: 12px;
@@ -82,11 +81,15 @@ body {
   border-radius: 6px;
   cursor: pointer;
   transition: 0.2s;
-  margin-top: 12px;
-
-  /* Alinha o botão à direita */
-  display: block;
+  margin: 12px;
+  text-align: right;
   margin-left: auto;
+  align-self: flex-end; /* Alinha o botão ao topo do container */
+}
+.perfil-info{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .perfil-botao-editar:hover {

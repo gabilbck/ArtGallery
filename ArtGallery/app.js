@@ -76,7 +76,7 @@ app.use("/suporte", suporteRouter);
 // --- Aqui a rota API para buscar dados do usuário ---
 
 // Importar sua função de busca do usuário (ajuste o caminho conforme sua estrutura)
-const { buscarDadosUsuario } = require('./models/usuarioModel'); 
+/*const { buscarDadosUsuario } = require('./models/usuarioModel'); 
 
 app.post('/api/usuario', async (req, res) => {
   try {
@@ -93,7 +93,7 @@ app.post('/api/usuario', async (req, res) => {
     console.error(error);
     res.status(500).json({ erro: 'Erro interno no servidor' });
   }
-});
+});*/
 
 // 404 — deve vir após todas as rotas
 app.use((req, res) => {
@@ -112,3 +112,5 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
+
+module.exports = app;

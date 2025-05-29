@@ -2,7 +2,7 @@
 const express = require("express");
 const router = express.Router();
 const { buscarUsuario, buscarObrasFavoritas, buscarDadosUsuarioPorId } = require("../banco"); // <- ajuste aqui
-const autenticado = require('../middlewares/autenticado');
+//const autenticado = require('../middlewares/autenticado');
 
 router.get("/", async (req, res) => {
   if (!req.session.usuario) {
@@ -22,7 +22,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get('/', autenticado, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const usuarioId = req.session.usuario.id;
     const usuario = await buscarDadosUsuarioPorId(usuarioId);

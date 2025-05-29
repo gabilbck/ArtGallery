@@ -120,11 +120,21 @@
          <div class="perfil-topo">
             <div class="perfil-avatar"></div>
             <div class="perfil-info">
-               <h1><%= usuario.nome_comp %></h1>
-               <p class="perfil-usuario"><%= usuario.nome_usu %></p>
-               <span class="perfil-tipo"><%= usuario.tipo_usu %></span>
-               <p class="perfil-bio"><%= usuario.bio_usu %></p>
-               <button class="perfil-botao-editar">Editar Perfil</button>
+               <div class="perfil-nome">
+                  <h1><%= usuario.nome_comp %></h1>
+               </div>
+               <div class="perfil-usu">
+                  <p class="perfil-usuario"><%= usuario.nome_usu %></p>
+               </div>
+               <div class="perfil-tipo_usu">
+                  <span class="perfil-tipo"><%= usuario.tipo_usu %></span>
+               </div>
+               <div class="perfil-bio_usu">
+                  <p class="perfil-bio"><%= usuario.bio_usu %></p>
+               </div>
+               <div class="perfil-editar">
+                  <button class="perfil-botao-editar">Editar Perfil</button>
+               </div>
                <div class="perfil-numeros">
                   <span><%= usuario.seguidores %> Seguindo</span> •
                   <span><%= usuario.favoritos %> Favoritos</span>
