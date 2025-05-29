@@ -8,7 +8,7 @@ const session = require("express-session");
 
 const indexRouter = require("./routes/index");
 const loginRouter = require("./routes/login");
-// const cadastroRouter = require("./routes/cadastro");
+const cadastroRouter = require("./routes/cadastro");
 const uploadRouter = require('./routes/upload');
 const explorarRouter = require("./routes/explorar");
 const categoriasRouter = require("./routes/categorias");
@@ -20,31 +20,25 @@ const app = express();
 
 app.set('view engine', 'ejs');
 
+// Middleware padrão para parse JSON
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
-
-//rota do cadastro
-const cadastroRouter = require("./routes/cadastro");
-app.use("/cadastro", cadastroRouter);
-
-
-
+// Middleware para cookies, sessão, logger, estáticos
+app.use(cookieParser());
+app.use(logger("dev"));
 app.use(session({
     secret: 'ok',
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false }
 }));
+app.use(express.static(path.join(__dirname, "public")));
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
-app.use(logger("dev"));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
-
-// Configuração do Multer para upload de arquivos 
+// Configuração Multer (upload)
 const storage = multer.diskStorage({ 
   destination: (req, file, cb) => { 
     cb(null, 'public/uploads/'); 
@@ -68,17 +62,40 @@ const upload = multer({
   } 
 }); 
 
-// As rotas: “/” aponta para a página index e “/login” para autenticação
+// Rotas principais
 app.use("/", indexRouter);
 app.use("/login", loginRouter);
-app.use('/upload', uploadRouter);
+app.use("/cadastro", cadastroRouter);
+app.use("/upload", uploadRouter);
 app.use("/explorar", explorarRouter);
 app.use("/categorias", categoriasRouter);
 app.use("/perfil", perfilRouter);
 app.use("/obras", obrasRouter);
 app.use("/suporte", suporteRouter);
 
-// 404
+// --- Aqui a rota API para buscar dados do usuário ---
+
+// Importar sua função de busca do usuário (ajuste o caminho conforme sua estrutura)
+const { buscarDadosUsuario } = require('./models/usuarioModel'); 
+
+app.post('/api/usuario', async (req, res) => {
+  try {
+    const usuario = req.body; // { email, senha }
+    const dados = await buscarDadosUsuario(usuario);
+
+    if (!dados) {
+      return res.status(404).json({ erro: 'Usuário não encontrado' });
+    }
+
+    res.json(dados);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ erro: 'Erro interno no servidor' });
+  }
+});
+
+// 404 — deve vir após todas as rotas
 app.use((req, res) => {
     res.status(404).send("<h1>404 - Página não encontrada</h1>");
 });
@@ -95,19 +112,3 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
-
-app.get('/', async (req, res) => {
-  try {
-    const [categorias] = await conexao.promise().query('SELECT id_cat, nome_cat FROM categoria');
-    res.render('index', { categorias });
-  } catch (error) {
-    console.error('Erro ao buscar categorias:', error);
-    res.render('index', { categorias: [] }); // evita erro no template
-  }
-});
-
-const registerRouter = require('./routes/register');
-app.use('/register', registerRouter);
-
-
-module.exports = app;

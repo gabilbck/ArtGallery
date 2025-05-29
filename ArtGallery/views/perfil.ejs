@@ -6,7 +6,7 @@
       <title><%= title %></title>
       <link rel="icon" href="/img/icon-ag.svg" type="image/x-icon" />
       <link rel="stylesheet" href="/stylesheets/style.css" />
-      <link rel="stylesheet" href="/stylesheets/perfil.css" />
+      <link rel="stylesheet" href="/stylesheets/stylePerfil.css" />
       <script src="/javascripts/perfil.js"></script>
    </head>
    <div class="topo-logo">
@@ -116,49 +116,42 @@
    </header>
 
    <body>
-      <div class="profile-container">
-         <div class="profile-header">
-            <div class="profile-info">
-                <div class="avatar"></div>
-                <div>
-                    <div class="profile-stats">
-                        <div><strong>0</strong><br />Seguindo</div>
-                        <div><strong>0</strong><br />Favoritados</div>
-                    </div>
-                </div>
-            </div>
-            <div class="profile-actions">
-                <div class="profile-user">
-                    <h1><%= usuario.nome_comp %></h1>
-                    <p><%= usuario.nome_usu %></p>
-                    <span class="badge"><%= usuario.tipo_usu %></span>
-                    <button class="exit-button">Sair</button>
-                </div>
-               <p class="profile-bio">Aqui vai a apresentação e biografia do APRECIADOR</p>
-               <button class="edit-button">Editar Perfil</button>
+      <div class="perfil-container">
+         <div class="perfil-topo">
+            <div class="perfil-avatar"></div>
+            <div class="perfil-info">
+               <h1><%= usuario.nome_comp %></h1>
+               <p class="perfil-usuario"><%= usuario.nome_usu %></p>
+               <span class="perfil-tipo"><%= usuario.tipo_usu %></span>
+               <p class="perfil-bio"><%= usuario.bio_usu %></p>
+               <button class="perfil-botao-editar">Editar Perfil</button>
+               <div class="perfil-numeros">
+                  <span><%= usuario.seguidores %> Seguindo</span> •
+                  <span><%= usuario.favoritos %> Favoritos</span>
+               </div>
             </div>
          </div>
+         <div class="perfil-switch-container">
+            <div class="perfil-switch-slider"></div>
+            <button class="ativo"onclick="togglePerfilTab('perfil-colecoes', this)">
+               Coleções
+            </button>
+            <button onclick="togglePerfilTab('perfil-favoritos', this)">
+               Favoritos
+            </button>
+         </div>
+         <div class="perfil-botoes-centro">
+            <div id="perfil-colecoes" class="perfil-aba-conteudo">
+               <!-- conteúdo de coleções -->
+            </div>
 
-<div class="profile-buttons">
-   <button class="tab-button active" onclick="toggleTab('colecoes', this)">COLEÇÕES</button>
-   <button class="tab-button" onclick="toggleTab('favoritos', this)">FAVORITOS</button>
-</div>
-
-<!-- Botão adicionar -->
-<div class="add-button-wrapper">
-   <button class="add-button">+ ADICIONAR NOVA COLEÇÃO</button>
-</div>
-
-<!-- Seções (visíveis conforme o botão) -->
-<div id="colecoes" class="tab-content">
-  <p>Conteúdo das coleções aqui.</p>
-</div>
-<div id="favoritos" class="tab-content hidden">
-  <p>Conteúdo dos favoritos aqui.</p>
-</div>
+            <div id="perfil-favoritos" class="perfil-aba-conteudo hidden">
+               <!-- conteúdo de favoritos -->
+            </div>
          </div>
       </div>
    </body>
+
    <footer>
       <p>
          Precisa de ajuda? Contate nosso <a href="/suporte"><b>SUPORTE</b></a>

@@ -1,0 +1,200 @@
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f5f5;
+  margin: 0;
+  padding: 40px;
+}
+
+/* Container principal mais largo */
+.perfil-container {
+  width: 100%;
+  max-width: 1280px;       /* Limite elegante para telas grandes */
+  margin: 0 auto;           /* Centraliza */
+  background: white;
+  border-radius: 12px;
+  padding: 40px 48px;       /* Espaço interno elegante */
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.06);
+}
+
+/* Topo com avatar e dados */
+.perfil-topo {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 30px;
+}
+
+.perfil-avatar {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  background: #ccc url('/images/avatar-placeholder.png') center/cover no-repeat;
+  flex-shrink: 0;
+}
+
+/* Novo container para a linha do nome + números */
+.perfil-nome-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline; /* Alinha pela linha de base do texto */
+  width: 100%;
+}
+
+/* Container dos nomes (nome completo + nome de usuário) */
+.perfil-nomes {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Nome completo maior e destacado */
+.perfil-nome-comp {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+/* Nome usuário menor e secundário */
+.perfil-nome-usu {
+  margin: 4px 0 0 0;
+  font-size: 16px;
+  color: #666;
+}
+
+/* Números de seguidores e favoritos alinhados à direita */
+.perfil-numeros {
+  color: #555;
+  font-size: 14px;
+  white-space: nowrap;
+  margin-left: 16px;
+  min-width: 140px;
+  text-align: right;
+}
+
+/* Botão editar alinhado à direita, abaixo da linha dos nomes */
+.perfil-botao-editar {
+  background-color: #000;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+  margin-top: 12px;
+
+  /* Alinha o botão à direita */
+  display: block;
+  margin-left: auto;
+}
+
+.perfil-botao-editar:hover {
+  background-color: #222;
+}
+
+/* Bio fica abaixo do botão e ocupa largura máxima */
+.perfil-bio {
+  font-size: 15px;
+  margin: 18px 0 14px 0;
+  color: #444;
+  max-width: 600px;
+}
+
+
+/* Container geral do switch */
+.perfil-switch-container {
+  position: relative;
+  display: flex;
+  width: 100%;          /* ocupa 100% do container pai */
+  max-width: 800px;     /* limite máximo de largura */
+  margin: 40px auto;    /* centraliza horizontalmente e dá margem vertical */
+  background: #eee;
+  border-radius: 9999px;
+  overflow: hidden;
+  user-select: none;
+  font-weight: 600;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* Os botões ficam flexíveis e iguais */
+.perfil-switch-container button {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 18px 0;
+  color: #444;
+  z-index: 2;
+  transition: color 0.3s;
+}
+
+/* Indicador slider ativo */
+.perfil-switch-slider {
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 4px;
+  width: 50%; /* ocupa metade do container */
+  background-color: #000;
+  border-radius: 9999px;
+  transition: left 0.3s ease;
+  z-index: 1;
+}
+
+/* Texto branco para o botão ativo */
+.perfil-switch-container button.ativo {
+  color: white;
+}
+
+/* Coleções */
+.perfil-colecoes {
+  margin-top: 30px;
+}
+
+.perfil-botao-nova-colecao {
+  background: #000;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  font-size: 15px;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 24px;
+}
+
+.perfil-grid-colecoes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.perfil-colecao-item {
+  background: #e3e3e3;
+  height: 160px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+  color: #555;
+  transition: 0.3s;
+}
+
+.perfil-colecao-item:hover {
+  background-color: #d5d5d5;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .perfil-container {
+    padding: 24px 16px;
+  }
+
+  .perfil-abas {
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+}
