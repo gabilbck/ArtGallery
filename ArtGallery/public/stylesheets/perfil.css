@@ -1,0 +1,219 @@
+/*PERFIL*/
+* {
+   box-sizing: border-box;
+   margin: 0;
+   padding: 0;
+   font-family: Arial, sans-serif;
+}
+.profile-container {
+   width: 90%;
+   height: auto;
+   margin: 20px;
+   padding: 0 1rem;
+   text-align: center;
+}
+
+.profile-header {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   gap: 1.5rem;
+   margin-bottom: 1.5rem;
+}
+
+.avatar {
+   width: 100px;
+   height: 100px;
+   margin: 10px;
+   border-radius: 50%;
+   background-color: #000;
+   display: flex;
+   color: #fff;
+   font-size: 2.5rem;
+}
+
+.profile-info {
+   text-align: center;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+}
+.profile-actions {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   gap: 1rem;
+   margin-top: 1rem;
+}
+.profile-user {
+   flex-direction: column;
+   align-items: center;
+   text-align: center;
+
+   .exit-button {
+      padding: 0.5rem 1rem;
+      border: 1px solid #000;
+      background: #fff;
+      color: #000;
+      cursor: pointer;
+   }
+   h1 {
+      font-size: 1.75rem;
+      margin: 0.5rem 0;
+      color: #000;
+      align-items: start;
+   }
+   p {
+      margin: 0.5rem 0;
+      font-size: 1rem;
+      color: #333;
+   }
+   span {
+      font-weight: bold;
+      color: #000;
+   }
+}
+.info h1 {
+   font-size: 1.5rem;
+   margin-bottom: 0.25rem;
+}
+
+.info p {
+   font-size: 0.95rem;
+   color: #555;
+}
+
+.badge {
+   display: inline-block;
+   margin-top: 0.25rem;
+   padding: 0.2rem 0.6rem;
+   background: #a00;
+   color: #fff;
+   font-size: 0.75rem;
+   border-radius: 0.25rem;
+}
+
+.profile-bio {
+   margin: 1rem 0;
+   font-size: 0.95rem;
+   color: #444;
+}
+
+.edit-button {
+   padding: 0.5rem 1rem;
+   border: 1px solid #000;
+   background: #fff;
+   color: #000;
+   cursor: pointer;
+   margin-bottom: 2rem;
+}
+
+.profile-stats {
+   display: flex;
+   justify-content: space-between;
+   gap: 3rem;
+   margin-bottom: 2rem;
+}
+
+.stats div {
+   text-align: center;
+}
+
+.tabs {
+   display: flex;
+   justify-content: center;
+   border-bottom: 1px solid #000;
+   margin-bottom: 1rem;
+}
+
+.tab {
+   padding: 0.75rem 1.5rem;
+   cursor: pointer;
+   font-weight: bold;
+}
+
+.tab.active {
+   border-bottom: 3px solid #000;
+}
+.profile-buttons {
+   display: flex;
+   width: 100%;
+   align-items: center;
+   margin-top: 20px;
+   margin-bottom: 20px;
+}
+
+.tab-button {
+   flex: 1;
+   padding: 0.75rem 1rem;
+   border: 1px solid black;
+   border-radius: 10px;
+   background-color: white;
+   color: black;
+   font-weight: bold;
+   cursor: pointer;
+   transition: all 0.3s ease;
+}
+.add-button-wrapper {
+   width: 100%;
+   padding: 1rem;
+   border: 1px solid #000;
+   background: #f9f9f9;
+   color: #000;
+   font-size: 1rem;
+   font-weight: bold;
+   text-align: center;
+   cursor: pointer;
+   border-radius: 10px;
+   margin-top: 20px;
+   margin-bottom: 20px;
+}
+
+.grid {
+   display: grid;
+   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+   gap: 1rem;
+   padding-top: 1rem;
+}
+
+.collection-card {
+   background: #e0e0e0;
+   height: 140px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   font-weight: bold;
+   color: #555;
+}
+
+.tab-button {
+   width: 100%;
+   flex: 1;
+   padding: 0.75rem 1rem;
+   border: 1px solid black;
+   border-radius: 10px;
+   background-color: white;
+   color: black;
+   font-weight: bold;
+   cursor: pointer;
+   transition: all 0.3s ease;
+}
+
+.tab-button + .tab-button {
+   border-left: none;
+}
+
+.tab-button.active {
+   background: #000;
+   color: #fff;
+   border: 1px solid black;
+}
+.tab-content {
+   padding: 1rem;
+   border: 1px solid #000;
+}
+
+.hidden {
+   display: none;
+}

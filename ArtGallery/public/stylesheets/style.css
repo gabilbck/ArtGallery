@@ -16,7 +16,7 @@ section {
    justify-content: center;
    align-items: center;
    flex-direction: column;
- }
+}
 .conteudo {
    /* >NÃO< utilizado nas páginas de acesssos, apenas navegação, */
    max-width: 960px;
@@ -27,14 +27,17 @@ section {
    flex-wrap: wrap; /* permite que quebrem se não couberem */
    gap: 20px; /* espaçamento entre os cards */
 }
-.espaco-contraste{
+.espaco-contraste {
    background-color: #333;
    color: #fff;
    padding: 100px 0 100px 0;
 }
 .grid {
    display: grid;
-   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Colunas responsivas com largura mínima de 300px */
+   grid-template-columns: repeat(
+      auto-fit,
+      minmax(300px, 1fr)
+   ); /* Colunas responsivas com largura mínima de 300px */
    gap: 20px;
    width: 100%;
    max-width: 960px; /* Limita a largura máxima para manter o alinhamento */
@@ -43,17 +46,14 @@ section {
 .grid a {
    display: flex;
    justify-content: center;
-   
 }
-.centralizado{
+.centralizado {
    text-align: center;
 }
-.linha-a-linha{
+.linha-a-linha {
    display: flex;
    flex-direction: column;
 }
-
-
 
 h1 {
    padding: 0;
@@ -69,13 +69,16 @@ a {
    font-weight: bold;
    text-decoration: none;
 }
-.tit-grande{
+.tit-grande {
    font-size: 36px;
    font-weight: bolder;
 }
+.up-font{
+   text-transform: uppercase;
+}
 
 /* Botões */
-.botao button{
+.botao button {
    background-color: #444;
    color: #fff;
    padding: 10px 20px;
@@ -86,7 +89,7 @@ a {
    height: 50px;
    margin: 50px 0;
 }
-.botao button:hover{
+.botao button:hover, .envio input:hover {
    transform: scale(1.025);
    transition: transform 0.3s ease;
    box-shadow: 0 4px 6px #444;
@@ -97,7 +100,7 @@ a {
    padding: 50px;
 }
 
-.voltar a{
+.voltar a {
    display: flex;
    justify-content: center;
    align-items: center;
@@ -106,9 +109,8 @@ a {
    font-size: 16px;
 }
 
-
 /* Retorno de Cadastro e Login */
-.retorno{
+.retorno {
    display: flex;
    justify-content: center;
    align-items: center;
@@ -124,18 +126,16 @@ a {
    max-width: 500px;
    min-width: 300px;
    text-align: center;
-}  
-
+}
 
 /* Retorno de ações */
 #sucesso {
-   background-color: #6A994E;
+   background-color: #6a994e;
 }
 #erro {
-   background-color: #D00000;
+   background-color: #d00000;
    margin: 0;
 }
-
 
 /* Formulário */
 .formulario {
@@ -156,7 +156,7 @@ a {
    margin: 50px 0 0 0;
 }
 .entrada {
-   margin: 20px 0 ;
+   margin: 20px 0;
    display: flex;
    justify-content: center;
    flex-direction: column;
@@ -177,6 +177,12 @@ a {
 .entrada p {
    margin: 5px 0 0 0;
    font-size: 14px;
+}
+.entrada textarea {
+   padding: 15px;
+   border-radius: 0.5rem;
+   border: 1px solid #ccc;
+   resize: none; /* Permite redimensionar apenas verticalmente */
 }
 .envio {
    display: flex;
@@ -209,15 +215,14 @@ a {
    font-size: 16px;
 }
 
-
 /* Navegação */
-header{
+header {
    display: flex;
    flex-direction: column;
    justify-content: center;
    padding: 0 0 50px 0;
 }
-.pesquisa{
+.pesquisa {
    display: flex;
    flex-direction: row;
    border: 1px solid #000;
@@ -228,12 +233,12 @@ header{
    width: 100%;
    align-self: center;
 }
-.pesquisa input{
+.pesquisa input {
    border: 0;
    width: 100%;
-   padding: 0 0 0 10px; 
+   padding: 0 0 0 10px;
 }
-.pesquisa input:focus{
+.pesquisa input:focus {
    outline: none;
 }
 .nav {
@@ -242,7 +247,7 @@ header{
    flex-direction: row;
    margin: 30px 0 0 0;
 }
-.nav-icone{
+.nav-icone {
    width: 100px;
    height: 77px;
    display: flex;
@@ -250,17 +255,17 @@ header{
    justify-content: center;
    margin: 0 50px 0 50px;
 }
-.nav-icone-img{
+.nav-icone-img {
    width: 100%;
    display: flex;
    justify-content: center;
    padding: 0 0 10px 0;
 }
-.nav-icone-img svg{
+.nav-icone-img svg {
    width: 40px;
    height: 40px;
 }
-.nav-icone #tit{
+.nav-icone #tit {
    display: flex;
    justify-content: center;
    align-items: center;
@@ -271,7 +276,7 @@ header{
 .nav-icone:hover #tit {
    transform: scale(1.05);
    transition: transform 0.3s ease;
-   text-shadow: 0 4px 6px rgba(0,0,0,0.1);
+   text-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
    cursor: pointer;
 }
 
@@ -295,9 +300,8 @@ footer {
    overflow: hidden;
    border-radius: 0.5rem;
 }
-.cat-container img{
+.cat-container img {
    filter: brightness(0.7);
-   
 }
 
 /* Categorias */
@@ -309,20 +313,23 @@ footer {
    border-radius: 0.5rem;
 }
 
-.cat-container:hover, .obr-container:hover {
+.cat-container:hover,
+.obr-container:hover {
    transform: scale(1.025);
    transition: transform 0.3s ease;
    box-shadow: 0 4px 6px #444;
    cursor: pointer;
 }
-.cat-container img, .obr-container img {
+.cat-container img,
+.obr-container img {
    width: 100%;
    height: 100%;
    object-fit: cover;
    display: block;
    border-radius: 0.5rem;
 }
-.cat-container span, .obr-container span {
+.cat-container span,
+.obr-container span {
    position: absolute;
    top: 50%;
    left: 50%;
@@ -337,20 +344,21 @@ footer {
 .obr-container span {
    display: none;
 }
-.obr-container:hover img{
+.obr-container:hover img {
    filter: brightness(0.7);
 }
-.obr-container:hover span{ 
+.obr-container:hover span {
    cursor: pointer;
    display: block;
+
 }
 
 /* Obras em Destaque */
-.obras-top{
+.obras-top {
    text-align: center;
    margin: 0 0 50px 0;
 }
-.card-obras{
+.card-obras {
    border-radius: 0.5rem;
    width: 300px;
    height: 300px;
@@ -362,35 +370,37 @@ footer {
    transition: transform 0.3s ease;
    box-shadow: 0 4px 6px #444;
 }
-.card-obras img{
+.card-obras img {
    width: 100%;
    height: 100%;
    object-fit: cover;
    border-radius: 0.5rem;
 }
-.card-obras img:hover, .card-obras span:hover, .card-obras strong:hover{
+.card-obras img:hover,
+.card-obras span:hover,
+.card-obras strong:hover {
    cursor: pointer;
 }
-.card-obras .card-info{
+.card-obras .card-info {
    padding: 8px 12px;
    display: flex;
    flex-direction: column;
 }
-.card-obras .top-info{
+.card-obras .top-info {
    display: flex;
    flex-direction: row;
    align-items: center;
    margin: 0 0 8px 0;
 }
-.card-obras .save{
+.card-obras .save {
    margin-left: auto;
 }
-.card-obras .bottom-info p{
+.card-obras .bottom-info p {
    color: #333;
 }
 
 /* Descubra */
-.descubra-container{
+.descubra-container {
    position: relative;
    width: 100%;
    height: 500px;
@@ -401,7 +411,7 @@ footer {
    text-shadow: #333 0px 0px 5px;
    cursor: pointer;
 }
-.descubra-container img{
+.descubra-container img {
    position: absolute;
    top: 0;
    left: 0;
@@ -409,22 +419,23 @@ footer {
    height: 100%;
    object-fit: cover;
    z-index: -1;
+   filter: brightness(0.7);
 }
-.descubra-conteudo{
+.descubra-conteudo {
    text-align: center;
    color: white;
    z-index: 1;
-} 
-.descubra-conteudo h1{
+}
+.descubra-conteudo h1 {
    font-size: 40px;
    font-weight: 300;
 }
-.descubra-conteudo p{
+.descubra-conteudo p {
    font-size: 20px;
    font-weight: 300;
-  text-transform: uppercase;
+   text-transform: uppercase;
 }
-.link-final{
+.link-final {
    position: absolute;
    bottom: 30px; /* 30px do fundo */
    left: 50%;
@@ -436,11 +447,20 @@ footer {
 }
 
 /* Artistas */
-.artista-container {
+.artista-container a{
    display: flex;
+   flex-direction: column;
    width: 300px;
    height: 300px;
    justify-content: center;
+   align-items: center;
+   gap: 20px;
+}
+.artista-container img:hover{
+   transform: scale(1.025);
+   transition: transform 0.3s ease;
+   box-shadow: 0 4px 6px #444;
+   cursor: pointer;
 }
 .artista-container img{
    width: 200px;
@@ -448,20 +468,20 @@ footer {
    border-radius: 50%;
 }
 .artista-container span{
-   position: absolute;
-   top: 50%;
-   left: 50%;
-   transform: translate(-50%, -50%);
    color: #fff;
    font-size: 20px;
    font-weight: bold;
    text-align: center;
    text-shadow: #000 2px 2px 4px;
-   text-transform: uppercase;
+}
+.artista-container span:hover{
+   cursor: pointer;
+   transform: scale(1.025);
+   transition: transform 0.3s ease;
 }
 
 /* Seja parte do clube de arte */
-.txt-img{
+.txt-img {
    display: flex;
    align-items: center;
    justify-content: center;
@@ -469,43 +489,245 @@ footer {
    max-width: 960px;
    margin: 50px 0 0 0;
 }
-.img-txt{
+.img-txt {
    flex-direction: row-reverse;
 }
-.txt-central{
+.txt-central {
    display: flex;
    flex-direction: column;
    width: 50%;
    text-align: center;
 }
-.img-central{
+.img-central {
    width: 50%;
    display: flex;
    justify-content: center;
    align-items: center;
 }
-.txt-img .botao button{
+.txt-img .botao button {
    margin: 50px 0 0 0;
 }
-.txt-img:last-child{
+.txt-img:last-child {
    margin: 50px 0 50px 0;
 }
 
-
 /* Devs */
-.dev-tit{
+.dev-tit {
    margin: 50px 0 0 0;
 }
-.desenvolvedores{
+.desenvolvedores {
    display: flex;
    flex-direction: column;
 }
-.desenvolvedores .dev-linha{
+.desenvolvedores .dev-linha {
    display: flex;
    align-items: center;
    flex-direction: row;
    margin: 5px 0;
 }
-.desenvolvedores .github{
+.desenvolvedores .github {
    margin: 0 20px 0 0;
+}
+
+/* Explorar */
+/* ----- CARROSSEL DINÂMICO ----- */
+.carousel {
+  position: relative;
+  width: 100%;
+  max-width: 960px;
+  overflow: hidden;
+  border-radius: 12px;
+}
+.slides {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+}
+.slide {
+  min-width: 100%;
+  position: relative;
+}
+.slide img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.overlay {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  color: #fff;
+  text-shadow: 0 0 8px #000;
+}
+.carrossel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 56px;
+  height: 56px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(6px);
+  font-size: 28px;
+  cursor: pointer;
+}
+.carrossel-prev { left: 24px; }
+.carrossel-next { right: 24px; }
+.carrossel-btn:hover { background: rgba(255,255,255,0.9); }
+.favoritas-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  padding: 2rem 0;
+}
+.favorita-link {
+  text-decoration: none;
+}
+.favorita-card {
+  width: 200px;
+  height: 280px;
+  border-radius: 16px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: transform 0.4s ease, filter 0.4s ease;
+  filter: brightness(0.6);
+}
+.favorita-card:hover {
+  transform: scale(1.2);
+  filter: brightness(1);
+  z-index: 1;
+}
+
+/* View Obras */
+.obr-view {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   flex-direction: column;
+   max-width: 960px;
+   width: 100%;
+   margin: 50px 0;
+}
+.obr-view img {
+   width: 100%;
+   height: auto;
+   border-radius: 0.5rem;
+}
+.obr-view-top{
+   margin: 20px 0;
+   text-align: center;
+}
+.obr-view-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+}
+.esquerda,
+.direita {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+.estrela,
+.comentario,
+.colecao {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.estrela svg,
+.comentario svg,
+.colecao svg {
+  width: 24px;
+  height: 24px;
+}
+span {
+  font-size: 16px;
+}
+.obr-view-top-info h1 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+.obr-view-top-info p {
+  font-size: 16px;
+  color: #666;
+  margin: 0;
+}
+.obr-view-img {
+  width: 100%;
+  max-width: 600px;
+  margin: 20px 0;
+  background-color: #ccc;
+  border-radius: 0.5rem;
+  aspect-ratio: 4 / 3; /* para manter proporção mesmo sem imagem */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.obr-view-img img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 0.5rem;
+  object-fit: contain;
+}
+.obr-view-info {
+  display: flex;
+  justify-content: space-between; /* separa esquerda ↔ direita */
+  align-items: center;
+  padding: 12px 0;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.esquerda, .direita {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.estrela, .comentario, .colecao {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.obr-view-info svg {
+  width: 20px;
+  height: 20px;
+}
+.obr-view-info span {
+  font-size: 16px;
+}
+.obr-view-artobr {
+  display: flex;
+  justify-content: left;
+  flex-direction: column;
+  width: 600px;
+}
+
+.com-view{
+   max-width: 600px;
+   width: 100%;
+}
+.com-view form .text {
+   width: 100%;
+   padding: 15px;
+   border-radius: 0.5rem;
+   border: 1px solid #ccc;
+}
+.com-view form .text::placeholder {
+   font-size: 14px;
+}
+.com-view form .botao{
+   display: flex;
+   justify-content: center;
+   margin: 20px 0;
+   border-radius: 25%;
+   width: 40px;
+   height: 40px;
+   background-color: #6A994E;
 }

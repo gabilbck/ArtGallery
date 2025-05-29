@@ -1,23 +1,28 @@
 const express = require("express");
 const router = express.Router();
-const { buscarTodasCategorias, buscarUmaCategoria, buscarObrasPorCategoria9, buscarArtistasPorCategoriaDeObra } = require("../banco");
+const { buscarTodasCategorias, buscarUmaCategoria, buscarObrasPorCategoria9, buscarArtistasPorCategoriaDeObra, buscarObrasPorCategoria } = require("../banco");
 
 
 router.get("/", async (req, res) => {
-  if (!req.session.usuario) {
-    return res.redirect("/login");
-  }
-  try {
-    const categorias = await buscarTodasCategorias();
-    res.render("categorias", {
-      title: "Categorias – ArtGallery",
-      usuario: req.session.usuario || null,
-      itens: categorias.map(c => ({ id: c.id, nome: c.nome, foto: c.foto, tabela: "categoria" })),
-    });
-  } catch (err) {
-    console.error("Erro ao buscar categorias:", err);
-    res.status(500).send("Erro ao carregar categorias");
-  }
+   if (!req.session.usuario) {
+      return res.redirect("/login");
+   }
+   try {
+      const categorias = await buscarTodasCategorias();
+      res.render("categorias", {
+         title: "Categorias – ArtGallery",
+         usuario: req.session.usuario || null,
+         itens: categorias.map((c) => ({
+            id: c.id,
+            nome: c.nome,
+            foto: c.foto,
+            tabela: "categoria",
+         })),
+      });
+   } catch (err) {
+      console.error("Erro ao buscar categorias:", err);
+      res.status(500).send("Erro ao carregar categorias");
+   }
 });
 
 // Rota para exibir obras de uma categoria específica   UE CArrega NA PÁGINA categoriasID.ejs
@@ -37,6 +42,7 @@ router.get("/:id", async (req, res) => {
       }
       const obras9 = await buscarObrasPorCategoria9(id);
       const artistas3 = await buscarArtistasPorCategoriaDeObra(id);
+      const obras = await buscarObrasPorCategoria(id);
       res.render("categoriasID", {
         title: `Categoria: ${categoria.nome} – ArtGallery`,
         usuario: req.session.usuario,
@@ -59,6 +65,13 @@ router.get("/:id", async (req, res) => {
           nomec: a.nomec,
           foto: a.foto,
           tabela: "artista"
+        })), 
+        obras: obras.map(o => ({
+          id: o.id,
+          nome: o.nome,
+          art: o.art,
+          foto: o.foto,
+          tabela: "obra"
         }))
       });
     } catch (err) {
@@ -67,6 +80,5 @@ router.get("/:id", async (req, res) => {
     }
   }
 });
-
 
 module.exports = router;

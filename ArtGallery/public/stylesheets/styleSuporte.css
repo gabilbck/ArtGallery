@@ -1,0 +1,13 @@
+.formulario{
+  max-width: 960px;
+}
+
+.botao a{
+  color: #fff;  
+}
+
+.botao button{
+  max-width: 960px;
+  width: 100%;
+  margin: 25px 0;
+}

@@ -1,9 +1,7 @@
 // routes/perfil.js
 const express = require("express");
 const router = express.Router();
-const {
-  // importe aqui outras funções futuras...
-} = require("../banco")
+const { buscarUsuario, buscarObrasFavoritas } = require("../banco"); // <- ajuste aqui
 
 router.get("/", async (req, res) => {
   if (!req.session.usuario) {
@@ -42,6 +40,32 @@ router.get("/:id", async (req, res) => {
   } catch (err) {
     console.error("Erro ao carregar perfil:", err);
     res.status(500).send("Erro ao carregar perfil");
+  }
+});
+
+router.get("/", async (req, res) => {
+  if (!req.session.usuario) {
+    return res.redirect("/login");
+  }
+
+  try {
+    const usuario = req.session.usuario;
+    const obrasFavoritas = await buscarObrasFavoritas(usuario.id_usu);
+
+    res.render("favoritos", {
+      title: "Favoritos – ArtGallery",
+      usuario,
+      obras: obrasFavoritas.map(o => ({
+        id: o.id,
+        nome: o.nome,
+        art: o.art,
+        foto: o.foto,
+        tabela: "obra"
+      }))
+    });
+  } catch (err) {
+    console.error("Erro ao carregar obras favoritas:", err);
+    res.status(500).send("Erro ao carregar favoritos");
   }
 });
 

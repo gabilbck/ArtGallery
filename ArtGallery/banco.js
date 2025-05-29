@@ -97,8 +97,10 @@ async function conectarBD() {
         const sql = `
             SELECT 
                 o.id_obr AS id,
-                o.titulo_obr AS nome,
-                a.nome_usu AS art,
+                o.titulo_obr AS titulo,
+                a.id_art AS id_art,
+                a.nome_usu AS artU,
+                a.nome_comp AS artC,
                 COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto,
                 o.descricao_obr AS des,
                 (
@@ -156,7 +158,7 @@ async function conectarBD() {
         const sql = `SELECT id_obr AS id, titulo_obr AS nome, foto_obr AS foto FROM obra WHERE id_cat = ?`;
         const [linhas] = await conexao.query(sql, [id]);
         return linhas;
-    }
+    }  
     async function buscarObrasPorCategoria9(id) {
         const conexao = await conectarBD();
         const sql = `
@@ -219,6 +221,85 @@ async function conectarBD() {
         const [linhas] = await conexao.query(sql);
         return linhas.length > 0 ? linhas[0] : null;
     };
+    async function buscarObraMaisComentada() {
+        const conexao = await conectarBD();
+        const sql = `
+            SELECT 
+                o.id_obr AS id,
+                o.titulo_obr AS nome,
+                a.nome_comp AS art,
+                COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto,
+                COUNT(c.id_com) AS qcom
+            FROM obra o
+            INNER JOIN artista a ON o.id_art = a.id_art
+            LEFT JOIN comentario c ON o.id_obr = c.id_obr
+            WHERE o.situacao_obr = 1
+            GROUP BY o.id_obr
+            ORDER BY qcom DESC
+            LIMIT 1
+        `;
+        const [linhas] = await conexao.query(sql);
+        return linhas.length > 0 ? linhas[0] : null;
+    }
+    async function buscarObraMaisFavoritada() {
+        const conexao = await conectarBD();
+        // precisa levar em consideração que a chavbe primaria de favorito_obra é composta por id_usu e id_obr, então precisamos contar os favoritos de cada obra
+        const sql = `
+        SELECT
+            o.id_obr AS id,
+            o.titulo_obr AS nome,
+            a.nome_comp AS art,
+            COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto,
+            COUNT(f.id_usu) AS qfav
+        FROM obra o
+        INNER JOIN artista a ON o.id_art = a.id_art
+        LEFT JOIN favorito_obra f ON o.id_obr = f.id_obr AND f.ativo = 1
+        WHERE o.situacao_obr = 1
+        GROUP BY o.id_obr
+        ORDER BY qfav DESC
+        LIMIT 1
+    `;
+        const [linhas] = await conexao.query(sql);
+        return linhas.length > 0 ? linhas[0] : null;
+    }
+    async function buscarObraMaisFavoritadaDoArtistaMaisSeguido() {
+        const conexao = await conectarBD();
+
+        // 1. Busca o artista com mais seguidores
+        const [artistaMaisSeguido] = await conexao.query(`
+            SELECT a.id_art
+            FROM artista a
+            LEFT JOIN seguidor_artista sa ON a.id_art = sa.id_artista
+            GROUP BY a.id_art
+            ORDER BY COUNT(sa.id_seguidor) DESC
+            LIMIT 1
+        `);
+
+        if (!artistaMaisSeguido.length) return null;
+
+        const idArtista = artistaMaisSeguido[0].id_art;
+
+        // 2. Busca a obra mais favoritada desse artista
+        const [obras] = await conexao.query(`
+            SELECT 
+                o.id_obr AS id,
+                o.titulo_obr AS nome,
+                a.nome_comp AS art,
+                COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto,
+                COUNT(f.id_usu) AS qfav
+            FROM obra o
+            INNER JOIN artista a ON o.id_art = a.id_art
+            LEFT JOIN favorito_obra f ON o.id_obr = f.id_obr AND f.ativo = 1
+            WHERE o.situacao_obr = 1 AND o.id_art = ?
+            GROUP BY o.id_obr
+            ORDER BY qfav DESC
+            LIMIT 1
+        `, [idArtista]);
+
+        return obras.length > 0 ? obras[0] : null;
+    }
+
+
 
 // Favoritos
     async function favoritarObra(id_usu, id_obr) {
@@ -226,11 +307,58 @@ async function conectarBD() {
         const sql = `INSERT INTO favorito_obra (id_usu, id_obr, ativo) VALUES (?, ?, 1)`;
         await conexao.query(sql, [id_usu, id_obr]);
     }
+    async function contarFavoritos(idObra) {
+        const conexao = await conectarBD();
+        const sql = `SELECT COUNT(*) AS total FROM favorito_obra WHERE id_obr = ? AND ativo = 1`;
+        const [linhas] = await conexao.query(sql, [idObra]);
+        return linhas[0].total;
+    }
+    async function jaFavoritou(id_usu, id_obr) {
+        const conexao = await conectarBD();
+        const sql = `SELECT COUNT(*) AS total FROM favorito_obra WHERE id_usu = ? AND id_obr = ? AND ativo = 1`;
+        const [linhas] = await conexao.query(sql, [id_usu, id_obr]);
+        return linhas[0].total > 0;
+    }
+    async function desfavoritarObra(id_usu, id_obr) {
+        const conexao = await conectarBD();
+        const sql = `UPDATE favorito_obra SET ativo = 0 WHERE id_usu = ? AND id_obr = ?`;
+        await conexao.query(sql, [id_usu, id_obr]);
+    }
+    async function favoritarObraComDesbloqueio(id_usu, id_obr) {
+        const conexao = await conectarBD();
+        const sql = `INSERT INTO favorito_obra (id_usu, id_obr, ativo) VALUES (?, ?, 1) ON DUPLICATE KEY UPDATE ativo = 1`;
+        await conexao.query(sql, [id_usu, id_obr]);
+    }
+    async function buscarObrasFavoritas(id_usu) {
+        const conexao = await conectarBD();
+        const sql = `
+            SELECT 
+                o.id_obr AS id,
+                o.titulo_obr AS nome,
+                a.nome_usu AS art,
+                COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto
+            FROM favorito_obra f
+            INNER JOIN obra o ON f.id_obr = o.id_obr
+            INNER JOIN artista a ON o.id_art = a.id_art
+            WHERE f.id_usu = ? AND f.ativo = 1
+        `;
+        const [linhas] = await conexao.query(sql, [id_usu]);
+        return linhas;
+    }
 
 // Comentários
     async function buscarComentariosPorObra(id_obr) {
         const conexao = await conectarBD();
-        const sql = `SELECT id_com, id_usu, comentario, data_com FROM comentario WHERE id_obr = ?`;
+        const sql = `
+            SELECT 
+            c.id_com AS id_com, 
+            c.id_usu AS id_usu, 
+            c.id_obr AS id_obr,
+            texto_com,
+            u.nome_usu AS nome_usu
+            FROM comentario c
+            INNER JOIN usuario u ON C.id_usu = u.id_usu
+            WHERE id_obr = ?`;
         const [linhas] = await conexao.query(sql, [id_obr]);
         return linhas;
     }
@@ -262,8 +390,9 @@ module.exports = {
     buscarUsuario, registrarUsuario,
     buscarArtista, buscarArtistasPorCategoriaDeObra,
     buscarTodasCategorias, buscarInicioCategorias, buscarUmaCategoria,
-    buscarTodasObras, buscarUmaObra, buscarUmaObraDetalhada, buscarObrasPorCategoria, buscarObrasPorCategoria9, buscarInicioObras, buscarObraAletoria,
+    buscarTodasObras, buscarUmaObra, buscarUmaObraDetalhada, buscarObrasPorCategoria, buscarObrasPorCategoria9, buscarInicioObras, buscarObraAletoria, buscarObraMaisComentada, buscarObraMaisFavoritada, buscarObraMaisFavoritadaDoArtistaMaisSeguido,
     buscarComentariosPorObra, comentarObra,
-    favoritarObra,
+    buscarSuporte, inserirSuporte, buscarObrasFavoritas,
+    favoritarObra, contarFavoritos, jaFavoritou, desfavoritarObra, favoritarObraComDesbloqueio,
     buscarSuporte, inserirSuporte
  }; 

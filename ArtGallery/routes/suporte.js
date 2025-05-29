@@ -20,8 +20,13 @@ router.post("/", async (req, res) => {
     }
 
     try {
-        await inserirSuporte({ email, assunto, descricao });
-        return res.render("suporte", { title: "Suporte - ArtGallery", erros: null, sucesso: true });
+        const reporte = await inserirSuporte({ email, assunto, descricao });
+        if (!reporte) {
+            erros = "Erro ao registrar o suporte. Tente novamente.";
+            return res.render("suporte", { title: "Suporte - ArtGallery", erros, sucesso: false });
+        } else {
+            return res.render("suporte", { title: "Suporte - ArtGallery", erros: null, sucesso: true });
+        }
     } catch (error) {
         console.error("Erro ao inserir suporte:", error);
         return res.render("suporte", { title: "Suporte - ArtGallery", erros: "Erro no servidor, tente novamente.", sucesso: false });

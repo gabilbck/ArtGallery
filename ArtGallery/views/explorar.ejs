@@ -66,69 +66,91 @@
     </header>
 
     <section>
-        <div class="conteudo linha-a-linha">
-            <h1 class="tit-grande"><%= categoria.nome %></h1>
-            <p><%= categoria.desc %></p>
-        </div>
-    </section>
-    
-    <section>
-        <div class="conteudo">
-            <div class="grid">
-            <% obras9.forEach(o => { %>
-             <a href="/obras/id=<%= o.id %>">
-                <div class="obr-container">
-                    <% if (o.foto) { %>
-                        <img src="<%= o.foto %>" alt="<%= o.nome %>">
-                    <% } else { %>
-                        <img src="/uploads/imagem.png" alt="<%= o.nome %>">
-                    <% } %>
-                    <span><%= o.nome %></span>
+    <div class="conteudo">
+        <!--  CARROSSEL  -->
+        <div class="carousel">
+        <div class="slides">
+            <% destaques.forEach((obra, i) => { %>
+            <a href="/obra/<%= obra.id %>" class="slide" data-index="<%= i %>">
+                <img src="<%= obra.foto %>" alt="Capa de <%= obra.nome %>">
+                <div class="overlay">
+                <h2><%= obra.nome %></h2>
+                <p><%= obra.art %></p>
                 </div>
             </a>
             <% }) %>
-            </div>
         </div>
+
+        <!-- botões de navegação -->
+        <button class="carrossel-btn carrossel-prev" aria-label="Anterior">&#8592;</button>
+        <button class="carrossel-btn carrossel-next" aria-label="Próximo">&#8594;</button>
+        </div>
+    </div>
+
+    <!--  SCRIPT que faz o looping infinito  -->
+    <script>
+        // script (dentro do <script> no final da seção)
+        (() => {
+        const slidesEl = document.querySelector(".slides");
+        const slides   = document.querySelectorAll(".slide");
+        const prevBtn  = document.querySelector(".carrossel-prev");
+        const nextBtn  = document.querySelector(".carrossel-next");
+
+        let idx   = 0;
+        const MAX = slides.length;
+
+        const update = () =>
+            slidesEl.style.transform = `translateX(-${idx * 100}%)`;
+
+        prevBtn.addEventListener("click", () => {
+            idx = (idx - 1 + MAX) % MAX;
+            update();
+        });
+
+        nextBtn.addEventListener("click", () => {
+            idx = (idx + 1) % MAX;
+            update();
+        });
+        })();
+    </script>
     </section>
+
+    <br><br><br><br>
 
     <section class="espaco-contraste">
         <div class="obras-top">
-            <h1>TODA ARTE, EM UM SÓ LUGAR!</h1>
-            <p>Confira a essas obras inspiradoras:</p>
+            <h1>OBRAS FAVORITAS</h1>
+            <p>Confira às obras mais favoritadas do ArtGallery:</p>
         </div>
-        <div class="conteudo">
-            <div class="grid">
-                <% artistas3.forEach(a => { %>
-                <div class="artista-container">
-                    <a href="/artistas/id=<%= a.id %>">
-                        <% if (a.foto) { %>
-                            <img src="<%= a.foto %>" alt="<%= a.nome %>">
-                        <% } else { %>
-                            <img src="/uploads/imagem.png" alt="<%= a.nome %>">
-                        <% } %>
-                        <span><%= a.nomec %></span>
-                    </a>
-                </div>
-                <% }) %>
-            </div>
+        <div class="favoritas-container">
+            <% destaques.forEach(obra => { %>
+            <a href="/obras/<%= obra.id %>" class="favorita-link">
+                <div class="favorita-card" style="background-image: url('<%= obra.foto %>');"></div>
+            </a>
+            <% }) %>
         </div>
     </section>
 
+    <br><br><br><br>
+    
     <section>
         <div class="conteudo">
+            <h1>
+                EXPLORE MAIS OBRAS:
+            </h1>
             <div class="grid">
-            <% obras.forEach(o => { %>
-             <a href="/obrras/id=<%= o.id %>">
-                <div class="obr-container">
-                    <% if (o.foto) { %>
-                        <img src="<%= o.foto %>" alt="<%= o.nome %>">
-                    <% } else { %>
-                        <img src="/uploads/imagem.png" alt="<%= o.nome %>">
-                    <% } %>
-                    <span><%= o.nome %></span>
-                </div>
-            </a>
-            <% }) %>
+                <% obras.forEach(o => { %>
+                <a href="/obrras/id=<%= o.id %>">
+                    <div class="obr-container">
+                        <% if (o.foto) { %>
+                            <img src="<%= o.foto %>" alt="<%= o.nome %>">
+                        <% } else { %>
+                            <img src="/uploads/imagem.png" alt="<%= o.nome %>">
+                        <% } %>
+                        <span><%= o.nome %></span>
+                    </div>
+                </a>
+                <% }) %>
             </div>
         </div>
     </section>
