@@ -122,7 +122,7 @@
             <div class="perfil-info">
                <div class="perfil-nome-row">
                   <div class="perfil-nome">
-                     <h1 class="perfil-nome-comp"><%= usuario.nome_comp %></h1>
+                     <h1 class="perfil-nome-comp"><%= usuario?.nome_comp || 'Nome não disponível' %></h1>
                   </div>
                   <div class="perfil-usu">
                      <p class="perfil-nome-usu"><%= usuario.nome_usu %></p>
