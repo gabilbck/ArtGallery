@@ -42,20 +42,33 @@ async function registrarUsuario(dadosUsuario) {
       throw erro;
    }
 }
-async function buscarDadosUsuario(usuario) { //para exibir no perfil
-  const conexao = await conectarBD();
+async function buscarDadosUsuario(usuario) {
+   //para exibir no perfil
+   const conexao = await conectarBD();
 
-  const sql = `
-    SELECT 
-      id_usu, nome_comp, nome_usu, tipo_usu, bio_usu, seguidores, favoritos, avatar_url
-    FROM usuario
-    WHERE email_usu = ? AND senha_usu = ?
-  `;
+   const sql = `
+   SELECT
+      id_usu, email_usu, senha_usu
+      FROM usuario
+      WHERE email_usu = ? AND senha_usu = ?;
+   `;
 
-  const [linhas] = await conexao.query(sql, [usuario.email, usuario.senha]);
-  return linhas.length > 0 ? linhas[0] : null;
+   const [linhas] = await conexao.query(sql, [usuario.email, usuario.senha]);
+   return linhas.length > 0 ? linhas[0] : null;
 }
 
+async function buscarDadosUsuarioPorId(id_usu) {
+   // para exibir no perfil os dados atualizados
+   const conexao = await conectarBD(); // sua função para conectar ao DB
+   const sql = `
+    SELECT 
+      id_usu, nome_usu, nome_comp, email_usu, foto_usu, bio_usu, tipo_usu, advertencia_usu, ban_usu
+    FROM usuario
+    WHERE id_usu = ?;
+  `;
+   const [linhas] = await conexao.query(sql, [id_usu]);
+   return linhas[0]; // retorna o primeiro resultado (ou undefined se não achar)
+}
 
 // Artistas
 async function buscarArtista(id_art) {
@@ -271,6 +284,21 @@ async function buscarObraMaisFavoritadaDoArtistaMaisSeguido() {
    return obras.length > 0 ? obras[0] : null;
 }
 
+// Coleções
+async function buscarColecoesPorUsuario(id_usu) {
+   //busca coleções do usuário
+   const conexao = await conectarBD();
+   const sql = `
+    SELECT
+      nome_col AS nome_colecao, id_col, titulo_obr AS titulo_obra, descricao_obr
+    FROM colecoes_usuario
+    WHERE id_usu = ?
+    ORDER BY nome_col, titulo_obra;
+  `;
+   const [linhas] = await conexao.query(sql, [id_usu]);
+   return linhas;
+}
+
 // Favoritos
 async function favoritarObra(id_usu, id_obr) {
    const conexao = await conectarBD();
@@ -303,10 +331,7 @@ async function buscarObrasFavoritas(id_usu) {
    const conexao = await conectarBD();
    const sql = `
             SELECT 
-                o.id_obr AS id,
-                o.titulo_obr AS nome,
-                a.nome_usu AS art,
-                COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto
+                o.id_obr AS id, o.titulo_obr AS nome, a.nome_usu AS art, COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto
             FROM favorito_obra f
             INNER JOIN obra o ON f.id_obr = o.id_obr
             INNER JOIN artista a ON o.id_art = a.id_art
@@ -388,4 +413,6 @@ module.exports = {
    buscarSuporte,
    inserirSuporte,
    buscarDadosUsuario,
+   buscarColecoesPorUsuario,
+   buscarDadosUsuarioPorId,
 };

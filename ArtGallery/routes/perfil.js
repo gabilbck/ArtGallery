@@ -1,114 +1,98 @@
 // routes/perfil.js
 const express = require("express");
 const router = express.Router();
-const { buscarUsuario, buscarObrasFavoritas, buscarDadosUsuarioPorId } = require("../banco"); // <- ajuste aqui
-//const autenticado = require('../middlewares/autenticado');
+const {
+   buscarObrasFavoritas,
+   buscarDadosUsuario,
+   buscarDadosUsuarioPorId,
+   buscarColecoesPorUsuario,
+} = require("../banco");
 
-router.get("/", async (req, res) => {
-  if (!req.session.usuario) {
-    return res.redirect("/login");
-  }
-  try {
-    const usuario = req.session.usuario;
-    // Aqui você pode buscar mais informações do usuário, se necessário
-    res.render("perfil", {
-      title: "Perfil - ArtGallery",
-      usuario: usuario,
-      // Adicione outras informações que deseja exibir no perfil
-    });
-  } catch (err) {
-    console.error("Erro ao carregar perfil:", err);
-    res.status(500).send("Erro ao carregar perfil");
-  }
+const autenticado = require('../middlewares/autenticado');
+
+// Página principal do perfil (usuário autenticado)
+router.get("/", autenticado, async (req, res) => {
+   try {
+      const usuarioSessao = req.session.usuario;
+
+      const usuario = await buscarDadosUsuarioPorId(usuarioSessao.id);
+      const colecoes = await buscarColecoesPorUsuario(usuarioSessao.id);
+      const favoritos = await buscarObrasFavoritas(usuarioSessao.id);
+
+      res.render("perfil", {
+         title: "Perfil - ArtGallery",
+         usuario,
+         colecoes,
+         favoritos,
+      });
+   } catch (err) {
+      console.error("Erro ao carregar perfil:", err);
+      res.status(500).send("Erro ao carregar perfil");
+   }
 });
 
-router.get('/', async (req, res) => {
-  try {
-    const usuarioId = req.session.usuario.id;
-    const usuario = await buscarDadosUsuarioPorId(usuarioId);
+// Rota para processar o login
+router.post("/login", async (req, res) => {
+   const { email, senha } = req.body;
 
-    if (!usuario) {
-      return res.redirect('/login');
-    }
+   try {
+      const usuario = await buscarDadosUsuario({ email, senha });
 
-    res.render('perfil', { usuario });
+      if (!usuario) {
+         return res.render("login", { erro: "Credenciais inválidas" });
+      }
 
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Erro ao carregar perfil');
-  }
-});
-router.post('/', async (req, res) => {
-  const { email, senha } = req.body;
+      req.session.usuario = {
+         id: usuario.id_usu,
+         nome: usuario.nome_usu,
+         email: usuario.email_usu,
+      };
 
-  try {
-    const usuario = await buscarDadosUsuario({ email, senha });
-
-    if (!usuario) {
-      return res.render('login', { erro: 'Credenciais inválidas' });
-    }
-
-    // ✅ Salvar usuário na sessão
-    req.session.usuario = {
-      id: usuario.id,
-      nome: usuario.nome,
-      email: usuario.email,
-      // outros campos se necessário
-    };
-
-    res.redirect('/perfil');
-  } catch (error) {
-    console.error(error);
-    res.render('login', { erro: 'Erro ao processar login' });
-  }
+      res.redirect("/perfil");
+   } catch (error) {
+      console.error("Erro ao processar login:", error);
+      res.render("login", { erro: "Erro ao processar login" });
+   }
 });
 
-router.get("/:id", async (req, res) => {
-  if (!req.session.usuario) {
-    return res.redirect("/login");
-  }
-  const usuarioId = req.params.id;
-  try {
-    // Aqui você pode buscar informações específicas do usuário pelo ID
-    const usuario = await buscarUsuario(usuarioId); // Implemente essa função no banco
-    if (!usuario) {
-      return res.status(404).send("Usuário não encontrado");
-    }
-    res.render("perfil", {
-      title: `Perfil de ${usuario.nome} - ArtGallery`,
-      usuario: usuario,
-      // Adicione outras informações que deseja exibir no perfil
-    });
-  } catch (err) {
-    console.error("Erro ao carregar perfil:", err);
-    res.status(500).send("Erro ao carregar perfil");
-  }
+// Página de favoritos
+router.get("/favoritos", autenticado, async (req, res) => {
+   try {
+      const usuario = req.session.usuario;
+      const obrasFavoritas = await buscarObrasFavoritas(usuario.id);
+
+      res.render("favoritos", {
+         title: "Favoritos – ArtGallery",
+         usuario,
+         obras: obrasFavoritas.map((o) => ({
+            id: o.id,
+            nome: o.nome,
+            art: o.art,
+            foto: o.foto,
+            tabela: "obra",
+         })),
+      });
+   } catch (err) {
+      console.error("Erro ao carregar obras favoritas:", err);
+      res.status(500).send("Erro ao carregar favoritos");
+   }
 });
 
-router.get("/", async (req, res) => {
-  if (!req.session.usuario) {
-    return res.redirect("/login");
-  }
+// Página de coleções
+router.get("/colecoes", autenticado, async (req, res) => {
+   try {
+      const usuario = req.session.usuario;
+      const colecoes = await buscarColecoesPorUsuario(usuario.id);
 
-  try {
-    const usuario = req.session.usuario;
-    const obrasFavoritas = await buscarObrasFavoritas(usuario.id_usu);
-
-    res.render("favoritos", {
-      title: "Favoritos – ArtGallery",
-      usuario,
-      obras: obrasFavoritas.map(o => ({
-        id: o.id,
-        nome: o.nome,
-        art: o.art,
-        foto: o.foto,
-        tabela: "obra"
-      }))
-    });
-  } catch (err) {
-    console.error("Erro ao carregar obras favoritas:", err);
-    res.status(500).send("Erro ao carregar favoritos");
-  }
+      res.render("colecoes", {
+         title: `Coleções de ${usuario.nome} - ArtGallery`,
+         usuario,
+         colecoes,
+      });
+   } catch (err) {
+      console.error("Erro ao carregar coleções:", err);
+      res.status(500).send("Erro ao carregar coleções");
+   }
 });
 
 module.exports = router;

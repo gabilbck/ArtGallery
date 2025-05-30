@@ -120,30 +120,35 @@
          <div class="perfil-topo">
             <div class="perfil-avatar"></div>
             <div class="perfil-info">
-               <div class="perfil-nome">
-                  <h1><%= usuario.nome_comp %></h1>
-               </div>
-               <div class="perfil-usu">
-                  <p class="perfil-usuario"><%= usuario.nome_usu %></p>
-               </div>
-               <div class="perfil-tipo_usu">
-                  <span class="perfil-tipo"><%= usuario.tipo_usu %></span>
-               </div>
-               <div class="perfil-bio_usu">
-                  <p class="perfil-bio"><%= usuario.bio_usu %></p>
-               </div>
-               <div class="perfil-editar">
-                  <button class="perfil-botao-editar">Editar Perfil</button>
-               </div>
-               <div class="perfil-numeros">
-                  <span><%= usuario.seguidores %> Seguindo</span> •
-                  <span><%= usuario.favoritos %> Favoritos</span>
+               <div class="perfil-nome-row">
+                  <div class="perfil-nome">
+                     <h1 class="perfil-nome-comp"><%= usuario.nome_comp %></h1>
+                  </div>
+                  <div class="perfil-usu">
+                     <p class="perfil-nome-usu"><%= usuario.nome_usu %></p>
+                  </div>
+                  <div class="perfil-tipo_usu">
+                     <span class="perfil-tipo"><%= usuario.tipo_usu %></span>
+                  </div>
+                  <div class="perfil-bio_usu">
+                     <p class="perfil-bio"><%= usuario.bio_usu %></p>
+                  </div>
+                  <div class="perfil-editar">
+                     <button class="perfil-botao-editar">Editar Perfil</button>
+                  </div>
+                  <div class="perfil-numeros">
+                     <span><%= usuario.seguidores %> Seguindo</span>
+                     <span><%= usuario.favoritos %> Favoritos</span>
+                  </div>
                </div>
             </div>
          </div>
          <div class="perfil-switch-container">
             <div class="perfil-switch-slider"></div>
-            <button class="ativo"onclick="togglePerfilTab('perfil-colecoes', this)">
+            <button
+               class="ativo"
+               onclick="togglePerfilTab('perfil-colecoes', this)"
+            >
                Coleções
             </button>
             <button onclick="togglePerfilTab('perfil-favoritos', this)">
@@ -152,11 +157,39 @@
          </div>
          <div class="perfil-botoes-centro">
             <div id="perfil-colecoes" class="perfil-aba-conteudo">
-               <!-- conteúdo de coleções -->
+               <section class="perfil-mid">
+                  <h2>Coleções</h2>
+                  <div class="colecoes-grid">
+                     <% if (colecoes.length > 0) { %> <% for (var i = 0; i <
+                     colecoes.length; i++) { var col = colecoes[i]; %>
+                     <div class="colecao-card">
+                        <img src="<%= col.foto %>" alt="<%= col.nome %>" />
+                        <h3><%= col.nome_col %></h3>
+                        <p><%= col.nome %></p>
+                     </div>
+                     <% } %> <% } else { %>
+                     <p>Você ainda não criou nenhuma coleção.</p>
+                     <% } %>
+                  </div>
+               </section>
             </div>
 
             <div id="perfil-favoritos" class="perfil-aba-conteudo hidden">
-               <!-- conteúdo de favoritos -->
+               <section class="perfil-favoritos">
+                  <h2>Favoritos</h2>
+                  <div class="favoritos-grid">
+                     <% if (favoritos.length > 0) { %> <% for (var i = 0; i <
+                     favoritos.length; i++) { var fav = favoritos[i]; %>
+                     <div class="obra-card">
+                        <img src="<%= fav.foto %>" alt="<%= fav.nome %>" />
+                        <h3><%= fav.nome %></h3>
+                        <p><%= fav.art %></p>
+                     </div>
+                     <% } %> <% } else { %>
+                     <p>Você ainda não favoritou nenhuma obra.</p>
+                     <% } %>
+                  </div>
+               </section>
             </div>
          </div>
       </div>

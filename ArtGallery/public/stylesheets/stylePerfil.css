@@ -18,90 +18,82 @@ body {
 /* Topo com avatar e dados */
 .perfil-topo {
   display: flex;
-  align-items: flex-start;
-  gap: 32px;
+  align-items: center;
+  gap: 2rem;
+  padding: 2rem;
   border-bottom: 1px solid #ddd;
-  padding-bottom: 30px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .perfil-avatar {
-  width: 130px;
-  height: 130px;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
-  background: #ccc url('/images/avatar-placeholder.png') center/cover no-repeat;
-  flex-shrink: 0;
+  background-image: url('/uploads/imagem.png'); /* ou dinamicamente: background-image: url('<%= usuario.foto_usu %>'); */
+  background-size: cover;
+  background-position: center;
+  border: 3px solid #eee;
 }
 
-/* Novo container para a linha do nome + números */
+.perfil-info {
+  flex: 1;
+}
 .perfil-nome-row {
   display: flex;
-  justify-content: space-between;
-  align-items: baseline; /* Alinha pela linha de base do texto */
-  width: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
 }
 
-/* Container dos nomes (nome completo + nome de usuário) */
-.perfil-nomes {
-  display: flex;
-  flex-direction: column;
-}
-
-/* Nome completo maior e destacado */
 .perfil-nome-comp {
+  font-size: 1.8rem;
+  font-weight: bold;
   margin: 0;
-  font-size: 32px;
-  font-weight: 700;
-  line-height: 1.1;
+  color: #333;
 }
 
-/* Nome usuário menor e secundário */
 .perfil-nome-usu {
-  margin: 4px 0 0 0;
-  font-size: 16px;
-  color: #666;
+  font-size: 1rem;
+  color: #888;
+  margin: 0;
 }
 
-/* Números de seguidores e favoritos alinhados à direita */
-.perfil-numeros {
+.perfil-tipo {
+  background-color: #f0f0f0;
   color: #555;
-  font-size: 14px;
-  white-space: nowrap;
-  margin-left: 16px;
-  min-width: 140px;
-  text-align: right;
+  padding: 0.3rem 0.8rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
 }
 
-/* Botão editar alinhado à direita, abaixo da linha dos nomes */
-.perfil-botao-editar {
-  background-color: #000;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  font-weight: 500;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: 0.2s;
-  margin: 12px;
-  text-align: right;
-  margin-left: auto;
-  align-self: flex-end; /* Alinha o botão ao topo do container */
+.perfil-bio {
+  margin: 0.5rem 0;
+  font-style: italic;
+  color: #666;
+  max-width: 500px;
 }
-.perfil-info{
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+
+.perfil-botao-editar {
+  background-color: #4f46e5;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .perfil-botao-editar:hover {
-  background-color: #222;
+  background-color: #4338ca;
 }
 
-/* Bio fica abaixo do botão e ocupa largura máxima */
-.perfil-bio {
-  font-size: 15px;
-  margin: 18px 0 14px 0;
-  color: #444;
-  max-width: 600px;
+.perfil-numeros {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #555;
 }
 
 
@@ -189,6 +181,33 @@ body {
 .perfil-colecao-item:hover {
   background-color: #d5d5d5;
 }
+.perfil-mid {
+  padding: 2rem;
+}
+
+.colecoes-grid, .favoritos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.colecao-card, .obra-card {
+  background-color: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  overflow: hidden;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  padding: 1rem;
+}
+
+.colecao-card img, .obra-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
 
 /* Responsividade */
 @media (max-width: 768px) {
