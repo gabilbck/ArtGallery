@@ -32,7 +32,8 @@ router.post("/", async (req, res) => {
             req.session.usuario = {
                 id_usu: usuario.id_usu,
                 nome_usu: usuario.nome_usu,
-                email_usu: usuario.email_usu
+                email_usu: usuario.email_usu,
+                tipo_usu: usuario.tipo_usu
             };
             console.log("Sessão após login:", req.session);
             return res.render("login", { title: "Login - ArtGallery", erros: null, sucesso: true });

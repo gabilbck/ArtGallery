@@ -2,49 +2,77 @@ const request = require("supertest");
 const express = require("express");
 const session = require("express-session");
 const loginRouter = require("../../routes/login");
-const banco = require("../../banco");
 
 jest.mock("../../banco", () => ({
-    buscarUsuario: jest.fn(),
-    conectarBD: jest.fn(), // prevenindo conexão real
+  buscarUsuario: jest.fn()
 }));
 
-const app = express();
-app.use(express.urlencoded({ extended: false }));
-app.use(session({ secret: "teste", resave: false, saveUninitialized: true }));
-app.set("view engine", "ejs"); // ajuste se estiver usando outro template
-app.use("/login", loginRouter);
+const { buscarUsuario } = require("../../banco");
 
-describe("POST /login (unitário)", () => {
-    beforeEach(() => {
-        banco.conectarBD.mockImplementation(() => {
-            throw new Error("conectarBD não deve ser chamado em testes unitários");
+describe("Rotas de /login", () => {
+  let app;
+
+  beforeEach(() => {
+    app = express();
+    app.use(express.urlencoded({ extended: false }));
+    app.use(session({ secret: "teste", resave: false, saveUninitialized: true }));
+    app.set("view engine", "ejs");
+    app.set("views", __dirname + "/../views");
+    app.use((req, res, next) => {
+      res.render = (view, options) => res.json({ view, options });
+      next();
+    });
+    app.use("/login", loginRouter);
+  });
+
+  it("deve redirecionar para / se já estiver logado", async () => {
+    const agent = request.agent(app);
+    const getSession = () =>
+      new Promise((resolve) => {
+        agent.get("/login").end(() => {
+          agent.app.request.session = { usuario: { nome_usu: "Ana" } };
+          resolve();
         });
-    });
+      });
 
-    it("deve mostrar erro se email ou senha estiverem vazios", async () => {
-        const res = await request(app).post("/login").send({ email: "", senha: "" });
-        expect(res.text).toContain("E-mail e senha são obrigatórios!");
-    });
+    await getSession();
+    const res = await agent.get("/login");
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe("/");
+  });
 
-    it("deve autenticar com sucesso se usuário for válido", async () => {
-        banco.buscarUsuario.mockResolvedValue({ id_usu: 1, nome_usu: "Maria", email_usu: "maria@email.com" });
+  it("deve renderizar a página de login se não estiver logado", async () => {
+    const res = await request(app).get("/login");
+    expect(res.status).toBe(200);
+    expect(res.body.view).toBe("login");
+    expect(res.body.options.erros).toBe(null);
+    expect(res.body.options.sucesso).toBe(false);
+  });
 
-        const res = await request(app).post("/login").send({ email: "maria@email.com", senha: "123" });
-        expect(res.text).toContain("sucesso"); // ajuste conforme seu EJS
-    });
+  it("deve validar ausência de email ou senha", async () => {
+    const res = await request(app).post("/login").send({ email: "", senha: "" });
+    expect(res.body.view).toBe("login");
+    expect(res.body.options.erros).toBe("E-mail e senha são obrigatórios!");
+  });
 
-    it("deve mostrar erro se usuário for inválido", async () => {
-        banco.buscarUsuario.mockResolvedValue(null);
+  it("deve falhar se o usuário não for encontrado", async () => {
+    buscarUsuario.mockResolvedValue(null);
+    const res = await request(app).post("/login").send({ email: "teste@email.com", senha: "123" });
+    expect(res.body.options.erros).toBe("E-mail ou senha incorretos.");
+    expect(res.body.options.sucesso).toBe(false);
+  });
 
-        const res = await request(app).post("/login").send({ email: "naoexiste@email.com", senha: "errado" });
-        expect(res.text).toContain("E-mail ou senha incorretos.");
-    });
+  it("deve logar com sucesso e criar sessão", async () => {
+    buscarUsuario.mockResolvedValue({ id_usu: 1, nome_usu: "Ana", email_usu: "a@b.com", tipo_usu: "comum" });
+    const res = await request(app).post("/login").send({ email: "a@b.com", senha: "123" });
+    expect(res.body.options.sucesso).toBe(true);
+    expect(res.body.options.erros).toBe(null);
+  });
 
-    it("deve mostrar erro de servidor se buscarUsuario falhar", async () => {
-        banco.buscarUsuario.mockRejectedValue(new Error("falha"));
-
-        const res = await request(app).post("/login").send({ email: "falha@email.com", senha: "123" });
-        expect(res.text).toContain("Erro no servidor, tente novamente.");
-    });
+  it("deve lidar com erro de servidor", async () => {
+    buscarUsuario.mockRejectedValue(new Error("Falha DB"));
+    const res = await request(app).post("/login").send({ email: "a@b.com", senha: "123" });
+    expect(res.body.options.erros).toBe("Erro no servidor, tente novamente.");
+    expect(res.body.options.sucesso).toBe(false);
+  });
 });

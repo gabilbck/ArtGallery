@@ -21,7 +21,7 @@ async function conectarBD() {
 // Usuários
     async function buscarUsuario(usuario) { 
         const conexao = await conectarBD(); 
-        const sql = `SELECT id_usu, nome_usu, email_usu 
+        const sql = `SELECT id_usu, nome_usu, email_usu, tipo_usu, foto_usu 
                     FROM usuario 
                     WHERE email_usu = ? AND senha_usu = ?`; 
         const [linhas] = await conexao.query(sql, [usuario.email, usuario.senha]); 
