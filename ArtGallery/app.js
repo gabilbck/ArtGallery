@@ -1,58 +1,111 @@
 const createError = require("http-errors");
 const express = require("express");
+const multer = require("multer");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
+const session = require("express-session");
 
-const indexRouter = require("./routes/index"); // Login
-const userComRouter = require("./routes/userCom");
-const userArtRouter = require("./routes/userArt");
-const adminRouter = require("./routes/admin");
-// const cadastroUserComRouter = require("./routes/cadastroUserCom");
-// const cadastroUserArtRouter = require("./routes/cadastroUserArt");
-// const loginUserComRouter = require("./routes/loginUserCom");
-// const loginUserArtRouter = require("./routes/loginUserArt");
+const indexRouter = require("./routes/index");
+const loginRouter = require("./routes/login");
+const cadastroRouter = require("./routes/cadastro");
+const uploadRouter = require('./routes/upload');
+const explorarRouter = require("./routes/explorar");
+const categoriasRouter = require("./routes/categorias");
+const perfilRouter = require("./routes/perfil");
+const obrasRouter = require("./routes/obras");
+const suporteRouter = require("./routes/suporte");
 
 const app = express();
 
-const session = require('express-session');
+app.set('views', path.join(__dirname, "views"));
+app.set('view engine', 'ejs');
 
 app.use(session({
-   secret: 'seuSegredoSuperSecreto', 
-   resave: false,
-   saveUninitialized: true,
-   cookie: { secure: false } // Altere para true se usar HTTPS
+    secret: 'ok',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { 
+      maxAge: 1000 * 60 * 60 * 24, // 1 dia
+      secure: false 
+    }
 }));
 
-// Configuração do EJS
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "ejs");
-
-// Middlewares básicos
-app.use(logger("dev"));
+// Middleware padrão para parse JSON e formulário
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
 
-// Servir arquivos estáticos
+// Middleware para cookies, sessão, logger, estáticos
+app.use(cookieParser());
+app.use(logger("dev"));
+app.use(
+   session({
+      secret: "ok",
+      resave: false,
+      saveUninitialized: true,
+      cookie: { secure: false }, // trocar para true em produção com HTTPS
+   })
+);
 app.use(express.static(path.join(__dirname, "public")));
 
-// Definição de rotas
-app.use("/", indexRouter);
-app.use("/userCom", userComRouter);
-app.use("/userArt", userArtRouter);
-app.use("/admin", adminRouter);
-// app.use("/cadastroUserCom", cadastroUserComRouter);
-// app.use("/cadastroUserArt", cadastroUserArtRouter);
-// app.use("/loginUserCom", loginUserComRouter);
-// app.use("/loginUserArt", loginUserArtRouter);
+app.use((req, res, next) => {
+    res.locals.usuario = req.session.usuario || null;
+    next();
+});
 
-// Middleware para erros 404
+// Configuração do Multer para upload de arquivos 
+const storage = multer.diskStorage({ 
+  destination: (req, file, cb) => { 
+    cb(null, 'public/uploads/'); 
+  }, 
+  filename: (req, file, cb) => { 
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9); 
+    cb(null, uniqueSuffix + path.extname(file.originalname)); 
+  } 
+}); 
+const upload = multer({ 
+  storage: storage, 
+  fileFilter: (req, file, cb) => { 
+    const filetypes = /jpeg|jpg|png/; 
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase()); 
+    const mimetype = filetypes.test(file.mimetype); 
+    if (extname && mimetype) { 
+      return cb(null, true); 
+    } else { 
+      cb(new Error('Apenas imagens JPG ou PNG são permitidas!')); 
+    } 
+  } 
+}); 
+
+// Rotas
+app.use("/", indexRouter);
+app.use("/login", loginRouter);
+app.use("/cadastro", cadastroRouter);
+app.use('/upload', uploadRouter);
+app.use("/explorar", explorarRouter);
+app.use("/categorias", categoriasRouter);
+app.use("/perfil", perfilRouter);
+app.use("/obras", obrasRouter);
+app.use("/suporte", suporteRouter);
+
+// Rota index com busca de categorias
+const conexao = require('./banco');  // Suponho que está no banco.js
+app.get('/', async (req, res) => {
+  try {
+    const [categorias] = await conexao.promise().query('SELECT id_cat, nome_cat FROM categoria');
+    res.render('index', { categorias });
+  } catch (error) {
+    console.error('Erro ao buscar categorias:', error);
+    res.render('index', { categorias: [] });
+  }
+});
+
+// 404
 app.use((req, res) => {
    res.status(404).send("<h1>404 - Página não encontrada</h1>");
 });
 
-// Middleware para tratamento de erros
+// Tratamento de erros
 app.use((err, req, res, next) => {
    res.locals.message = err.message;
    res.locals.error = req.app.get("env") === "development" ? err : {};
@@ -60,10 +113,11 @@ app.use((err, req, res, next) => {
    res.render("error");
 });
 
-// Iniciar servidor
+// Iniciando servidor
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
-   console.log(`🔥 Servidor rodando em http://localhost:${PORT}`);
+   console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
 
 module.exports = app;
+

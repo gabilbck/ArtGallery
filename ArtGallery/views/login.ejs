@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="icon" href="/img/icon-ag.svg" type="image/x-icon">
+    <link rel="stylesheet" href="/stylesheets/style.css">
+</head>
+<body>
+    <% if (!sucesso) { %>
+    <div class="topo-logo"> 
+        <h1>ArtGallery</h1>
+    </div>
+
+    <div class="formulario" id="formulario">
+        <div class="topo-formulario">
+            <h1>Entrar Em Uma Conta</h1>
+            <p>Insira seu e-mail e senha para entrar em sua conta:</p>
+        </div>
+
+        <% if (erros) { %>
+        <div class="retorno">
+            <div class="retorno-container" id="erro">
+                <%= erros %>
+            </div>
+        </div>
+        <% } %>
+        
+        <form action="/login" method="post">
+            <div class="entrada">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" name="email" placeholder="email@dominio.com" required>
+            </div>
+
+            <div class="entrada">
+                <label for="senha">Senha</label>
+                <input type="password" id="senha" name="senha" placeholder="Senha" required>
+                <p>Esqueceu a senha? <a href="#">Recuperar sua conta</a></p>
+            </div>
+
+            <div class="envio">
+                <input type="submit" value="Entrar Agora">
+            </div>
+        </form>
+
+        <div class="fim-formulario">
+            <p>Não possui uma conta? <a href="/cadastro">Cadastre-se agora!</a></p>
+        </div>
+
+        <div class="voltar">
+            <a href="/">
+                <div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-arrow-left-short" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5"/>
+                    </svg>
+                </div>
+                <div>Voltar</div>
+            </a>
+        </div>
+    </div>
+    <% } else { %>
+    <div class="retorno">
+        <h1>Entrou com Sucesso!</h1>
+        <p>Aguarde enquanto redirecionamos você...</p>
+        <div class="retorno-container" id="sucesso">
+           Seu login foi validado com sucesso!
+        </div>
+    </div>
+    <script>
+        setTimeout(() => { 
+            window.location.href = "/";
+        }, 3001);
+    </script>
+    <% } %>
+</body>
+</html>

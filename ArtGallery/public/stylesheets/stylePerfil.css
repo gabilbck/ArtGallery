@@ -1,0 +1,222 @@
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f5f5;
+  margin: 0;
+  padding: 40px;
+}
+
+/* Container principal mais largo */
+.perfil-container {
+  width: 85%;
+  margin: 0 auto;           /* Centraliza */
+  background: white;
+  border-radius: 12px;
+  padding: 40px 48px;       /* Espaço interno elegante */
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.06);
+}
+
+/* Topo com avatar e dados */
+.perfil-topo {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 2rem;
+  border-bottom: 1px solid #ddd;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.perfil-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background-image: url('/uploads/imagem.png'); /* ou dinamicamente: background-image: url('<%= usuario.foto_usu %>'); */
+  background-size: cover;
+  background-position: center;
+  border: 3px solid #eee;
+}
+
+.perfil-info {
+  flex: 1;
+}
+.perfil-nome-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+
+.perfil-nome-comp {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin: 0;
+  color: #333;
+}
+
+.perfil-nome-usu {
+  font-size: 1rem;
+  color: #888;
+  margin: 0;
+}
+
+.perfil-tipo {
+  background-color: #f0f0f0;
+  color: #555;
+  padding: 0.3rem 0.8rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.perfil-bio {
+  margin: 0.5rem 0;
+  font-style: italic;
+  color: #666;
+  max-width: 500px;
+}
+
+.perfil-botao-editar {
+  background-color: #4f46e5;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.perfil-botao-editar:hover {
+  background-color: #4338ca;
+}
+
+.perfil-numeros {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+
+/* Container geral do switch */
+.perfil-switch-container {
+  position: relative;
+  display: flex;
+  width: 100%;          /* ocupa 100% do container pai */
+  max-width: 800px;     /* limite máximo de largura */
+  margin: 40px auto;    /* centraliza horizontalmente e dá margem vertical */
+  background: #eee;
+  border-radius: 9999px;
+  overflow: hidden;
+  user-select: none;
+  font-weight: 600;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* Os botões ficam flexíveis e iguais */
+.perfil-switch-container button {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 18px 0;
+  color: #444;
+  z-index: 2;
+  transition: color 0.3s;
+}
+
+/* Indicador slider ativo */
+.perfil-switch-slider {
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 4px;
+  width: 50%; /* ocupa metade do container */
+  background-color: #000;
+  border-radius: 9999px;
+  transition: left 0.3s ease;
+  z-index: 1;
+}
+
+/* Texto branco para o botão ativo */
+.perfil-switch-container button.ativo {
+  color: white;
+}
+
+/* Coleções */
+.perfil-colecoes {
+  margin-top: 30px;
+}
+
+.perfil-botao-nova-colecao {
+  background: #000;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  font-size: 15px;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 24px;
+}
+
+.perfil-grid-colecoes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.perfil-colecao-item {
+  background: #e3e3e3;
+  height: 160px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+  color: #555;
+  transition: 0.3s;
+}
+
+.perfil-colecao-item:hover {
+  background-color: #d5d5d5;
+}
+.perfil-mid {
+  padding: 2rem;
+}
+
+.colecoes-grid, .favoritos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.colecao-card, .obra-card {
+  background-color: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  overflow: hidden;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  padding: 1rem;
+}
+
+.colecao-card img, .obra-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .perfil-container {
+    padding: 24px 16px;
+  }
+
+  .perfil-abas {
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+}
