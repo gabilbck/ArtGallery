@@ -1,17 +1,26 @@
-function toggleTab(tabId, btn) {
-   // Esconder todos os conteúdos
-   document
-      .querySelectorAll(".tab-content")
-      .forEach((div) => div.classList.add("hidden"));
+  function togglePerfilTab(tabId, btn) {
+    const container = btn.parentElement; // .perfil-switch-container
+    const buttons = container.querySelectorAll('button');
+    const slider = container.querySelector('.perfil-switch-slider');
 
-   // Remover 'active' de todos os botões
-   document
-      .querySelectorAll(".tab-button")
-      .forEach((button) => button.classList.remove("active"));
+    // Remove ativo de todos os botões
+    buttons.forEach(b => b.classList.remove('ativo'));
 
-   // Mostrar a aba correspondente
-   document.getElementById(tabId).classList.remove("hidden");
+    // Adiciona ativo no botão clicado
+    btn.classList.add('ativo');
 
-   // Ativar o botão clicado
-   btn.classList.add("active");
-}
+    // Pega índice do botão clicado para posicionar o slider
+    const index = Array.from(buttons).indexOf(btn);
+
+    // Move slider para o botão clicado
+    slider.style.left = `${index * 50}%`;
+
+    // Aqui você pode adicionar código para mostrar a aba/tab correta
+    // Exemplo simples (se tiver os conteúdos das abas):
+    /*
+    document.querySelectorAll('.perfil-tab').forEach(tab => {
+      tab.style.display = 'none';
+    });
+    document.getElementById(tabId).style.display = 'block';
+    */
+  }

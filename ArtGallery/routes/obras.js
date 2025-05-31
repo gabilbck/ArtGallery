@@ -76,12 +76,10 @@ router.get("/favoritar/:id", async (req, res) => {
   if (!req.session.usuario) {
     return res.redirect("/login");
   }
-  const usuario = req.session.
-
+  const usuId = req.session.usuario;
   const obraId = req.params.id.includes("=")
     ? req.params.id.split("=")[1]
     : req.params.id;
-  const usuario = id_usu;
 
   // --- BLOQUEIO de 5s ---
   const agora = Date.now();
@@ -100,10 +98,10 @@ router.get("/favoritar/:id", async (req, res) => {
 
   try {
     // Alterna favorito ↔ desfavorito
-    if (await jaFavoritou(usuario, obraId)) {
-      await desfavoritarObra(usuario, obraId);
+    if (await jaFavoritou(usuId, obraId)) {
+      await desfavoritarObra(usuId, obraId);
     } else {
-      await favoritarObraComDesbloqueio(usuario, obraId);
+      await favoritarObraComDesbloqueio(usuId, obraId);
     }
     console.log("Favoreitou");
     res.redirect(req.get("Referrer") || "/");

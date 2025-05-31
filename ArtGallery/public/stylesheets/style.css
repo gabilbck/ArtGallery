@@ -115,6 +115,9 @@ a {
    justify-content: center;
    align-items: center;
    flex-direction: column;
+   margin: 20px;
+}
+.retorno:has(#sucesso){
    height: 100vh;
 }
 .retorno-container {

@@ -1,6 +1,6 @@
 const createError = require("http-errors");
 const express = require("express");
-const multer = require('multer'); 
+const multer = require("multer");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
@@ -31,10 +31,21 @@ app.use(session({
     }
 }));
 
-app.use(logger("dev"));
+// Middleware padrão para parse JSON e formulário
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
+
+// Middleware para cookies, sessão, logger, estáticos
 app.use(cookieParser());
+app.use(logger("dev"));
+app.use(
+   session({
+      secret: "ok",
+      resave: false,
+      saveUninitialized: true,
+      cookie: { secure: false }, // trocar para true em produção com HTTPS
+   })
+);
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use((req, res, next) => {
@@ -91,21 +102,22 @@ app.get('/', async (req, res) => {
 
 // 404
 app.use((req, res) => {
-    res.status(404).send("<h1>404 - Página não encontrada</h1>");
+   res.status(404).send("<h1>404 - Página não encontrada</h1>");
 });
 
 // Tratamento de erros
 app.use((err, req, res, next) => {
-    res.locals.message = err.message;
-    res.locals.error = req.app.get("env") === "development" ? err : {};
-    res.status(err.status || 500);
-    res.render("error");
+   res.locals.message = err.message;
+   res.locals.error = req.app.get("env") === "development" ? err : {};
+   res.status(err.status || 500);
+   res.render("error");
 });
 
 // Iniciando servidor
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
-    console.log(`Servidor rodando em http://localhost:${PORT}`);
+   console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
 
 module.exports = app;
+

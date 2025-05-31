@@ -120,21 +120,20 @@
 
     <section>
       <div class="conteudo">
-        <% if (erros) { %>
-        <div class="retorno">
-            <div class="retorno-container" id="erro">
-                <%= erros %>
-            </div>
-        </div>
-        <% } %>
-        
         <div class="formulario" id="formulario">
-
           <form action="/suporte" method="post">
             <div class="topo-formulario">
               <h1 class="tit-grande up-font">CONTATE NOSSO SUPORTE</h1>
-              <p>Encontrou um erro ou precisa de ajuda? Preencha as informações abaixo para entrar em contato:</p>
+              <p>
+                Encontrou um erro ou precisa de ajuda? Preencha as informações
+                abaixo para entrar em contato:
+              </p>
             </div>
+            <% if (erros) { %>
+            <div class="retorno">
+              <div class="retorno-container" id="erro"><%= erros %></div>
+            </div>
+            <% } %>
             <div class="entrada">
               <label for="assunto">Assunto:</label>
               <input type="text" id="assunto" name="assunto" required />
@@ -145,17 +144,26 @@
             </div>
             <div class="entrada">
               <label for="descricao">Mensagem:</label>
-              <textarea id="descricao" name="descricao" rows="4" required></textarea>
+              <textarea
+                id="descricao"
+                name="descricao"
+                rows="4"
+                required
+              ></textarea>
             </div>
 
-            <div class="envio" >
-              <input type="submit" value="ENVIAR REQUISIÇÃO PARA CONTATO" id="sucesso">
+            <div class="envio">
+              <input
+                type="submit"
+                value="ENVIAR REQUISIÇÃO PARA CONTATO"
+                id="sucesso"
+              />
             </div>
-            
+
             <p class="centralizado">ou</p>
 
             <div class="botao">
-              <button ><a href="/">CANCELAR E RETORNAR</a></button>
+              <button><a href="/">CANCELAR E RETORNAR</a></button>
             </div>
           </form>
         </div>
@@ -163,21 +171,21 @@
     </section>
 
     <footer>
-        <a href="/">ArtGallery - 2025</a>
+      <a href="/">ArtGallery - 2025</a>
     </footer>
     <% } else { %>
-      <div class="retorno">
-          <h1>Reporte Enviado com Sucesso!</h1>
-          <p>Aguarde enquanto redirecionamos você...</p>
-          <div class="retorno-container" id="sucesso">
-            Seu Reporte Foi Registrado Com Sucesso!
-          </div>
+    <div class="retorno">
+      <h1>Reporte Enviado com Sucesso!</h1>
+      <p>Aguarde enquanto redirecionamos você...</p>
+      <div class="retorno-container" id="sucesso">
+        Seu Reporte Foi Registrado Com Sucesso!
       </div>
-      <script>
-          setTimeout(() => { 
-              window.location.href = "/";
-          }, 3001);
-      </script>
+    </div>
+    <script>
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 3001);
+    </script>
     <% } %>
   </body>
 </html>
