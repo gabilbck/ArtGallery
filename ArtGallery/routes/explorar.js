@@ -26,15 +26,26 @@ router.get("/", async (req, res) => {
 
     // evita duplicatas (caso a mesma obra apareça em mais de um critério)
     const vistos = new Set();
-    const destaques = [maisComentada, maisFavoritada, doArtistaMaisSeguido]
-      .filter(o => o && !vistos.has(o.id) && vistos.add(o.id));
+    const destaquesC = [maisComentada, maisFavoritada, doArtistaMaisSeguido]
+    .filter(o => o && !vistos.has(o.id) && vistos.add(o.id));
+    const destaquesO = destaquesC;
+      
     const obras = await buscarTodasObras();
-
+    console.log(maisComentada, maisFavoritada, doArtistaMaisSeguido);
 
     res.render("explorar", {
       title: "Explorar - ArtGallery",
       usuario,
-      destaques,               //  <<<<  será usado no EJS
+      destaquesC: destaquesC.map(obra => ({
+        id: obra.id,
+        nome: obra.nome,
+        art: obra.art,
+        foto: obra.foto,
+      })),
+      destaquesO: destaquesO.map(obra => ({
+        id: obra.id,
+        foto: obra.foto,
+      })),           //  <<<<  será usado no EJS
       obras: obras.map(o => ({
         id: o.id,
         nome: o.nome,

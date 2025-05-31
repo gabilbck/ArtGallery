@@ -70,7 +70,7 @@
         <!--  CARROSSEL  -->
         <div class="carousel">
         <div class="slides">
-            <% destaques.forEach((obra, i) => { %>
+            <% destaquesC.forEach((obra, i) => { %>
             <a href="/obras/<%= obra.id %>" class="slide" data-index="<%= i %>">
                 <img src="<%= obra.foto %>" alt="Capa de <%= obra.nome %>">
                 <div class="overlay">
@@ -123,7 +123,7 @@
             <p>Confira às obras mais favoritadas do ArtGallery:</p>
         </div>
         <div class="favoritas-container">
-            <% destaques.forEach(obra => { %>
+            <% destaquesO.forEach(obra => { %>
             <a href="/obras/<%= obra.id %>" class="favorita-link">
                 <div class="favorita-card" style="background-image: url('<%= obra.foto %>');"></div>
             </a>
