@@ -3,28 +3,28 @@ const express = require("express");
 const router = express.Router();
 const {
   jaFavoritou, // bool  -> usuário já marcou?
-  favoritarObraComDesbloqueio, // void  -> grava favorito
+  favoritarObra, // void  -> grava favorito
   desfavoritarObra, // void  -> remove favorito
   contarFavoritos, // int   -> total atual
   buscarUmaObra,
   buscarComentariosPorObra,
 } = require("../banco");
 
-router.get("/", async (req, res) => {
-  if (!req.session.usuario) {
-    return res.redirect("/login");
-  }
+// router.get("/", async (req, res) => {
+//   if (!req.session.usuario) {
+//     return res.redirect("/login");
+//   }
 
-  try {
-    const usuario = req.session.usuario.id;
-    const obras = await contarFavoritos(usuario);
+//   try {
+//     const usuario = req.session.usuario.id;
+//     const obras = await contarFavoritos(usuario);
 
-    res.render("obras", { obras, usuario });
-  } catch (err) {
-    console.error("Erro ao carregar obras:", err);
-    res.status(500).send("Erro ao carregar obras");
-  }
-});
+//     res.render("obras", { obras, usuario });
+//   } catch (err) {
+//     console.error("Erro ao carregar obras:", err);
+//     res.status(500).send("Erro ao carregar obras");
+//   }
+// });
 
 router.get("/:id", async (req, res) => {
   if (!req.session.usuario) {
@@ -33,11 +33,13 @@ router.get("/:id", async (req, res) => {
   const obraId = req.params.id.includes("=")
     ? req.params.id.split("=")[1]
     : req.params.id;
-  const usuario = req.session.usuario.id;
+  const usuario = req.session.usuario.id_usu;
   try {
     const obra = await buscarUmaObra(obraId);
     const jaFavoritouObra = await jaFavoritou(usuario, obraId);
     const comentarios = await buscarComentariosPorObra(obraId); // Supondo que você tenha uma função para buscar comentários
+    const favoritar = await favoritarObra(usuario, obraId);
+    const desfavoritar = await desfavoritarObra(usuario, obraId);
 
     if (!obra) {
       return res.status(404).send("Obra não encontrada");
@@ -72,11 +74,11 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.get("/favoritar/:id", async (req, res) => {
+router.get("/:id/favoritar", async (req, res) => {
   if (!req.session.usuario) {
     return res.redirect("/login");
   }
-  const usuId = req.session.usuario;
+  const usuId = req.session.usuario.id_usu;
   const obraId = req.params.id.includes("=")
     ? req.params.id.split("=")[1]
     : req.params.id;
@@ -87,7 +89,7 @@ router.get("/favoritar/:id", async (req, res) => {
 
   if (agora - ultimoClique < 5000) {
     console.log("Clique bloqueado por 5s");
-    return res.redirect(req.get("Referrer") || "/");
+    res.redirect(`/obras/id=${obraId}`);
   }
 
   // Atualiza a marca de tempo
@@ -98,52 +100,51 @@ router.get("/favoritar/:id", async (req, res) => {
 
   try {
     // Alterna favorito ↔ desfavorito
+    console.log("usuId:", usuId, "obraId:", obraId);
     if (await jaFavoritou(usuId, obraId)) {
       await desfavoritarObra(usuId, obraId);
     } else {
-      await favoritarObraComDesbloqueio(usuId, obraId);
+      await favoritarObra(usuId, obraId);
     }
-    console.log("Favoreitou");
-    res.redirect(req.get("Referrer") || "/");
+    console.log("Favoritou");
+    res.redirect(`/obras/id=${obraId}`);
   } catch (err) {
     console.error("Erro ao favoritar:", err);
     res.status(500).send("Erro ao favoritar obra");
   }
 });
 
-/*
-router.get('/favoritar', async (req, res) => {
+// Em routes/obras.js
+router.post("/:id/favoritar", async (req, res) => {
   if (!req.session.usuario) {
-    return res.redirect('/login');
+    return res.status(401).json({ sucesso: false, mensagem: "Não autenticado" });
   }
-  const obraId = req.params.id;
-  try {
-    const usuario = req.session.usuario.id;
-    const obra = await buscarUmaObraDetalhada(ObraId, usuario);
-    const favorito = await jaFavoritou(usuario, ObraId);
-    if (jaFavoritou > 0){
-      await favoritarObra(usuario, obraId);
 
+  const id_usu = req.session.usuario.id_usu;
+  const id_obr = req.params.id;
+
+  try {
+    const jaTem = await jaFavoritou(id_usu, id_obr);
+    if (jaTem) {
+      await desfavoritarObra(id_usu, id_obr);
     } else {
-      await desfavoritarObra(usuario, obraId);
-     
+      await favoritarObra(id_usu, id_obr);
     }
 
-    res.send({
+    const total = await contarFavoritos(id_obr);
+
+    return res.json({
       sucesso: true,
-      mensagem: "Favoritos atualizados com sucesso",
-      obra,
-      favorito
+      favoritado: !jaTem,
+      total,
     });
   } catch (err) {
-    res.send({
-      sucesso: false,
-      mensagem
-    })
+    console.error("Erro ao favoritar via AJAX:", err);
+    return res.status(500).json({ sucesso: false, mensagem: "Erro interno" });
   }
-  res.redirect('/obras');
 });
-*/
+
+
 
 router.get("/comentar/:id", async (req, res) => {
   if (!req.session.usuario) {
@@ -181,7 +182,7 @@ router.get("/comentar/:id", async (req, res) => {
   }
 });
 
-router.get("/colecionar/:id", async (req, res) => {
+router.get("/:id/colecionar", async (req, res) => {
   if (!req.session.usuario) {
     return res.redirect("/login");
   }

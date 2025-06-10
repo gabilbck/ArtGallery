@@ -22,8 +22,8 @@ async function conectarBD() {
 async function buscarUsuario(usuario) {
   const conexao = await conectarBD();
   const sql = `SELECT id_usu, nome_usu, email_usu, tipo_usu, foto_usu 
-                    FROM usuario 
-                    WHERE email_usu = ? AND senha_usu = ?`;
+    FROM usuario 
+    WHERE email_usu = ? AND senha_usu = ?`;
   const [linhas] = await conexao.query(sql, [usuario.email, usuario.senha]);
   return linhas.length > 0 ? linhas[0] : null;
 }
@@ -32,7 +32,6 @@ async function registrarUsuario(dadosUsuario) {
   const conexao = await conectarBD();
   const sql =
     "INSERT INTO usuario (email_usu, nome_comp, nome_usu, senha_usu, tipo_usu) VALUES (?, ?, ?, ?, ?)";
-
   try {
     const [resultado] = await conexao.execute(sql, [
       email,
@@ -58,7 +57,6 @@ async function buscarDadosUsuario(usuario) {
       FROM usuario
       WHERE email_usu = ? AND senha_usu = ?;
    `;
-
   const [linhas] = await conexao.query(sql, [usuario.email, usuario.senha]);
   return linhas.length > 0 ? linhas[0] : null;
 }
@@ -86,12 +84,12 @@ async function buscarArtista(id_art) {
 async function buscarArtistasPorCategoriaDeObra(id_cat) {
   const conexao = await conectarBD();
   const sql = `
-            SELECT DISTINCT a.id_art AS id, a.nome_usu AS nome, a.nome_comp AS nomec, a.foto_art AS foto
-            FROM artista a
-            INNER JOIN obra o ON a.id_art = o.id_art
-            WHERE o.id_cat = ? AND o.situacao_obr = 1
-            LiMIT 3;
-        `;
+    SELECT DISTINCT a.id_art AS id, a.nome_usu AS nome, a.nome_comp AS nomec, a.foto_art AS foto
+    FROM artista a
+    INNER JOIN obra o ON a.id_art = o.id_art
+    WHERE o.id_cat = ? AND o.situacao_obr = 1
+    LiMIT 3;
+`;
   const [linhas] = await conexao.query(sql, [id_cat]);
   return linhas;
 }
@@ -349,11 +347,6 @@ async function buscarColecoesPorUsuario(id_usu) {
 }
 
 // Favoritos
-async function favoritarObra(id_usu, id_obr) {
-  const conexao = await conectarBD();
-  const sql = `INSERT INTO favorito_obra (id_usu, id_obr, ativo) VALUES (?, ?, 1)`;
-  await conexao.query(sql, [id_usu, id_obr]);
-}
 async function contarFavoritos(idObra) {
   const conexao = await conectarBD();
   const sql = `SELECT COUNT(*) AS total FROM favorito_obra WHERE id_obr = ? AND ativo = 1`;
@@ -366,26 +359,40 @@ async function jaFavoritou(id_usu, id_obr) {
   const [linhas] = await conexao.query(sql, [id_usu, id_obr]);
   return linhas[0].total > 0;
 }
+async function favoritarObra(id_usu, id_obr) {
+  const conexao = await conectarBD();
+  const [result] = await conexao.query(
+    `SELECT * FROM favorito_obra WHERE id_usu = ? AND id_obr = ?`,
+    [id_usu, id_obr]
+  );
+  if (result.length > 0) {
+    // já existe → atualiza
+    await conexao.query(
+      `UPDATE favorito_obra SET ativo = 1 WHERE id_usu = ? AND id_obr = ?`,
+      [id_usu, id_obr]
+    );
+  } else {
+    // não existe → insere
+    await conexao.query(
+      `INSERT INTO favorito_obra (id_usu, id_obr, ativo) VALUES (?, ?, 1)`,
+      [id_usu, id_obr]
+    );
+  }
+}
 async function desfavoritarObra(id_usu, id_obr) {
   const conexao = await conectarBD();
   const sql = `UPDATE favorito_obra SET ativo = 0 WHERE id_usu = ? AND id_obr = ?`;
   await conexao.query(sql, [id_usu, id_obr]);
 }
-async function favoritarObraComDesbloqueio(id_usu, id_obr) {
-  const conexao = await conectarBD();
-  const sql = `INSERT INTO favorito_obra (id_usu, id_obr, ativo) VALUES (?, ?, 1) ON DUPLICATE KEY UPDATE ativo = 1`;
-  await conexao.query(sql, [id_usu, id_obr]);
-}
 async function buscarObrasFavoritas(id_usu) {
   const conexao = await conectarBD();
   const sql = `
-            SELECT 
-                o.id_obr AS id, o.titulo_obr AS nome, a.nome_usu AS art, COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto
-            FROM favorito_obra f
-            INNER JOIN obra o ON f.id_obr = o.id_obr
-            INNER JOIN artista a ON o.id_art = a.id_art
-            WHERE f.id_usu = ? AND f.ativo = 1
-        `;
+    SELECT 
+    o.id_obr AS id, o.titulo_obr AS nome, a.nome_usu AS art, COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto
+    FROM favorito_obra f
+    INNER JOIN obra o ON f.id_obr = o.id_obr
+    INNER JOIN artista a ON o.id_art = a.id_art
+    WHERE f.id_usu = ? AND f.ativo = 1`;
   const [linhas] = await conexao.query(sql, [id_usu]);
   return linhas;
 }
@@ -453,7 +460,6 @@ module.exports = {
   contarFavoritos,
   jaFavoritou,
   desfavoritarObra,
-  favoritarObraComDesbloqueio,
   buscarObrasFavoritas,
   buscarComentariosPorObra,
   comentarObra,
