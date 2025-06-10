@@ -401,15 +401,17 @@ async function buscarObrasFavoritas(id_usu) {
 async function buscarComentariosPorObra(id_obr) {
   const conexao = await conectarBD();
   const sql = `
-            SELECT 
-            c.id_com AS id_com, 
-            c.id_usu AS id_usu, 
-            c.id_obr AS id_obr,
-            texto_com,
-            u.nome_usu AS nome_usu
-            FROM comentario c
-            INNER JOIN usuario u ON C.id_usu = u.id_usu
-            WHERE id_obr = ?`;
+    SELECT 
+    c.id_com AS id_com, 
+    c.id_usu AS id_usu, 
+    c.id_obr AS id_obr,
+    texto_com as texto,
+    u.nome_usu AS usu,
+    u.nome_comp as nome,
+    u.foto_usu as foto
+    FROM comentario c
+    INNER JOIN usuario u ON C.id_usu = u.id_usu
+    WHERE id_obr = ?`;
   const [linhas] = await conexao.query(sql, [id_obr]);
   return linhas;
 }

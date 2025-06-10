@@ -8,6 +8,7 @@ const {
   contarFavoritos, // int   -> total atual
   buscarUmaObra,
   buscarComentariosPorObra,
+  comentarObra,
 } = require("../banco");
 
 // router.get("/", async (req, res) => {
@@ -38,8 +39,6 @@ router.get("/:id", async (req, res) => {
     const obra = await buscarUmaObra(obraId);
     const jaFavoritouObra = await jaFavoritou(usuario, obraId);
     const comentarios = await buscarComentariosPorObra(obraId); // Supondo que você tenha uma função para buscar comentários
-    const favoritar = await favoritarObra(usuario, obraId);
-    const desfavoritar = await desfavoritarObra(usuario, obraId);
 
     if (!obra) {
       return res.status(404).send("Obra não encontrada");
@@ -63,10 +62,14 @@ router.get("/:id", async (req, res) => {
             id_com: c.id_com,
             id_usu: c.id_usu,
             id_obr: c.id_obr,
-            texto_com: c.texto_com,
+            nome: c.nome,
+            usu: c.usu,
+            foto: c.foto,
+            texto: c.texto,
             tabela: "comentario"
         })),
         usuario: req.session.usuario, 
+        usuNome: req.session.usuario.nome_usu
     });
   } catch (err) {
     console.error("Erro ao carregar detalhes da obra:", err);
@@ -114,7 +117,6 @@ router.get("/:id/favoritar", async (req, res) => {
   }
 });
 
-// Em routes/obras.js
 router.post("/:id/favoritar", async (req, res) => {
   if (!req.session.usuario) {
     return res.status(401).json({ sucesso: false, mensagem: "Não autenticado" });
@@ -144,78 +146,111 @@ router.post("/:id/favoritar", async (req, res) => {
   }
 });
 
-
-
-router.get("/comentar/:id", async (req, res) => {
+router.get("/:id/comentar", async (res, req) => {
   if (!req.session.usuario) {
     return res.redirect("/login");
   }
-
+  const usuId = req.session.usuario.id_usu;
   const obraId = req.params.id.includes("=")
     ? req.params.id.split("=")[1]
     : req.params.id;
-  const usuario = req.session.usuario.id;
-
+  const comentario = req.params.comentario;
   // --- BLOQUEIO de 5s ---
   const agora = Date.now();
-  const ultimoClique = req.session.ultimoCom?.[obraId] || 0;
+  const ultimoClique = req.session.ultimoFav?.[obraId] || 0;
 
   if (agora - ultimoClique < 5000) {
     console.log("Clique bloqueado por 5s");
-    return res.redirect("back", {usuario: req.session.usuario || null}); // volta para a mesma página
+    res.redirect(`/obras/id=${obraId}`);
   }
 
   // Atualiza a marca de tempo
-  req.session.ultimoCom = {
-    ...(req.session.ultimoCom || {}),
+  req.session.ultimoFav = {
+    ...(req.session.ultimoFav || {}),
     [obraId]: agora,
   };
 
   try {
-    // Aqui você deve implementar a lógica para comentar a obra
-    // Exemplo: await comentar(usuario, obraId, req.body.comentario);
-
-    res.redirect("back"); // volta para a página anterior
+    await comentarObra(usuId, obraId, comentario);
+    console.log(`$usuID: $comentario (na obra $obraId)`);
+    res.redirect(`/obras/id=${obraId}`);
   } catch (err) {
     console.error("Erro ao comentar:", err);
-    res.status(500).send("Erro ao comentar obra");
+    res.status(500).send("Erro ao comentar na obra");
   }
 });
 
-router.get("/:id/colecionar", async (req, res) => {
-  if (!req.session.usuario) {
-    return res.redirect("/login");
-  }
 
-  const obraId = req.params.id.includes("=")
-    ? req.params.id.split("=")[1]
-    : req.params.id;
-  const usuario = req.session.usuario.id;
+// router.get("/comentar/:id", async (req, res) => {
+//   if (!req.session.usuario) {
+//     return res.redirect("/login");
+//   }
 
-  // --- BLOQUEIO de 5s ---
-  const agora = Date.now();
-  const ultimoClique = req.session.ultimoCol?.[obraId] || 0;
+//   const obraId = req.params.id.includes("=")
+//     ? req.params.id.split("=")[1]
+//     : req.params.id;
+//   const usuario = req.session.usuario.id;
 
-  if (agora - ultimoClique < 5000) {
-    console.log("Clique bloqueado por 5s");
-    return res.redirect("back", {usuario: req.session.usuario || null}); // volta para a mesma página
-  }
+//   // --- BLOQUEIO de 5s ---
+//   const agora = Date.now();
+//   const ultimoClique = req.session.ultimoCom?.[obraId] || 0;
 
-  // Atualiza a marca de tempo
-  req.session.ultimoCol = {
-    ...(req.session.ultimoCol || {}),
-    [obraId]: agora,
-  };
+//   if (agora - ultimoClique < 5000) {
+//     console.log("Clique bloqueado por 5s");
+//     return res.redirect("back", {usuario: req.session.usuario || null}); // volta para a mesma página
+//   }
 
-  try {
-    // Aqui você deve implementar a lógica para colecionar a obra
-    // Exemplo: await colecionar(usuario, obraId);
+//   // Atualiza a marca de tempo
+//   req.session.ultimoCom = {
+//     ...(req.session.ultimoCom || {}),
+//     [obraId]: agora,
+//   };
 
-    res.redirect("back", {usuario: req.session.usuario || null}); // volta para a página anterior
-  } catch (err) {
-    console.error("Erro ao colecionar:", err);
-    res.status(500).send("Erro ao colecionar obra");
-  }
-});
+//   try {
+//     // Aqui você deve implementar a lógica para comentar a obra
+//     // Exemplo: await comentar(usuario, obraId, req.body.comentario);
+
+//     res.redirect("back"); // volta para a página anterior
+//   } catch (err) {
+//     console.error("Erro ao comentar:", err);
+//     res.status(500).send("Erro ao comentar obra");
+//   }
+// });
+
+// router.get("/:id/colecionar", async (req, res) => {
+//   if (!req.session.usuario) {
+//     return res.redirect("/login");
+//   }
+
+//   const obraId = req.params.id.includes("=")
+//     ? req.params.id.split("=")[1]
+//     : req.params.id;
+//   const usuario = req.session.usuario.id;
+
+//   // --- BLOQUEIO de 5s ---
+//   const agora = Date.now();
+//   const ultimoClique = req.session.ultimoCol?.[obraId] || 0;
+
+//   if (agora - ultimoClique < 5000) {
+//     console.log("Clique bloqueado por 5s");
+//     return res.redirect("back", {usuario: req.session.usuario || null}); // volta para a mesma página
+//   }
+
+//   // Atualiza a marca de tempo
+//   req.session.ultimoCol = {
+//     ...(req.session.ultimoCol || {}),
+//     [obraId]: agora,
+//   };
+
+//   try {
+//     // Aqui você deve implementar a lógica para colecionar a obra
+//     // Exemplo: await colecionar(usuario, obraId);
+
+//     res.redirect("back", {usuario: req.session.usuario || null}); // volta para a página anterior
+//   } catch (err) {
+//     console.error("Erro ao colecionar:", err);
+//     res.status(500).send("Erro ao colecionar obra");
+//   }
+// });
 
 module.exports = router;
