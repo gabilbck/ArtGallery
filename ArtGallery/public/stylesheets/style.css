@@ -738,16 +738,43 @@ span {
 
 
 /* Comentarios */
-.comentarios{
+.comentarios, .com-input{
    display: flex;
+   flex-direction: column;
    width: 600px;
+   margin: 0 0 20px 0;
+   gap: 25px;
 }
-.com{
+.com, .com-input form{
    display: flex;
    flex-direction: row;
    width: 100%;
    justify-content: left;
    align-items: center;
+}
+#comentar{
+   display: block;
+   width: 100%;
+   margin: 0 20px 0 0;
+   padding: 15px;
+   border-radius: 0.5rem;
+   border: 1px solid #ccc;
+}
+.com-input #enviar{
+   display: block;
+   padding: 12.5px 15px;
+   background-color: #6a994e;
+   border: none;
+   font-size: 20px;
+   color: white;
+   border-radius: 0.5rem;
+   font-weight: bolder;
+}
+.com-input #enviar:hover{
+   cursor: pointer;
+   transform: scale(1.025);
+   transition: 0.3s;
+   box-shadow: #444;
 }
 .com-img{
    width: 50px;

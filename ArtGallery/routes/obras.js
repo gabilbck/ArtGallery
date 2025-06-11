@@ -43,6 +43,12 @@ router.get("/:id", async (req, res) => {
     if (!obra) {
       return res.status(404).send("Obra não encontrada");
     }
+
+    const erros = req.session.erro || null;
+    const sucesso = req.session.sucesso || null;
+    delete req.session.erro;
+    delete req.session.sucesso;
+
     res.render("ObraID", { 
         obra: {
             id: obra.id, 
@@ -69,7 +75,9 @@ router.get("/:id", async (req, res) => {
             tabela: "comentario"
         })),
         usuario: req.session.usuario, 
-        usuNome: req.session.usuario.nome_usu
+        usuNome: req.session.usuario.nome_usu,
+        erros,
+        sucesso
     });
   } catch (err) {
     console.error("Erro ao carregar detalhes da obra:", err);
@@ -91,9 +99,11 @@ router.get("/:id/favoritar", async (req, res) => {
   const ultimoClique = req.session.ultimoFav?.[obraId] || 0;
 
   if (agora - ultimoClique < 5000) {
-    console.log("Clique bloqueado por 5s");
-    res.redirect(`/obras/id=${obraId}`);
-  }
+  console.log("Clique bloqueado por 5s");
+  erros = "clique bloquad por 5s";
+  return res.redirect(`/obras/${obraId}`); 
+}
+
 
   // Atualiza a marca de tempo
   req.session.ultimoFav = {
@@ -171,12 +181,43 @@ router.get("/:id/comentar", async (res, req) => {
   };
 
   try {
+    if (!!comentario){
     await comentarObra(usuId, obraId, comentario);
     console.log(`$usuID: $comentario (na obra $obraId)`);
-    res.redirect(`/obras/id=${obraId}`);
+    res.redirect(`/obras/${obraId}`);
+    } else{
+      
+    }
+    
   } catch (err) {
     console.error("Erro ao comentar:", err);
     res.status(500).send("Erro ao comentar na obra");
+  }
+});
+
+// Corrija seu método de POST para comentar:
+router.post("/:id/comentar", async (req, res) => {
+  if (!req.session.usuario) {
+    return res.redirect("/login");
+  }
+
+  const id_usu = req.session.usuario.id_usu;
+  const id_obr = req.params.id;
+  const comentario = req.body.comentario;
+
+  if (!comentario || comentario.length > 255) {
+    req.session.erro = "Comentário inválido: precisa ter entre 1 e 255 caracteres.";
+    return res.redirect(`/obras/${id_obr}`);
+  }
+
+  try {
+    await comentarObra(id_usu, id_obr, comentario);
+    req.session.sucessoComentario = "Comentário enviado com sucesso!";
+    res.redirect(`/obras/${id_obr}`);
+  } catch (err) {
+    console.error("Erro ao comentar:", err);
+    req.session.erro = "Erro ao enviar comentário.";
+    res.redirect(`/obras/${id_obr}`);
   }
 });
 

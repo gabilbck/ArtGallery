@@ -417,7 +417,7 @@ async function buscarComentariosPorObra(id_obr) {
 }
 async function comentarObra(id_usu, id_obr, comentario) {
   const conexao = await conectarBD();
-  const sql = `INSERT INTO comentario (id_usu, id_obr, comentario) VALUES (?, ?, ?)`;
+  const sql = `INSERT INTO comentario (id_usu, id_obr, texto_com) VALUES (?, ?, ?)`;
   await conexao.query(sql, [id_usu, id_obr, comentario]);
 }
 // Suporte

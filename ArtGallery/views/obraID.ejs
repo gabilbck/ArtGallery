@@ -175,14 +175,22 @@
 
     <section>
       <div class="conteudo">
-        <div class="comentarios-input">
+        <div class="com-input">
           <form action="/obras/<%= obra.id %>/comentar" method="post">
-            <input type="text" name="comentario" placeholder="Adicionar novo comentário à obra..." max="255">
-            <input type="submit" id="comentar" value="">
+            <input type="text" id="comentar" name="comentario" placeholder="Adicionar novo comentário à obra..." maxlength="255">
+            <input type="submit" id="enviar" value="&rarr;">
           </form>
         </div>
       </div>
     </section>
+
+    <% if (erros) { %>
+    <div class="retorno" style="max-width: 600px;">
+      <div class="retorno-container" id="erro">
+        <%= erros %>
+      </div>
+    </div>
+    <% } %>
 
     <section>
       <div class="conteudo">
@@ -190,10 +198,14 @@
         <% comentarios.forEach(c =>{ %>
         <div class="com">
           <div class="com-img">
-            <img src="<%= c.foto %>" alt="<%= c.usu %>">
+            <a href="/perfil/<%= c.id_usu %>">
+              <img src="<%= c.foto %>" alt="<%= c.usu %>">
+            </a>
           </div>
           <div class="com-info">
-            <h3><%= c.nome %> (<%= c.usu %>)</h3>
+            <a href="/perfil/<%= c.id_usu %>">
+              <h3><%= c.nome %> ( @<%= c.usu %>)</h3>
+            </a>
             <p><%= c.texto %></p>
           </div>
           <% if ((obra.artU == usuNome) || (usuNome == c.nome)) { %>
