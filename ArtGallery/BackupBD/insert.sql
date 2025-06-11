@@ -280,18 +280,6 @@ BEGIN
 END|
 DELIMITER ;
 
--- Adicionar advertência
-DELIMITER |
-CREATE TRIGGER advertencia
-AFTER INSERT ON comentario
-FOR EACH ROW
-BEGIN
-    UPDATE usuario
-    SET advertencia_usu = advertencia_usu + 1
-    WHERE id_usu = NEW.id_usu;
-END|
-DELIMITER ;
-
 -- Banimento automático ao atingir 2 advertências
 DELIMITER |
 CREATE TRIGGER banir
