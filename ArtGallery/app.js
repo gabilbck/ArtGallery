@@ -88,8 +88,8 @@ app.use("/perfil", perfilRouter);
 app.use("/obras", obrasRouter);
 app.use("/suporte", suporteRouter);
 
-// Rota index com busca de categorias
-const conexao = require('./banco');  // Suponho que está no banco.js
+
+const conexao = require('./banco');
 app.get('/', async (req, res) => {
   try {
     const [categorias] = await conexao.promise().query('SELECT id_cat, nome_cat FROM categoria');
