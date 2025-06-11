@@ -426,6 +426,41 @@ async function excluirComentario(id_com){
   await conexao.query(sql, [id_com]);
 }
 
+//Coleções
+async function buscarColecoesPorUsu(id_usu){
+  const conexao = await conectarBD();
+  const sql = `
+  SELECT 
+    c.nome_col,
+    c.id_usu,
+    oco.id_obr,
+    oco.id_col,
+    o.titulo_obr,
+    o.descricao_obr,
+    o.situacao_obr,
+    o.id_cat,
+    o.id_art
+  FROM colecao c
+  INNER JOIN obra_colecao oco ON c.id_col = oco.id_col
+  INNER JOIN obra o ON oco.id_obr = o.id_obr
+  where c.id_usu = ?`;
+  await conexao.query((sql), [id_usu]);
+}
+async function criarColecoes(id_usu, nome){
+  const conexao = await conectarBD();
+  const sql = `
+  insert into colecao (id_usu, nome_colecao) values (?, ?)`;
+  await conexao.query((sql) [id_usu, nome]);
+}
+async function excluirColecao(id_col){
+  const conexao = await conectarBD();
+  const sql = `
+  delete from colecao where id_col = ?
+  `;
+  await conexao.query((sql) [id_col]);
+}
+
+
 // Suporte
 async function inserirSuporte(email_sup, assunto_sup, descricao_sup) {
   const conexao = await conectarBD();
