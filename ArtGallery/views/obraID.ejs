@@ -116,6 +116,14 @@
       </div>
     </header>
 
+    <% if (erros) { %>
+    <div class="retorno" style="max-width: 600px;">
+      <div class="retorno-container" id="erro">
+        <%= erros %>
+      </div>
+    </div>
+    <% } %>
+    
     <section>
       <div class="conteudo">
         <div class="obr-view">
@@ -175,36 +183,46 @@
 
     <section>
       <div class="conteudo">
-        <div class="comentarios-input">
+        <div class="com-input">
           <form action="/obras/<%= obra.id %>/comentar" method="post">
-            <input type="text" name="comentario" placeholder="Adicionar novo comentário à obra..." max="255">
-            <input type="submit" id="comentar" value="">
+            <input type="text" id="comentar" name="comentario" placeholder="Adicionar novo comentário à obra..." maxlength="255">
+            <input type="submit" id="enviar" value="&rarr;">
           </form>
         </div>
       </div>
     </section>
 
+    
+
     <section>
       <div class="conteudo">
         <div class="comentarios">
-        <% comentarios.forEach(c =>{ %>
-        <div class="com">
-          <div class="com-img">
-            <img src="<%= c.foto %>" alt="<%= c.usu %>">
+          <% comentarios.forEach(c =>{ %>
+          <div class="com">
+            <div class="com-view">
+              <div class="com-conteudo">
+                <div class="com-img">
+                  <a href="/perfil/<%= c.id_usu %>">
+                    <img src="<%= c.foto %>" alt="<%= c.usu %>">
+                  </a>
+                </div>
+                <div class="com-info">
+                  <a href="/perfil/<%= c.id_usu %>">
+                    <h3><%= c.nome %> ( @<%= c.usu %>)</h3>
+                  </a>
+                  <p><%= c.texto %></p>
+                </div>
+              </div>
+              <% if ((usuario.id_usu === obra.id_art) || (usuario.id_usu === c.id_usu)) { %>
+              <div class="com-del">
+                <form action="/obras/<%= obra.id %>/comentarios/<%= c.id_com %>/excluir" method="POST">
+                  <input type="submit" value="X">
+                </form>
+              </div>
+              <% } %> 
+            </div>  
           </div>
-          <div class="com-info">
-            <h3><%= c.nome %> (<%= c.usu %>)</h3>
-            <p><%= c.texto %></p>
-          </div>
-          <% if ((obra.artU == usuNome) || (usuNome == c.nome)) { %>
-          <div class="com-del">
-            <form action="/obra/<%= c_id_obr %>/deletarcomentario" >
-              <input type="submit" value="X">
-            </form>
-          </div>
-          <% } %>
-        </div>
-        <% }) %>
+          <% }) %>
         </div>
       </div>
     </section>

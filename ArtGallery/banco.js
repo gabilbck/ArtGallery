@@ -417,16 +417,21 @@ async function buscarComentariosPorObra(id_obr) {
 }
 async function comentarObra(id_usu, id_obr, comentario) {
   const conexao = await conectarBD();
-  const sql = `INSERT INTO comentario (id_usu, id_obr, comentario) VALUES (?, ?, ?)`;
+  const sql = `INSERT INTO comentario (id_usu, id_obr, texto_com) VALUES (?, ?, ?)`;
   await conexao.query(sql, [id_usu, id_obr, comentario]);
 }
+async function excluirComentario(id_com){
+  const conexao = await conectarBD();
+  const sql = `delete from comentario where id_com = ?`;
+  await conexao.query(sql, [id_com]);
+}
+
 // Suporte
 async function inserirSuporte(email_sup, assunto_sup, descricao_sup) {
   const conexao = await conectarBD();
   const sql = `INSERT INTO suporte (email_sup, assunto_sup, descricao_sup) VALUES (?, ?, ?)`;
   await conexao.query(sql, [email_sup, assunto_sup, descricao_sup]);
 }
-
 async function buscarSuporte(email, assunto, descricao) {
   const conexao = await conectarBD();
   const sql = `SELECT email_sup, assunto_sup, descricao_sup 
@@ -465,6 +470,7 @@ module.exports = {
   buscarObrasFavoritas,
   buscarComentariosPorObra,
   comentarObra,
+  excluirComentario,
   buscarSuporte,
   inserirSuporte,
 };
