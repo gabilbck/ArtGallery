@@ -9,6 +9,7 @@ const {
   buscarUmaObra,
   buscarComentariosPorObra,
   comentarObra,
+  excluirComentario
 } = require("../banco");
 
 // router.get("/", async (req, res) => {
@@ -100,7 +101,7 @@ router.get("/:id/favoritar", async (req, res) => {
 
   if (agora - ultimoClique < 5000) {
   console.log("Clique bloqueado por 5s");
-  erros = "clique bloquad por 5s";
+  req.session.erro = "Espere pelo menos 5 segundos antes de favoritar novamente.";
   return res.redirect(`/obras/${obraId}`); 
 }
 
@@ -120,7 +121,7 @@ router.get("/:id/favoritar", async (req, res) => {
       await favoritarObra(usuId, obraId);
     }
     console.log("Favoritou");
-    res.redirect(`/obras/id=${obraId}`);
+    res.redirect(`/obras/${obraId}`);
   } catch (err) {
     console.error("Erro ao favoritar:", err);
     res.status(500).send("Erro ao favoritar obra");
@@ -171,7 +172,7 @@ router.get("/:id/comentar", async (res, req) => {
 
   if (agora - ultimoClique < 5000) {
     console.log("Clique bloqueado por 5s");
-    res.redirect(`/obras/id=${obraId}`);
+    res.redirect(`/obras/${obraId}`);
   }
 
   // Atualiza a marca de tempo
@@ -185,10 +186,7 @@ router.get("/:id/comentar", async (res, req) => {
     await comentarObra(usuId, obraId, comentario);
     console.log(`$usuID: $comentario (na obra $obraId)`);
     res.redirect(`/obras/${obraId}`);
-    } else{
-      
-    }
-    
+    } 
   } catch (err) {
     console.error("Erro ao comentar:", err);
     res.status(500).send("Erro ao comentar na obra");
@@ -221,77 +219,41 @@ router.post("/:id/comentar", async (req, res) => {
   }
 });
 
+router.post("/:id/comentarios/:id_com/excluir", async (req, res) => {
+  if (!req.session.usuario) return res.redirect("/login");
 
-// router.get("/comentar/:id", async (req, res) => {
-//   if (!req.session.usuario) {
-//     return res.redirect("/login");
-//   }
+  const id_com = req.params.id_com;
+  const id_obr = req.params.id;
+  const usuarioLogado = req.session.usuario;
 
-//   const obraId = req.params.id.includes("=")
-//     ? req.params.id.split("=")[1]
-//     : req.params.id;
-//   const usuario = req.session.usuario.id;
+  try {
+    const comentarios = await buscarComentariosPorObra(id_obr);
+    const comentario = comentarios.find(c => c.id_com == id_com);
 
-//   // --- BLOQUEIO de 5s ---
-//   const agora = Date.now();
-//   const ultimoClique = req.session.ultimoCom?.[obraId] || 0;
+    if (!comentario) {
+      req.session.erro = "Comentário não encontrado.";
+      return res.redirect(`/obras/${id_obr}`);
+    }
 
-//   if (agora - ultimoClique < 5000) {
-//     console.log("Clique bloqueado por 5s");
-//     return res.redirect("back", {usuario: req.session.usuario || null}); // volta para a mesma página
-//   }
+    // Apenas dono do comentário ou artista da obra pode excluir
+    const obra = await buscarUmaObra(id_obr);
+    if (
+      usuarioLogado.id_usu !== comentario.id_usu &&
+      usuarioLogado.id_usu !== obra.id_art
+    ) {
+      req.session.erro = "Você não tem permissão para excluir esse comentário.";
+      return res.redirect(`/obras/${id_obr}`);
+    }
 
-//   // Atualiza a marca de tempo
-//   req.session.ultimoCom = {
-//     ...(req.session.ultimoCom || {}),
-//     [obraId]: agora,
-//   };
+    await excluirComentario(id_com);
+    req.session.sucesso = "Comentário excluído com sucesso.";
+    res.redirect(`/obras/${id_obr}`);
+  } catch (err) {
+    console.error("Erro ao excluir comentário:", err);
+    req.session.erro = "Erro ao tentar excluir o comentário.";
+    res.redirect(`/obras/${id_obr}`);
+  }
+});
 
-//   try {
-//     // Aqui você deve implementar a lógica para comentar a obra
-//     // Exemplo: await comentar(usuario, obraId, req.body.comentario);
-
-//     res.redirect("back"); // volta para a página anterior
-//   } catch (err) {
-//     console.error("Erro ao comentar:", err);
-//     res.status(500).send("Erro ao comentar obra");
-//   }
-// });
-
-// router.get("/:id/colecionar", async (req, res) => {
-//   if (!req.session.usuario) {
-//     return res.redirect("/login");
-//   }
-
-//   const obraId = req.params.id.includes("=")
-//     ? req.params.id.split("=")[1]
-//     : req.params.id;
-//   const usuario = req.session.usuario.id;
-
-//   // --- BLOQUEIO de 5s ---
-//   const agora = Date.now();
-//   const ultimoClique = req.session.ultimoCol?.[obraId] || 0;
-
-//   if (agora - ultimoClique < 5000) {
-//     console.log("Clique bloqueado por 5s");
-//     return res.redirect("back", {usuario: req.session.usuario || null}); // volta para a mesma página
-//   }
-
-//   // Atualiza a marca de tempo
-//   req.session.ultimoCol = {
-//     ...(req.session.ultimoCol || {}),
-//     [obraId]: agora,
-//   };
-
-//   try {
-//     // Aqui você deve implementar a lógica para colecionar a obra
-//     // Exemplo: await colecionar(usuario, obraId);
-
-//     res.redirect("back", {usuario: req.session.usuario || null}); // volta para a página anterior
-//   } catch (err) {
-//     console.error("Erro ao colecionar:", err);
-//     res.status(500).send("Erro ao colecionar obra");
-//   }
-// });
 
 module.exports = router;

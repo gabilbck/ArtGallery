@@ -745,12 +745,24 @@ span {
    margin: 0 0 20px 0;
    gap: 25px;
 }
+.comentarios{
+   margin: 20px;
+}
 .com, .com-input form{
    display: flex;
    flex-direction: row;
    width: 100%;
    justify-content: left;
    align-items: center;
+}
+.com-view{
+   display: flex;
+   flex-direction: row;
+   padding: 0 0 20px 0; 
+   border-bottom: 1px #333 solid;
+}
+.com hr{
+   border: 2px #000 solid;
 }
 #comentar{
    display: block;
@@ -769,12 +781,19 @@ span {
    color: white;
    border-radius: 0.5rem;
    font-weight: bolder;
+   width: 50px;
 }
 .com-input #enviar:hover{
    cursor: pointer;
    transform: scale(1.025);
    transition: 0.3s;
    box-shadow: #444;
+}
+.com-conteudo{
+   display: flex;
+   flex-direction: row;
+   align-items: center;
+   width: 100%;
 }
 .com-img{
    width: 50px;
@@ -791,4 +810,9 @@ span {
 .com-info h3{
    margin: 0;
    padding: 0;
+}
+.com-del input{
+   background-color: white;
+   color: #000;
+   border: 0;
 }
