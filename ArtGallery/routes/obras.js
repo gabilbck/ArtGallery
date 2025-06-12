@@ -76,6 +76,7 @@ router.get("/:id", async (req, res) => {
             tabela: "comentario"
         })),
         usuario: req.session.usuario, 
+        usuario: req.session.usuaio.id_usu,
         usuNome: req.session.usuario.nome_usu,
         erros,
         sucesso
