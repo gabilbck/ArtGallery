@@ -128,6 +128,7 @@ async function buscarUmaObra(id_obr) {
                 o.id_obr AS id,
                 o.titulo_obr AS titulo,
                 a.id_art AS id_art,
+                a.id_usu as id_usu_art,
                 a.nome_usu AS artU,
                 a.nome_comp AS artC,
                 COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto,

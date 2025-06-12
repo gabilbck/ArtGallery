@@ -787,7 +787,7 @@ span {
    cursor: pointer;
    transform: scale(1.025);
    transition: 0.3s;
-   box-shadow: #444;
+   box-shadow: #333;
 }
 .com-conteudo{
    display: flex;

@@ -207,12 +207,12 @@
                 </div>
                 <div class="com-info">
                   <a href="/perfil/<%= c.id_usu %>">
-                    <h3><%= c.nome %> ( @<%= c.usu %>)</h3>
+                    <h3><%= c.nome %> (@<%= c.usu %>)</h3>
                   </a>
                   <p><%= c.texto %></p>
                 </div>
               </div>
-              <% if ((usuario.id_usu === obra.id_art) || (usuario.id_usu === c.id_usu)) { %>
+              <% if ((usuario.id_usu == obra.id_usu_Art) || (usuario.id_usu == c.id_usu)) { %>
               <div class="com-del">
                 <form action="/obras/<%= obra.id %>/comentarios/<%= c.id_com %>/excluir" method="POST">
                   <input type="submit" value="X">
