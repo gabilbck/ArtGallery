@@ -6,7 +6,8 @@ const {
     excluirColecao
 } = require("../banco");
 
-router.get("/", async (res, req) => {
+// Página principal redireciona para as coleções do usuário logado
+router.get("/", async (req, res) => {
     if (!req.session.usuario) {
         return res.redirect("/login");
     }
@@ -14,55 +15,77 @@ router.get("/", async (res, req) => {
     res.redirect(`/colecao/${id_usu}`);
 });
 
-router.get("/:id_usu", async (res, req) => {
+// Página que exibe as coleções do usuário
+router.get("/:id_usu", async (req, res) => {
     if (!req.session.usuario) {
         return res.redirect("/login");
     }
+
     const id_usu = req.session.usuario.id_usu;
     const nome_usu = req.session.usuario.nome_usu;
-    const colecoes = await buscarColecaoPorUsu(id_usu);
 
-    const erros = req.session.erro || null;
-    const sucesso = req.session.sucesso || null;
-    delete req.session.erro;
-    delete req.session.sucesso;
+    try {
+        const colecoes = await buscarColecaoPorUsu(id_usu);
 
-    if (!colecoes){
-        return res.redirect("/colecao/criar");
-    } else {
-        try{
-        res.render("colecoes", {
-            colecoes: {
-                id_col: c.idCol,
-                nome_col: c.nome,
-                foto_col: c.foto
-            },
-            id_usu,
-            title: `Coleções de ${nome_usu}`
-        })} 
-        catch (err) {
-            console.log("Erro ao buscar coleções: " + err),
-            res.status(500).send("Erro ao buscar coleções");
+        if (!colecoes || colecoes.length === 0) {
+            return res.redirect("/colecao/criar");
         }
-    }
-})
 
-router.get("/criar", async (res, req) => {
+        const erros = req.session.erro || null;
+        const sucesso = req.session.sucesso || null;
+        delete req.session.erro;
+        delete req.session.sucesso;
+
+        res.render("colecoes", {
+            colecoes,
+            id_usu,
+            nome_usu,
+            title: `Coleções de ${nome_usu}`,
+            erros,
+            sucesso
+        });
+
+    } catch (err) {
+        console.error("Erro ao buscar coleções:", err);
+        res.status(500).send("Erro ao buscar coleções");
+    }
+});
+
+// Rota GET → mostra o formulário de criação de coleção
+router.get("/criar", (req, res) => {
     if (!req.session.usuario) {
         return res.redirect("/login");
     }
+
+    res.render("criarColecao", {
+        nome_usu: req.session.usuario.nome_usu,
+        title: "Criar nova coleção"
+    });
+});
+
+// Rota POST → recebe os dados do formulário e cria a coleção
+router.post("/criar", async (req, res) => {
+    if (!req.session.usuario) {
+        return res.redirect("/login");
+    }
+
     const id_usu = req.session.usuario.id_usu;
-    const nome_usu = req.session.usuario.nome_usu;
-    const colecoes = await buscarColecaoPorUsu(id_usu);
+    const nome_col = req.body.nome_col;
 
-    //carregar a pagina para criação de coleções
-})
+    if (!nome_col || nome_col.trim().length === 0) {
+        req.session.erro = "Nome da coleção não pode ser vazio.";
+        return res.redirect("/colecao/criar");
+    }
 
-
-//router para processar a exclusão (somente post, não carrega uma página especifica, apenas recarrega  amesma pagina com todas as coleões)
-
-//post para criação da categoria
-
-//post para update da categoria
+    try {
+        await criarColecao(id_usu, nome_col.trim());
+        req.session.sucesso = "Coleção criada com sucesso!";
+        res.redirect(`/colecao/${id_usu}`);
+    } catch (err) {
+        console.error("Erro ao criar coleção:", err);
+        req.session.erro = "Erro ao criar coleção.";
+        res.redirect("/colecao/criar");
+    }
+});
 
 module.exports = router;
