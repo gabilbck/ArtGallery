@@ -432,12 +432,16 @@ async function buscarColecaoPorUsu(id_usu) {
   const conexao = await conectarBD();
   const sql = `
   SELECT 
-    c.id_col,
-    c.nome_col,
-    (select foto_obr from obra order by rand() limit 1) as foto
+    c.nome_col AS nome_colecao,
+    c.id_col AS id_colecao,
+    u.id_usu,
+    u.nome_comp AS nome_completo,
+    o.foto_obr AS foto_obra
   FROM colecao c
-  INNER JOIN obra o ON oco.id_obr = o.id_obr
-  where c.id_usu = ?`;
+  JOIN usuario u ON c.id_usu = u.id_usu
+  JOIN obra_colecao oc ON c.id_col = oc.id_col
+  JOIN obra o ON oc.id_obr = o.id_obr
+  GROUP BY c.id_col`;
   await conexao.query(sql, [id_usu]);
 }
 async function criarColecao(id_usu, nome) {
@@ -452,6 +456,29 @@ async function excluirColecao(id_col) {
   delete from colecao where id_col = ?
   `;
   await conexao.query(sql[id_col]);
+}
+async function atualizarColecao(id_col){
+  const conexao = await conectarBD();
+  const sql =`
+  update colecao set nome_col where id_col = ?
+  `;
+  await conexao.query(sql[id_col]);
+}
+async function adicionarObraColecao(id_col, id_obra){
+  const conexao = await conectarBD();
+  const sql =`
+    INSERT INTO obra_colecao (id_obr, id_col)
+    VALUES (?, ?)
+  `;
+  await conexao.query(sql[id_col, id_obra]);
+}
+async function excluirObraColecao(id_col, id_obra) {
+  const conexao = await conectarBD();
+  const sql = `
+    DELETE FROM obra_colecao
+    WHERE id_obr = ? AND id_col = ?
+  `;
+  await conexao.query(sql[id_col, id_obra]);
 }
 
 // Suporte
@@ -502,6 +529,9 @@ module.exports = {
   buscarColecaoPorUsu,
   criarColecao,
   excluirColecao,
+  atualizarColecao,
+  adicionarObraColecao,
+  excluirObraColecao,
   buscarSuporte,
   inserirSuporte,
 };
