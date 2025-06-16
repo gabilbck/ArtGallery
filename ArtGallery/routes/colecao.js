@@ -112,7 +112,7 @@ router.post("/adicionarObra", async (req, res) => {
     // Adiciona a obra a coleção e manda pra página da coleção corresponente à adição
 });
 
-router.post("/excluirObra", aync (req, res) => {
+router.post("/excluirObra", async (req, res) => {
     // Só vai excluir a obra da coleção e volta pra pagina da coleção
 });
 
