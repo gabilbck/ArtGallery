@@ -470,7 +470,7 @@ async function buscarColecaoes(id_usu) {
 async function criarColecao(id_usu, nome) {
   const conexao = await conectarBD();
   const sql = `
-  insert into colecao (id_usu, nome_colecao) values (?, ?)`;
+  insert into colecao (id_usu, nome_col) values (?, ?)`;
   await conexao.query(sql, [id_usu, nome]);
 }
 async function excluirColecao(id_col) {

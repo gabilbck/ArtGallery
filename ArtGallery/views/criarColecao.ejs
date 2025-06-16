@@ -118,48 +118,47 @@
 
     <div class="formulario" id="formulario">
       <div class="topo-formulario">
-          <h1>CRIAR COLEÇÃO</h1>
-          <p>Preencha as informações abaixo para criar uma nova coleção:</p>
+        <h1>CRIAR COLEÇÃO</h1>
+        <p>Preencha as informações abaixo para criar uma nova coleção:</p>
       </div>
-
-      <% if (erros) { %>
-      <div class="retorno">
-          <div class="retorno-container" id="erro">
-              <%= erros %>
-          </div>
-      </div>
-      <% } %>
-      
+  
       <% if (sucesso) { %>
-      <form action="/colecao/criar" method="post">
-        <div class="entrada">
-          <label for="text">Nome da Coleção</label>
-          <input type="text" id="nome_col" name="nome_col" placeholder="Nome da Coleção" required>
+        <div class="retorno">
+          <h1>Coleção criada com Sucesso!</h1>
+          <p>Aguarde enquanto redirecionamos você...</p>
+          <div class="retorno-container" id="sucesso">
+            <%= sucesso %>
+          </div>
         </div>
-        <div class="envio">
-          <input type="submit" value="CRIAR AGORA E ADICIONAR OBRAS" id="sucesso">
-        </div>
-        <p class="centralizado">ou</p>
-        <div class="botao">
-          <button><a href="/">CANCELAR E RETORNAR</a></button>
-        </div>
-      </form>
+        <script>
+          setTimeout(() => {
+            window.location.href = "/colecao/verTodas/<%= usuario.id_usu %>";
+          }, 3000);
+        </script>
+      <% } else { %>
+        <% if (erros) { %>
+          <div class="retorno">
+            <div class="retorno-container" id="erro">
+              <%= erros %>
+            </div>
+          </div>
+        <% } %>
+  
+        <form action="/colecao/criarColecao" method="post">
+          <div class="entrada">
+            <label for="nome_col">Nome da Coleção</label>
+            <input type="text" id="nome_col" name="nome_col" placeholder="Nome da Coleção" required>
+          </div>
+          <div class="envio">
+            <input type="submit" value="CRIAR AGORA E ADICIONAR OBRAS">
+          </div>
+          <p class="centralizado">ou</p>
+          <div class="botao">
+            <button><a href="/">CANCELAR E RETORNAR</a></button>
+          </div>
+        </form>
+      <% } %>
     </div>
-
-    <% } else { %>
-    <div class="retorno">
-      <h1>Coleção criada com Sucesso!</h1>
-      <p>Aguarde enquanto redirecionamos você...</p>
-      <div class="retorno-container" id="sucesso">
-        Sua nova coleção <%= c.nome %>
-      </div>
-    </div>
-    <script>
-        setTimeout(() => { 
-          window.location.href = "/colecao/<%= c.id_usu %>";
-        }, 3001);
-    </script>
-    <% } %>
 
     <footer>
       <p>

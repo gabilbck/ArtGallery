@@ -56,11 +56,10 @@ router.get("/ver/:id", (req, res) => {
 });
 
 // Rota GET → mostra o formulário de criação de coleção
-router.get("/criarColecao", (req, res) => {
+router.get("/criarColecao", async (req, res) => {
   if (!req.session.usuario) {
     return res.redirect("/login");
   }
-
   res.render("criarColecao", {
     nome_usu: req.session.usuario.nome_usu,
     title: "Criar nova coleção",
@@ -72,6 +71,7 @@ router.get("/criarColecao", (req, res) => {
 });
 
 // Rota POST → recebe os dados do formulário e cria a coleção e manda pra /ver/:id
+// Rota POST → recebe os dados do formulário e cria a coleção e manda pra /verTodas/:id_usu
 router.post("/criarColecao", async (req, res) => {
   if (!req.session.usuario) {
     return res.redirect("/login");
@@ -87,11 +87,14 @@ router.post("/criarColecao", async (req, res) => {
 
   try {
     await criarColecao(id_usu, nome_col.trim());
+
     res.render("criarColecao", {
+      usuario: req.session.usuario, // Corrigido: passar o objeto completo
+      id_usu,
       nome_usu: req.session.usuario.nome_usu,
       title: "Criar nova coleção",
       sucesso: "Coleção criada com sucesso!",
-      erros: null,
+      erros: null
     });
   } catch (err) {
     console.error("Erro ao criar coleção:", err);
