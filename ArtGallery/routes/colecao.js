@@ -86,12 +86,11 @@ router.post("/criarColecao", async (req, res) => {
   }
 
   try {
-    await criarColecao(id_usu, nome_col.trim());
+    const id_col = await criarColecao(id_usu, nome_col.trim());
 
     res.render("criarColecao", {
-      usuario: req.session.usuario, // Corrigido: passar o objeto completo
-      id_usu,
-      nome_usu: req.session.usuario.nome_usu,
+      usuario: req.session.usuario,
+      id_col, // ← Passa o id da nova coleção
       title: "Criar nova coleção",
       sucesso: "Coleção criada com sucesso!",
       erros: null
@@ -99,9 +98,10 @@ router.post("/criarColecao", async (req, res) => {
   } catch (err) {
     console.error("Erro ao criar coleção:", err);
     req.session.erro = "Erro ao criar coleção.";
-    res.redirect("/colecao/criar");
+    res.redirect("/colecao/criarColecao");
   }
 });
+
 
 router.post("/atualizarColecao", async (req, res) => {
   // Só vai atualizar o nome da coleção e voltar para página da coleção

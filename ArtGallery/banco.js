@@ -467,11 +467,13 @@ async function buscarColecaoes(id_usu) {
   const [linhas] = await conexao.query(sql, [id_usu]);
   return linhas;
 }
-async function criarColecao(id_usu, nome) {
+async function criarColecao(id_usu, nome_col) {
   const conexao = await conectarBD();
-  const sql = `
-  insert into colecao (id_usu, nome_col) values (?, ?)`;
-  await conexao.query(sql, [id_usu, nome]);
+  const [resultado] = await conexao.query(
+    "INSERT INTO colecao (id_usu, nome_col) VALUES (?, ?)",
+    [id_usu, nome_col]
+  );
+  return resultado.insertId; // Isso retorna o id_col da nova coleção
 }
 async function excluirColecao(id_col) {
   const conexao = await conectarBD();
