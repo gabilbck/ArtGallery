@@ -428,27 +428,50 @@ async function excluirComentario(id_com) {
 }
 
 //Coleções
-async function buscarColecaoPorUsu(id_usu) {
+async function buscarObrasPorColecao(id_col, id_usu) {
   const conexao = await conectarBD();
   const sql = `
-  SELECT 
-    c.nome_col AS nome_colecao,
-    c.id_col AS id_colecao,
-    u.id_usu,
-    u.nome_comp AS nome_completo,
-    o.foto_obr AS foto_obra
-  FROM colecao c
-  JOIN usuario u ON c.id_usu = u.id_usu
-  JOIN obra_colecao oc ON c.id_col = oc.id_col
-  JOIN obra o ON oc.id_obr = o.id_obr
-  GROUP BY c.id_col`;
-  await conexao.query(sql, [id_usu]);
+    SELECT 
+      col.id_col AS id_col,
+      col.nome_col AS nome_colecao,
+      usu.id_usu AS id_usu,
+      usu.nome_comp AS nome_usuario,
+      obr.id_obr AS id_obr,
+      obr.titulo_obr AS titulo,
+      obr.foto_obr AS foto,
+    FROM colecao col
+    INNER JOIN usuario usu ON col.id_usu = usu.id_usu
+    INNER JOIN obra_colecao oc ON col.id_col = oc.id_col
+    INNER JOIN obra obr ON oc.id_obr = obr.id_obr
+    WHERE col.id_col = ?
+  `;
+  const [linhas] = await conexao.query(sql, [id_col, id_usu]);
+  return linhas;
+}
+async function buscarColecaoes(id_usu) {
+  const conexao = await conectarBD();
+  const sql = `
+    SELECT 
+      c.nome_col AS nome_colecao,
+      c.id_col AS id_colecao,
+      u.id_usu,
+      u.nome_comp AS nome_completo,
+      o.foto_obr AS foto_obra
+    FROM colecao c
+    JOIN usuario u ON c.id_usu = u.id_usu
+    LEFT JOIN obra_colecao oc ON c.id_col = oc.id_col
+    LEFT JOIN obra o ON oc.id_obr = o.id_obr
+    WHERE c.id_usu = ?
+    GROUP BY c.id_col
+  `;
+  const [linhas] = await conexao.query(sql, [id_usu]);
+  return linhas;
 }
 async function criarColecao(id_usu, nome) {
   const conexao = await conectarBD();
   const sql = `
   insert into colecao (id_usu, nome_colecao) values (?, ?)`;
-  await conexao.query(sql[(id_usu, nome)]);
+  await conexao.query(sql, [id_usu, nome]);
 }
 async function excluirColecao(id_col) {
   const conexao = await conectarBD();
@@ -526,7 +549,8 @@ module.exports = {
   buscarComentariosPorObra,
   comentarObra,
   excluirComentario,
-  buscarColecaoPorUsu,
+  buscarColecaoes,
+  buscarObrasPorColecao,
   criarColecao,
   excluirColecao,
   atualizarColecao,

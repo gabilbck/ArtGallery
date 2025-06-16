@@ -130,6 +130,7 @@
       </div>
       <% } %>
       
+      <% if (sucesso) { %>
       <form action="/colecao/criar" method="post">
         <div class="entrada">
           <label for="text">Nome da Coleção</label>
@@ -155,7 +156,7 @@
     </div>
     <script>
         setTimeout(() => { 
-          window.location.href = "/colecoes/<%= c.id_usu %>";
+          window.location.href = "/colecao/<%= c.id_usu %>";
         }, 3001);
     </script>
     <% } %>
