@@ -147,14 +147,14 @@
         <form action="/colecao/criarColecao" method="post">
           <div class="entrada">
             <label for="nome_col">Nome da Coleção</label>
-            <input type="text" id="nome_col" name="nome_col" placeholder="Nome da Coleção" required>
+            <input type="text" id="nome_col" name="nome_col" placeholder="Nome da Coleção">
           </div>
           <div class="envio">
-            <input type="submit" value="CRIAR AGORA E ADICIONAR OBRAS">
+            <input type="submit" id="sucesso" value="CRIAR AGORA E ADICIONAR OBRAS">
           </div>
           <p class="centralizado">ou</p>
           <div class="botao">
-            <button><a href="/">CANCELAR E RETORNAR</a></button>
+            <a href="/" ><button style="width: 500px; margin: 25px 0">CANCELAR E RETORNAR</button></a>
           </div>
         </form>
       <% } %>

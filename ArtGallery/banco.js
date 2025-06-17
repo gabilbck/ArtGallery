@@ -428,9 +428,9 @@ async function excluirComentario(id_com) {
 }
 
 //Coleções
-async function buscarObrasPorColecao(id_col, id_usu) {
+async function buscarObrasPorColecao(id_col) {
   const conexao = await conectarBD();
-  const sql = `
+  const [obras] = await conexao.query(`
     SELECT 
       col.id_col AS id_col,
       col.nome_col AS nome_colecao,
@@ -438,17 +438,16 @@ async function buscarObrasPorColecao(id_col, id_usu) {
       usu.nome_comp AS nome_usuario,
       obr.id_obr AS id_obr,
       obr.titulo_obr AS titulo,
-      obr.foto_obr AS foto,
+      obr.foto_obr AS foto
     FROM colecao col
     INNER JOIN usuario usu ON col.id_usu = usu.id_usu
-    INNER JOIN obra_colecao oc ON col.id_col = oc.id_col
-    INNER JOIN obra obr ON oc.id_obr = obr.id_obr
+    LEFT JOIN obra_colecao oc ON col.id_col = oc.id_col
+    LEFT JOIN obra obr ON oc.id_obr = obr.id_obr
     WHERE col.id_col = ?
-  `;
-  const [linhas] = await conexao.query(sql, [id_col, id_usu]);
-  return linhas;
+  `, [id_col]);
+  return obras;
 }
-async function buscarColecaoes(id_usu) {
+async function buscarColecaoPorUsu(id_usu) {
   const conexao = await conectarBD();
   const sql = `
     SELECT 
@@ -468,12 +467,19 @@ async function buscarColecaoes(id_usu) {
   return linhas;
 }
 async function criarColecao(id_usu, nome_col) {
-  const conexao = await conectarBD();
-  const [resultado] = await conexao.query(
-    "INSERT INTO colecao (id_usu, nome_col) VALUES (?, ?)",
-    [id_usu, nome_col]
-  );
-  return resultado.insertId; // Isso retorna o id_col da nova coleção
+  try {
+    const conexao = await conectarBD();
+    console.log("Parâmetros recebidos:", id_usu, nome_col);
+
+    const [resultado] = await conexao.query(
+      "INSERT INTO colecao (id_usu, nome_col) VALUES (?, ?)",
+      [id_usu, nome_col]
+    );
+    return resultado.insertId;
+  } catch (erro) {
+    console.error("Erro ao criar coleção:", erro);
+    throw erro; // Propaga o erro para quem chamou
+  }
 }
 async function excluirColecao(id_col) {
   const conexao = await conectarBD();
@@ -551,7 +557,7 @@ module.exports = {
   buscarComentariosPorObra,
   comentarObra,
   excluirComentario,
-  buscarColecaoes,
+  buscarColecaoPorUsu,
   buscarObrasPorColecao,
   criarColecao,
   excluirColecao,

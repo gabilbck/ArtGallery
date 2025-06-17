@@ -140,6 +140,12 @@ a {
    background-color: #d00000;
    margin: 0;
 }
+#padrao {
+   background-color: #000;
+}
+#intermediario {
+   background-color: #444;
+}
 
 /* Formulário */
 .formulario {
