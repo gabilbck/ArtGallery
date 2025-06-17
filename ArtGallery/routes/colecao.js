@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const {
+  buscarDadosUsuarioPorId,
   buscarColecaoPorUsu,
   buscarObrasPorColecao,
   criarColecao,
@@ -21,14 +22,14 @@ router.get("/", async (req, res) => {
 
 // Página que exibe todas as coleções do usuário
 router.get("/verTodas/:id_usu", async (req, res) => {
-  if (!req.session.usuario) {
-    return res.redirect("/login");
-  }
+  if (!req.session.usuario) return res.redirect("/login");
   const id_usu = req.session.usuario.id_usu;
   const nome_usu = req.session.usuario.nome_usu;
+  const usu = buscarDadosUsuarioPorId(id_usu);
+  const colecoes = await buscarColecaoPorUsu(id_usu);
+  if (!colecoes) return res.redirect("/colecao/criar");
 
   try {
-    const colecoes = await buscarColecaoPorUsu(id_usu);
     if (!colecoes || colecoes.length === 0) {
       return res.redirect("/colecao/criar");
     }
@@ -39,9 +40,16 @@ router.get("/verTodas/:id_usu", async (req, res) => {
     delete req.session.sucesso;
 
     res.render("colecoes", {
-      colecoes,
+      colecoes: {
+        id_col: colecoes.id_col,
+        nome_col: colecoes.nome_col,
+        foto_col: colecoes.foto_col || [],
+      },
       id_usu,
-      nome_usu,
+      usu: {
+        nome_usu: usu.nome_usu,
+        nome_comp: usu.nome_comp
+      },
       title: `Coleções de ${nome_usu}`,
       erros,
       sucesso,

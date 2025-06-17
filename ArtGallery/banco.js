@@ -486,7 +486,7 @@ async function excluirColecao(id_col) {
   const sql = `
   delete from colecao where id_col = ?
   `;
-  await conexao.query(sql[id_col]);
+  await conexao.query(sql, [id_col]);
 }
 async function atualizarColecao(id_col){
   const conexao = await conectarBD();
