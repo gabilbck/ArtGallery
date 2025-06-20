@@ -39,13 +39,17 @@ router.get("/verTodas/:id_usu", async (req, res) => {
     delete req.session.sucesso;
 
     res.render("colecoes", {
-      colecoes,
-      id_usu,
-      nome_usu,
-      title: `Coleções de ${nome_usu}`,
-      erros,
-      sucesso,
-    });
+    colecoes: colecoes.map(c => ({
+      id: c.id_colecao,
+      nome: c.nome_colecao,
+      foto: c.foto_obra || "imagem.png" // ou ajuste o caminho conforme seu sistema de uploads
+    })),
+    id_usu,
+    nome_usu,
+    title: `Coleções de ${nome_usu}`,
+    erros,
+    sucesso,
+  });
   } catch (err) {
     console.error("Erro ao buscar coleções:", err);
     res.status(500).send("Erro ao buscar coleções");
@@ -120,6 +124,71 @@ router.get("/criarColecao", async (req, res) => {
   });
   delete req.session.erro;
   delete req.session.sucesso;
+});
+
+router.get("/adicionarObra/:id_col", async (req, res) => {
+  if (!req.session.usuario) {
+    return res.redirect("/login");
+  }
+
+  const id_col = req.params.id_col;
+  const id_usu = req.session.usuario.id_usu;
+  const nome_usu = req.session.usuario.nome_usu;
+
+  try {
+    const resultado = await buscarColecaoPorUsu(id_usu);
+    const colecoes = resultado.map(c => ({
+      id: c.id_colecao,
+      nome: c.nome_colecao,
+      foto: c.foto_obra
+    }));
+
+
+    console.log("COLECOES RETORNADAS:", colecoes);  // <-- Adicione isso
+
+    res.render("selecionarColecao", {
+      id_col,
+      nome_usu,
+      id_usu,
+      colecoes,
+      usuario: req.session.usuario, // <-- Isso também faltava antes!
+      title: "Adicionar Obra à Coleção",
+      erros: req.session.erro || null,
+      sucesso: req.session.sucesso || null,
+    });
+
+    delete req.session.erro;
+    delete req.session.sucesso;
+  } catch (err) {
+    console.error("Erro ao carregar coleções:", err);
+    res.status(500).send("Erro ao carregar coleções.");
+  }
+});
+
+
+router.post("/adicionarObra", async (req, res) => {
+  if (!req.session.usuario) {
+    return res.redirect("/login");
+  }
+  const { id_col, id_obr } = req.body;
+  const id_usu = req.session.usuario.id_usu;
+  const nome_usu = req.session.usuario.nome_usu;
+
+  // Verifica se os IDs são válidos
+  if (!id_col || isNaN(id_col) || !id_obr || isNaN(id_obr)) {
+    req.session.erro = "IDs inválidos.";
+    return res.redirect(`/colecao/adicionarObra/${id_col}`);
+  }
+  try {
+    // Adiciona a obra à coleção
+    await adicionarObraColecao(id_col, id_obr);
+    req.session.sucesso = "Obra adicionada à coleção com sucesso!";
+    res.redirect(`/colecao/ver/${id_col}`);
+  } catch (err) {
+    console.error("Erro ao adicionar obra à coleção:", err);
+    req.session.erro = "Erro ao adicionar obra à coleção.";
+    res.redirect(`/colecao/adicionarObra/${id_col}`);
+  }
 });
 
 // Criação da coleção (POST)
