@@ -168,7 +168,7 @@
         <% obras.forEach(function(obra) { %>
         <div class="obra-item" style="margin-bottom: 20px">
           <img
-            src="/uploads/<%= obra.foto ? obra.foto : 'imagem.png' %>"
+            src="<%= obra.foto ? obra.foto : 'imagem.png' %>"
             alt="<%= obra.titulo %>"
             style="max-width: 200px"
           />
@@ -190,11 +190,6 @@
       </div>
       <% } else { %>
       <div class="obra-vazia">
-        <img
-          src="/uploads/imagem.png"
-          alt="Nenhuma obra"
-          style="max-width: 200px"
-        />
         <p>Esta coleção ainda não possui obras.</p>
       </div>
       <% } %>
