@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Recuperar Conta</title>
+  <link rel="stylesheet" href="/stylesheets/style.css">
+</head>
+<body>
+  <div class="formulario">
+    <h1>Recuperar Conta</h1>
+    <p>Digite seu e-mail para enviarmos um código de verificação:</p>
+
+    <% if (erro) { %>
+    <div class="retorno-container" id="erro"><%= erro %></div>
+    <% } %>
+
+    <% if (mensagem) { %>
+    <div class="retorno-container" id="sucesso"><%= mensagem %></div>
+    <% } %>
+
+    <form action="/recuperar" method="post">
+      <div class="entrada">
+        <label for="email">E-mail</label>
+        <input type="email" name="email" required>
+      </div>
+      <div class="envio">
+        <input type="submit" value="Enviar código">
+      </div>
+    </form>
+  </div>
+</body>
+</html>

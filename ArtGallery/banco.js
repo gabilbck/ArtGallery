@@ -441,6 +441,17 @@ async function buscarSuporte(email, assunto, descricao) {
   return linhas.length > 0 ? linhas[0] : null;
 }
 
+
+async function verificarEmailExiste(email) {
+  const conexao = await conectarBD();
+  const [resultado] = await conexao.query(
+    "SELECT email_usu FROM usuario WHERE email_usu = ?",
+    [email]
+  );
+  return resultado.length > 0;
+}
+
+
 module.exports = {
   conectarBD,
   buscarUsuario,
@@ -473,4 +484,5 @@ module.exports = {
   excluirComentario,
   buscarSuporte,
   inserirSuporte,
+  verificarEmailExiste,
 };
