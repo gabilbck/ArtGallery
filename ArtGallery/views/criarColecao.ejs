@@ -118,6 +118,12 @@
 
     <div class="formulario" id="formulario">
       <div class="topo-formulario">
+        <% if (msg_criacao) { %>
+          <div class="retorno-container" id="erro">
+            <p><%= msg_criacao %></p>
+          </div>
+        <% } %>
+        <br>
         <h1>CRIAR COLEÇÃO</h1>
         <p>Preencha as informações abaixo para criar uma nova coleção:</p>
       </div>
@@ -130,11 +136,13 @@
             <%= sucesso %>
           </div>
         </div>
-        <script>
-          setTimeout(() => {
-            window.location.href = "/colecao/ver/<%= id_col %>";
-          }, 3000);
-        </script>
+        <% if (sucesso && typeof id_col !== "undefined") { %>
+          <script>
+            setTimeout(() => {
+              window.location.href = "/colecao/ver/<%= id_col %>";
+            }, 3000);
+          </script>
+        <% } %>
       <% } else { %>
         <% if (erros) { %>
           <div class="retorno">
@@ -154,7 +162,9 @@
           </div>
           <p class="centralizado">ou</p>
           <div class="botao">
-            <a href="/" ><button style="width: 500px; margin: 25px 0">CANCELAR E RETORNAR</button></a>
+            <a href="/" style="width: 500px; margin: 25px 0">
+              CANCELAR E RETORNAR
+            </a>
           </div>
         </form>
       <% } %>

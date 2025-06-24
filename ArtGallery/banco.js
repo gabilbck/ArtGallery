@@ -453,9 +453,9 @@ async function buscarColecaoPorUsu(id_usu) {
     SELECT 
       c.nome_col AS nome_colecao,
       c.id_col AS id_colecao,
-      u.id_usu,
+      u.id_usu as id_usu,
       u.nome_comp AS nome_completo,
-      COALESCE(o.foto_obr, 'imagem.png') AS foto_obra
+      COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto_obra
     FROM colecao c
     JOIN usuario u ON c.id_usu = u.id_usu
     LEFT JOIN obra_colecao oc ON c.id_col = oc.id_col
@@ -483,25 +483,26 @@ async function criarColecao(id_usu, nome_col) {
 }
 async function excluirColecao(id_col) {
   const conexao = await conectarBD();
-  const sql = `
-  delete from colecao where id_col = ?
-  `;
-  await conexao.query(sql, [id_col]);
+  // Primeiro, excluir todas as relações dessa coleção com obras
+  await conexao.query('DELETE FROM obra_colecao WHERE id_col = ?', [id_col]);
+  // Agora sim, pode excluir a coleção
+  await conexao.query('DELETE FROM colecao WHERE id_col = ?', [id_col]);
 }
-async function atualizarColecao(id_col){
+async function atualizarColecao(id_col, novo_nome) {
   const conexao = await conectarBD();
-  const sql =`
-  update colecao set nome_col where id_col = ?
+  const sql = `
+    UPDATE colecao SET nome_col = ? WHERE id_col = ?
   `;
-  await conexao.query(sql[id_col]);
+  await conexao.query(sql, [novo_nome, id_col]);
 }
+
 async function adicionarObraColecao(id_col, id_obra){
   const conexao = await conectarBD();
   const sql =`
     INSERT INTO obra_colecao (id_obr, id_col)
     VALUES (?, ?)
   `;
-  await conexao.query(sql[id_col, id_obra]);
+  await conexao.query(sql, [id_obra, id_col]);
 }
 async function excluirObraColecao(id_col, id_obra) {
   const conexao = await conectarBD();
@@ -509,8 +510,9 @@ async function excluirObraColecao(id_col, id_obra) {
     DELETE FROM obra_colecao
     WHERE id_obr = ? AND id_col = ?
   `;
-  await conexao.query(sql[id_col, id_obra]);
+  await conexao.query(sql, [id_obra, id_col]); // <- CORRETO!
 }
+
 
 // Suporte
 async function inserirSuporte(email_sup, assunto_sup, descricao_sup) {

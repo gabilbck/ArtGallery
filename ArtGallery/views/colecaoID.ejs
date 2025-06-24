@@ -117,7 +117,7 @@
     </header>
 
     <section>
-      <h2>Detalhes da Coleção: <%= colecao.nome_colecao %></h2>
+      <h2>Coleção: <%= colecao.nome_colecao %></h2>
 
       <% if (sucesso) { %>
       <div class="retorno-container" id="sucesso">
@@ -133,60 +133,69 @@
       <form
         action="/colecao/atualizarColecao"
         method="POST"
-        style="margin-bottom: 20px"
+        class="botao"
+        style="margin: 20px 0"
       >
         <input type="hidden" name="id_col" value="<%= colecao.id_col %>" />
-        <input
-          type="text"
-          name="novo_nome"
-          placeholder="Novo nome da coleção"
-          required
-        />
-        <button type="submit">Atualizar Nome</button>
+        <div class="entrada">
+          <label for="novo_nome">Novo Nome da Coleção:</label>
+          <input
+            type="text"
+            id="novo_nome"
+            name="novo_nome"
+            placeholder="Digite o novo nome da coleção"
+            required
+          />
+        </div>
+        <button type="submit">Editar nome</button>
       </form>
 
       <!-- Formulário: Excluir Coleção -->
       <form
         action="/colecao/excluirColecao"
         method="POST"
-        style="margin-bottom: 20px"
+        class="botao"
+        style="margin-bottom: 30px"
       >
         <input type="hidden" name="id_col" value="<%= colecao.id_col %>" />
         <button
           type="submit"
           onclick="return confirm('Tem certeza que deseja excluir esta coleção?')"
         >
-          Excluir Coleção
+          Excluir coleção
         </button>
       </form>
 
       <!-- Lista de Obras -->
       <h3>Obras na Coleção:</h3>
-
       <% if (obras.length > 0 && obras[0].id_obr !== null) { %>
-      <div class="galeria">
-        <% obras.forEach(function(obra) { %>
-        <div class="obra-item" style="margin-bottom: 20px">
-          <img
-            src="<%= obra.foto ? obra.foto : 'imagem.png' %>"
-            alt="<%= obra.titulo %>"
-            style="max-width: 200px"
-          />
-          <p><%= obra.titulo %></p>
+      <div class="conteudo">
+        <div class="grid">
+          <% obras.forEach(function(obra) { %>
+          <div class="col-card">
+            <img
+              src="<%= obra.foto ? obra.foto : '/uploads/imagem.png' %>"
+              alt="<%= obra.titulo %>"
+            />
+            <span><%= obra.titulo %></span>
 
-          <!-- Formulário: Excluir Obra da Coleção -->
-          <form action="/colecao/excluirObra" method="POST">
-            <input type="hidden" name="id_col" value="<%= colecao.id_col %>" />
-            <input type="hidden" name="id_obr" value="<%= obra.id_obr %>" />
-            <button
-              type="submit"
-              onclick="return confirm('Deseja realmente remover esta obra da coleção?')"
+            <!-- Botão de exclusão -->
+            <form
+              action="/colecao/excluirObra"
+              method="POST"
+              onsubmit="return confirm('Deseja realmente remover esta obra da coleção?')"
             >
-              Remover da Coleção
-            </button>
-          </form>
+              <input
+                type="hidden"
+                name="id_col"
+                value="<%= colecao.id_col %>"
+              />
+              <input type="hidden" name="id_obr" value="<%= obra.id_obr %>" />
+              <input type="submit" value="X" class="col-delete" />
+            </form>
+          </div>
+          <% }); %>
         </div>
-        <% }); %>
       </div>
       <% } else { %>
       <div class="obra-vazia">
@@ -194,10 +203,13 @@
       </div>
       <% } %>
 
-      <br />
-      <a href="/colecao/verTodas/<%= usuario.id_usu %>"
-        >← Voltar para Minhas Coleções</a
-      >
+      <div class="conteudo">
+        <div class="botao">
+          <a href="/colecao/verTodas/<%= usuario.id_usu %>"
+            >← Voltar para Minhas Coleções
+          </a>
+        </div>
+      </div>
     </section>
 
     <footer>

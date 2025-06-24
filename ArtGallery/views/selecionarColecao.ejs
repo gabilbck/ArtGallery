@@ -137,11 +137,15 @@
     <% if (colecoes && colecoes.length > 0) { %>
         <div class="grid">
         <% colecoes.forEach(function(c) { %>
-            <div class="card">
-            <a href="/colecao/adicionarObra/<%= c.id %>">
-                <img src="/uploads/colecao/<%= c.foto %>" alt="<%= c.nome %>">
-                <h4><%= c.nome %></h4>
-            </a>
+            <div class="col-card">
+              <% if (id_obr) { %>
+                <a href="/colecao/adicionarObraDireto?id_col=<%= c.id %>&id_obr=<%= id_obr %>">
+                  <img src="<%= c.foto %>" alt="<%= c.nome %>"/>
+                  <span><%= c.nome %></span>
+                </a>
+              <% } else { %>
+                <span style="color: red;">Erro: ID da obra não foi carregado.</span>
+              <% } %>
             </div>
         <% }); %>
         </div>

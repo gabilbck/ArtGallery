@@ -28,10 +28,10 @@ router.get("/verTodas/:id_usu", async (req, res) => {
   const usu = buscarDadosUsuarioPorId(id_usu);
   const colecoes = await buscarColecaoPorUsu(id_usu);
   if (!colecoes) return res.redirect("/colecao/criar");
-
+  console.log("COLEÇÕES:", colecoes); // <-- Adicione isso para depuração
   try {
     if (!colecoes || colecoes.length === 0) {
-      return res.redirect("/colecao/criar");
+      return res.redirect("/colecao/criarColecao");
     }
 
     const erros = req.session.erro || null;
@@ -40,17 +40,18 @@ router.get("/verTodas/:id_usu", async (req, res) => {
     delete req.session.sucesso;
 
     res.render("colecoes", {
-    colecoes: colecoes.map(c => ({
-      id: c.id_colecao,
-      nome: c.nome_colecao,
-      foto: c.foto_obra || "imagem.png" // ou ajuste o caminho conforme seu sistema de uploads
-    })),
-    id_usu,
-    nome_usu,
-    title: `Coleções de ${nome_usu}`,
-    erros,
-    sucesso,
-  });
+      colecoes: colecoes.map((c) => ({
+        id: c.id_colecao,
+        id_usu: c.id_usu,
+        nome: c.nome_colecao,
+        foto: c.foto_obra || "/uploads/imagem.png",
+      })),
+      id_usu,
+      nome_usu,
+      title: `Coleções de ${nome_usu}`,
+      erros,
+      sucesso,
+    });
   } catch (err) {
     console.error("Erro ao buscar coleções:", err);
     res.status(500).send("Erro ao buscar coleções");
@@ -78,8 +79,10 @@ router.get("/ver/:id", async (req, res) => {
       };
     } else {
       // Caso a coleção esteja vazia, buscar infos básicas só da coleção
-      const todasColecoes = await buscarColecaoPorUsu(req.session.usuario.id_usu);
-      colecao = todasColecoes.find(c => c.id_col == id_col);
+      const todasColecoes = await buscarColecaoPorUsu(
+        req.session.usuario.id_usu
+      );
+      colecao = todasColecoes.find((c) => c.id_col == id_col);
 
       if (!colecao) {
         return res.status(404).send("Coleção não encontrada.");
@@ -104,55 +107,73 @@ router.get("/ver/:id", async (req, res) => {
 
     delete req.session.erro;
     delete req.session.sucesso;
-
   } catch (err) {
     console.error("Erro ao carregar a coleção:", err);
     res.status(500).send("Erro ao carregar a coleção.");
   }
 });
 
-
-// Formulário GET para criar coleção
 router.get("/criarColecao", async (req, res) => {
-  if (!req.session.usuario) {
-    return res.redirect("/login");
-  }
+  if (!req.session.usuario) return res.redirect("/login");
+
+  const sucesso = req.session.sucesso || null;
+  const erro = req.session.erro || null;
+  const id_col = req.session.id_col || null;
+  const msg_criacao = req.session.msg_criacao || null;
+
+  // ⚠️ Limpar sessões ANTES de renderizar
+  delete req.session.sucesso;
+  delete req.session.erro;
+  delete req.session.id_col;
+  delete req.session.msg_criacao;
+
   res.render("criarColecao", {
     nome_usu: req.session.usuario.nome_usu,
     title: "Criar nova coleção",
-    erros: req.session.erro || null,
-    sucesso: req.session.sucesso || null,
+    sucesso,
+    msg_criacao,
+    erros: erro,
+    id_col
   });
-  delete req.session.erro;
-  delete req.session.sucesso;
 });
 
+
+
+
+
 router.get("/adicionarObra/:id_col", async (req, res) => {
-  if (!req.session.usuario) {
-    return res.redirect("/login");
-  }
+  if (!req.session.usuario) return res.redirect("/login");
 
   const id_col = req.params.id_col;
+  const id_obr = req.query.obra; // ⚠️ ESSENCIAL vir da query string
   const id_usu = req.session.usuario.id_usu;
   const nome_usu = req.session.usuario.nome_usu;
 
+  if (!id_obr || isNaN(id_obr)) {
+    req.session.erro = "ID da obra ausente ou inválido.";
+    return res.redirect("/colecao/verTodas/" + id_usu);
+  }
+
+  const verificarColecoesExistentes = await buscarColecaoPorUsu(id_usu);
+  if (!verificarColecoesExistentes || verificarColecoesExistentes.length === 0) {
+    req.session.erro = "Você não possui coleções para adicionar obras.";
+    return res.redirect("/colecao/criarColecao");
+  }
+
   try {
-    const resultado = await buscarColecaoPorUsu(id_usu);
-    const colecoes = resultado.map(c => ({
+    const colecoes = verificarColecoesExistentes.map((c) => ({
       id: c.id_colecao,
       nome: c.nome_colecao,
-      foto: c.foto_obra
+      foto: c.foto_obra || '/uploads/imagem.png'
     }));
-
-
-    console.log("COLECOES RETORNADAS:", colecoes);  // <-- Adicione isso
 
     res.render("selecionarColecao", {
       id_col,
+      id_obr,
       nome_usu,
       id_usu,
       colecoes,
-      usuario: req.session.usuario, // <-- Isso também faltava antes!
+      usuario: req.session.usuario,
       title: "Adicionar Obra à Coleção",
       erros: req.session.erro || null,
       sucesso: req.session.sucesso || null,
@@ -174,8 +195,13 @@ router.post("/adicionarObra", async (req, res) => {
   const { id_col, id_obr } = req.body;
   const id_usu = req.session.usuario.id_usu;
   const nome_usu = req.session.usuario.nome_usu;
+  const verificarColecoesExistentes = await buscarColecaoPorUsu(id_usu);
 
   // Verifica se os IDs são válidos
+  if (!verificarColecoesExistentes || verificarColecoesExistentes.length === 0) {
+    req.session.erro = "Você não possui coleções para adicionar obras.";
+    return res.redirect("/colecao/criarColecao");
+  }
   if (!id_col || isNaN(id_col) || !id_obr || isNaN(id_obr)) {
     req.session.erro = "IDs inválidos.";
     return res.redirect(`/colecao/adicionarObra/${id_col}`);
@@ -192,36 +218,31 @@ router.post("/adicionarObra", async (req, res) => {
   }
 });
 
-// Criação da coleção (POST)
 router.post("/criarColecao", async (req, res) => {
-  if (!req.session.usuario) {
-    return res.redirect("/login");
-  }
+  if (!req.session.usuario) return res.redirect("/login");
 
   const id_usu = req.session.usuario.id_usu;
   const nome_col = req.body.nome_col;
 
   if (!nome_col || nome_col.trim().length === 0) {
     req.session.erro = "Nome da coleção não pode ser vazio.";
-    return res.redirect("/colecao/criar");
+    return res.redirect("/colecao/criarColecao");
   }
 
   try {
     const id_col = await criarColecao(id_usu, nome_col.trim());
-
-    res.render("criarColecao", {
-      usuario: req.session.usuario,
-      id_col,
-      title: "Criar nova coleção",
-      sucesso: "Coleção criada com sucesso!",
-      erros: null
-    });
+    req.session.sucesso = "Coleção criada com sucesso!";
+    req.session.id_col = id_col;
+    return res.redirect("/colecao/criarColecao");
   } catch (err) {
     console.error("Erro ao criar coleção:", err);
     req.session.erro = "Erro ao criar coleção.";
-    res.redirect("/colecao/criarColecao");
+    return res.redirect("/colecao/criarColecao");
   }
 });
+
+
+
 
 // Atualizar nome da coleção
 router.post("/atualizarColecao", async (req, res) => {
@@ -249,23 +270,41 @@ router.post("/atualizarColecao", async (req, res) => {
 
 // Excluir coleção
 router.post("/excluirColecao", async (req, res) => {
-  if (!req.session.usuario) {
-    return res.redirect("/login");
-  }
+  if (!req.session.usuario) return res.redirect("/login");
 
   const { id_col } = req.body;
-  const id_usu = req.session.usuario.id_usu;
+  const id_usu_logado = req.session.usuario.id_usu;
 
   try {
+    // Validação de dono da coleção
+    const colecoesDoUsuario = await buscarColecaoPorUsu(id_usu_logado);
+    const existe = colecoesDoUsuario.some((c) => c.id_colecao == id_col);
+
+    if (!existe) {
+      req.session.erro = "Você não tem permissão para excluir essa coleção.";
+      return res.redirect(`/colecao/verTodas/${id_usu_logado}`);
+    }
+
+    // Excluir a coleção
     await excluirColecao(id_col);
+
+    // Verificar se o usuário ficou sem coleções
+    const colecoesRestantes = await buscarColecaoPorUsu(id_usu_logado);
+    if (!colecoesRestantes || colecoesRestantes.length === 0) {
+      // ⚠️ Não mostrar sucesso aqui, só aviso separado
+      req.session.msg_criacao = "Você ainda não tem coleções. Crie uma nova.";
+      return res.redirect("/colecao/criarColecao");
+    }
+
     req.session.sucesso = "Coleção excluída com sucesso!";
-    res.redirect(`/colecao/verTodas/${id_usu}`);
+    res.redirect(`/colecao/verTodas/${id_usu_logado}`);
   } catch (err) {
     console.error("Erro ao excluir coleção:", err);
     req.session.erro = "Erro ao excluir coleção.";
-    res.redirect(`/colecao/ver/${id_col}`);
+    res.redirect(`/colecao/verTodas/${id_usu_logado}`);
   }
 });
+
 
 // Excluir uma obra da coleção
 router.post("/excluirObra", async (req, res) => {
@@ -282,6 +321,28 @@ router.post("/excluirObra", async (req, res) => {
   } catch (err) {
     console.error("Erro ao excluir obra da coleção:", err);
     req.session.erro = "Erro ao excluir obra da coleção.";
+    res.redirect(`/colecao/ver/${id_col}`);
+  }
+});
+
+router.get("/adicionarObraDireto", async (req, res) => {
+  if (!req.session.usuario) return res.redirect("/login");
+
+  const { id_col, id_obr } = req.query;
+  const id_usu = req.session.usuario.id_usu;
+
+  if (!id_col || !id_obr || isNaN(id_col) || isNaN(id_obr)) {
+  req.session.erro = "ID de coleção ou obra inválido.";
+  return res.redirect(`/colecao/verTodas/${id_usu}`);
+}
+
+  try {
+    await adicionarObraColecao(id_col, id_obr);
+    req.session.sucesso = "Obra adicionada com sucesso!";
+    res.redirect(`/colecao/ver/${id_col}`);
+  } catch (err) {
+    console.error("Erro ao adicionar obra à coleção:", err);
+    req.session.erro = "Erro ao adicionar obra à coleção.";
     res.redirect(`/colecao/ver/${id_col}`);
   }
 });

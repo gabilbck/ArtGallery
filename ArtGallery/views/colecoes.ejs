@@ -136,14 +136,17 @@
         <div class="grid">
             <% if (colecoes.length > 0) { %>
             <% colecoes.forEach(function(c) { %>
-            <div class="card">
+            <div class="col-card">
               <a href="/colecao/ver/<%= c.id %>">
-                <img
-                  src="/uploads/colecao/<%= c.foto %>"
-                  alt="<%= c.nome %>"
-                />
-                <h4><%= c.nome %></h4>
+                <img src="<%= c.foto %>" alt="<%= c.nome %>"/>
+                <span><%= c.nome %></span>
               </a>
+              <% if (c.id_usu === id_usu) { %>
+                <form action="/colecao/excluirColecao" method="post" onsubmit="return confirm('Tem certeza que deseja excluir esta coleção?');">
+                  <input type="hidden" name="id_col" value="<%= c.id %>" />
+                  <input type="submit" value="X" class="col-delete" />
+                </form>
+              <% } %>
             </div>
             <% }); %>
         </div>
@@ -151,6 +154,12 @@
       <% } else { %>
         <p>Nenhuma coleção encontrada.</p>
       <% } %>
+
+      <div class="conteudo">
+        <div class="botao" >
+            <a href="/" ><button id="sucesso" style="width: 500px; margin: 25px 0">CRIAR NOVA COLEÇÃO</button></a>
+          </div>
+      </div>
 
       <br />
       <a href="/"
