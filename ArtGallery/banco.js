@@ -97,7 +97,7 @@ async function buscarArtistasPorCategoriaDeObra(id_cat) {
 // Categorias
 async function buscarTodasCategorias() {
   const conexao = await conectarBD();
-  const sql = `SELECT id_cat AS id, nome_cat AS nome, foto_cat AS foto FROM categoria`;
+  const sql = `SELECT id_cat AS id, nome_cat AS nome, descricao_cat AS descricao, foto_cat AS foto FROM categoria`;
   const [linhas] = await conexao.query(sql);
   return linhas;
 }

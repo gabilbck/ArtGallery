@@ -1,9 +1,6 @@
 // routes/index.js
 const express = require("express");
 const router = express.Router();
-const {
-
-} = require("../../banco");
 
 router.get("/", (req, res) => {
     if (!req.session.usuario) return res.redirect("/login")
