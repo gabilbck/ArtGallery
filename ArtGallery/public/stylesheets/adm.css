@@ -13,10 +13,15 @@ body {
     text-align: center;
 }
 
+.topo-logo h1, .topo-logo p{
+    color: #fff;
+}
+
 .resumo{
     display: grid;
     grid-template-columns: repeat(3, 1fr); /* 3 colunas de largura igual */
     gap: 20px; /* espaço entre os itens (opcional) */
+    max-width: 960px;
 }
 
 .resumo-card{
@@ -26,7 +31,6 @@ body {
     border-radius: 0.5rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     color: #000;
-    max-width: 300px;
 }
 
 .r-c-tit{
