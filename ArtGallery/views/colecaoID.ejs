@@ -1,19 +1,18 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%= title %></title>
-    <link rel="icon" href="/img/icon-ag.svg" type="image/x-icon" />
+    <link rel="icon" href="/uploads/icon-ag.svg" type="image/x-icon" />
     <link rel="stylesheet" href="/stylesheets/style.css" />
-    <link rel="stylesheet" href="/stylesheets/stylePerfil.css" />
-    <script src="/javascripts/perfil.js"></script>
   </head>
   <body>
     <div class="topo-logo">
       <h1>ArtGallery</h1>
     </div>
 
+    <!-- Navegação -->
     <header>
       <div class="pesquisa">
         <svg
@@ -117,85 +116,101 @@
       </div>
     </header>
 
-   <div class="perfil-container">
-      <div class="perfil-topo">
-        <div class="perfil-avatar"></div>
-        <div class="perfil-info">
-          <div class="perfil-nome-row">
-            <div class="perfil-nome">
-              <h1 class="perfil-nome-comp">
-                <%= usuario.nome_comp %>
-              </h1>
-            </div>
-            <div class="perfil-usu">
-              <p class="perfil-nome-usu"><%= usuario.nome_usu %></p>
-            </div>
-            <div class="perfil-tipo_usu">
-              <span class="perfil-tipo"><%= usuario.tipo_usu %></span>
-            </div>
-            <div class="perfil-bio_usu">
-              <p class="perfil-bio"><%= usuario.bio_usu %></p>
-            </div>
-            <div class="perfil-editar">
-              <button class="perfil-botao-editar">Editar Perfil</button>
-            </div>
-            <div class="perfil-numeros">
-              <span><%= usuario.seguidores %> Seguindo</span>
-              <span><%= usuario.favoritos %> Favoritos</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="perfil-switch-container">
-        <div class="perfil-switch-slider"></div>
-        <button
-          class="ativo"
-          onclick="togglePerfilTab('perfil-colecoes', this)"
-        >
-          Coleções
-        </button>
-        <button onclick="togglePerfilTab('perfil-favoritos', this)">
-          Favoritos
-        </button>
-      </div>
-      <div class="perfil-botoes-centro">
-        <div id="perfil-colecoes" class="perfil-aba-conteudo">
-          <section class="perfil-mid">
-            <h2>Coleções</h2>
-            <div class="colecoes-grid">
-              <% if (colecoes.length > 0) { %> <% for (var i = 0; i <
-              colecoes.length; i++) { var col = colecoes[i]; %>
-              <div class="colecao-card">
-                <img src="<%= col.foto %>" alt="<%= col.nome %>" />
-                <h3><%= col.nome_col %></h3>
-                <p><%= col.nome %></p>
-              </div>
-              <% } %> <% } else { %>
-              <p>Você ainda não criou nenhuma coleção.</p>
-              <% } %>
-            </div>
-          </section>
-        </div>
+    <section>
+      <h2>Coleção: <%= colecao.nome_colecao %></h2>
 
-        <div id="perfil-favoritos" class="perfil-aba-conteudo hidden">
-          <section class="perfil-favoritos">
-            <h2>Favoritos</h2>
-            <div class="favoritos-grid">
-              <% if (favoritos.length > 0) { %> <% for (var i = 0; i <
-              favoritos.length; i++) { var fav = favoritos[i]; %>
-              <div class="obra-card">
-                <img src="<%= fav.foto %>" alt="<%= fav.nome %>" />
-                <h3><%= fav.nome %></h3>
-                <p><%= fav.art %></p>
-              </div>
-              <% } %> <% } else { %>
-              <p>Você ainda não favoritou nenhuma obra.</p>
-              <% } %>
-            </div>
-          </section>
+      <% if (sucesso) { %>
+      <div class="retorno-container" id="sucesso">
+        <p><%= sucesso %></p>
+      </div>
+      <% } %> <% if (erros) { %>
+      <div class="retorno-container" id="erro">
+        <p><%= erros %></p>
+      </div>
+      <% } %>
+
+      <!-- Formulário: Atualizar Nome da Coleção -->
+      <form
+        action="/colecao/atualizarColecao"
+        method="POST"
+        class="botao"
+        style="margin: 20px 0"
+      >
+        <input type="hidden" name="id_col" value="<%= colecao.id_col %>" />
+        <div class="entrada">
+          <label for="novo_nome">Novo Nome da Coleção:</label>
+          <input
+            type="text"
+            id="novo_nome"
+            name="novo_nome"
+            placeholder="Digite o novo nome da coleção"
+            required
+          />
+        </div>
+        <button type="submit">Editar nome</button>
+      </form>
+
+      <!-- Formulário: Excluir Coleção -->
+      <form
+        action="/colecao/excluirColecao"
+        method="POST"
+        class="botao"
+        style="margin-bottom: 30px"
+      >
+        <input type="hidden" name="id_col" value="<%= colecao.id_col %>" />
+        <button
+          type="submit"
+          onclick="return confirm('Tem certeza que deseja excluir esta coleção?')"
+        >
+          Excluir coleção
+        </button>
+      </form>
+
+      <!-- Lista de Obras -->
+      <h3>Obras na Coleção:</h3>
+      <% if (obras.length > 0 && obras[0].id_obr !== null) { %>
+      <div class="conteudo">
+        <div class="grid">
+          <% obras.forEach(function(obra) { %>
+          <div class="col-card">
+            <img
+              src="<%= obra.foto ? obra.foto : '/uploads/imagem.png' %>"
+              alt="<%= obra.titulo %>"
+            />
+            <span><%= obra.titulo %></span>
+
+            <!-- Botão de exclusão -->
+            <form
+              action="/colecao/excluirObra"
+              method="POST"
+              onsubmit="return confirm('Deseja realmente remover esta obra da coleção?')"
+            >
+              <input
+                type="hidden"
+                name="id_col"
+                value="<%= colecao.id_col %>"
+              />
+              <input type="hidden" name="id_obr" value="<%= obra.id_obr %>" />
+              <input type="submit" value="X" class="col-delete" />
+            </form>
+          </div>
+          <% }); %>
         </div>
       </div>
-    </div>
+      <% } else { %>
+      <div class="obra-vazia">
+        <p>Esta coleção ainda não possui obras.</p>
+      </div>
+      <% } %>
+
+      <div class="conteudo">
+        <div class="botao">
+          <a href="/colecao/verTodas/<%= usuario.id_usu %>"
+            >← Voltar para Minhas Coleções
+          </a>
+        </div>
+      </div>
+    </section>
 
     <footer>
       <p>

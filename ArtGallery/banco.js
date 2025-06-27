@@ -128,6 +128,7 @@ async function buscarUmaObra(id_obr) {
                 o.id_obr AS id,
                 o.titulo_obr AS titulo,
                 a.id_art AS id_art,
+                a.id_usu as id_usu_art,
                 a.nome_usu AS artU,
                 a.nome_comp AS artC,
                 COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto,
@@ -420,11 +421,98 @@ async function comentarObra(id_usu, id_obr, comentario) {
   const sql = `INSERT INTO comentario (id_usu, id_obr, texto_com) VALUES (?, ?, ?)`;
   await conexao.query(sql, [id_usu, id_obr, comentario]);
 }
-async function excluirComentario(id_com){
+async function excluirComentario(id_com) {
   const conexao = await conectarBD();
   const sql = `delete from comentario where id_com = ?`;
   await conexao.query(sql, [id_com]);
 }
+
+//Coleções
+async function buscarObrasPorColecao(id_col) {
+  const conexao = await conectarBD();
+  const [obras] = await conexao.query(`
+    SELECT 
+      col.id_col AS id_col,
+      col.nome_col AS nome_colecao,
+      usu.id_usu AS id_usu,
+      usu.nome_comp AS nome_usuario,
+      obr.id_obr AS id_obr,
+      obr.titulo_obr AS titulo,
+      obr.foto_obr AS foto
+    FROM colecao col
+    INNER JOIN usuario usu ON col.id_usu = usu.id_usu
+    LEFT JOIN obra_colecao oc ON col.id_col = oc.id_col
+    LEFT JOIN obra obr ON oc.id_obr = obr.id_obr
+    WHERE col.id_col = ?
+  `, [id_col]);
+  return obras;
+}
+async function buscarColecaoPorUsu(id_usu) {
+  const conexao = await conectarBD();
+  const sql = `
+    SELECT 
+      c.nome_col AS nome_colecao,
+      c.id_col AS id_colecao,
+      u.id_usu as id_usu,
+      u.nome_comp AS nome_completo,
+      COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto_obra
+    FROM colecao c
+    JOIN usuario u ON c.id_usu = u.id_usu
+    LEFT JOIN obra_colecao oc ON c.id_col = oc.id_col
+    LEFT JOIN obra o ON oc.id_obr = o.id_obr
+    WHERE c.id_usu = ?
+    GROUP BY c.id_col
+  `;
+  const [linhas] = await conexao.query(sql, [id_usu]);
+  return linhas;
+}
+async function criarColecao(id_usu, nome_col) {
+  try {
+    const conexao = await conectarBD();
+    console.log("Parâmetros recebidos:", id_usu, nome_col);
+
+    const [resultado] = await conexao.query(
+      "INSERT INTO colecao (id_usu, nome_col) VALUES (?, ?)",
+      [id_usu, nome_col]
+    );
+    return resultado.insertId;
+  } catch (erro) {
+    console.error("Erro ao criar coleção:", erro);
+    throw erro; // Propaga o erro para quem chamou
+  }
+}
+async function excluirColecao(id_col) {
+  const conexao = await conectarBD();
+  // Primeiro, excluir todas as relações dessa coleção com obras
+  await conexao.query('DELETE FROM obra_colecao WHERE id_col = ?', [id_col]);
+  // Agora sim, pode excluir a coleção
+  await conexao.query('DELETE FROM colecao WHERE id_col = ?', [id_col]);
+}
+async function atualizarColecao(id_col, novo_nome) {
+  const conexao = await conectarBD();
+  const sql = `
+    UPDATE colecao SET nome_col = ? WHERE id_col = ?
+  `;
+  await conexao.query(sql, [novo_nome, id_col]);
+}
+
+async function adicionarObraColecao(id_col, id_obra){
+  const conexao = await conectarBD();
+  const sql =`
+    INSERT INTO obra_colecao (id_obr, id_col)
+    VALUES (?, ?)
+  `;
+  await conexao.query(sql, [id_obra, id_col]);
+}
+async function excluirObraColecao(id_col, id_obra) {
+  const conexao = await conectarBD();
+  const sql = `
+    DELETE FROM obra_colecao
+    WHERE id_obr = ? AND id_col = ?
+  `;
+  await conexao.query(sql, [id_obra, id_col]); // <- CORRETO!
+}
+
 
 // Suporte
 async function inserirSuporte(email_sup, assunto_sup, descricao_sup) {
@@ -435,14 +523,14 @@ async function inserirSuporte(email_sup, assunto_sup, descricao_sup) {
 async function buscarSuporte(email, assunto, descricao) {
   const conexao = await conectarBD();
   const sql = `SELECT email_sup, assunto_sup, descricao_sup 
-               FROM suporte 
-               WHERE email_sup = ? AND assunto_sup = ? AND descricao_sup = ?`;
+    FROM suporte 
+    WHERE email_sup = ? AND assunto_sup = ? AND descricao_sup = ?`;
   const [linhas] = await conexao.query(sql, [email, assunto, descricao]);
   return linhas.length > 0 ? linhas[0] : null;
 }
 
 module.exports = {
-  conectarBD,
+  conectarBD, 
   buscarUsuario,
   registrarUsuario,
   buscarDadosUsuario,
@@ -471,6 +559,13 @@ module.exports = {
   buscarComentariosPorObra,
   comentarObra,
   excluirComentario,
+  buscarColecaoPorUsu,
+  buscarObrasPorColecao,
+  criarColecao,
+  excluirColecao,
+  atualizarColecao,
+  adicionarObraColecao,
+  excluirObraColecao,
   buscarSuporte,
   inserirSuporte,
 };

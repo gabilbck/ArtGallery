@@ -1,19 +1,18 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%= title %></title>
-    <link rel="icon" href="/img/icon-ag.svg" type="image/x-icon" />
+    <link rel="icon" href="/uploads/icon-ag.svg" type="image/x-icon" />
     <link rel="stylesheet" href="/stylesheets/style.css" />
-    <link rel="stylesheet" href="/stylesheets/stylePerfil.css" />
-    <script src="/javascripts/perfil.js"></script>
   </head>
   <body>
     <div class="topo-logo">
       <h1>ArtGallery</h1>
     </div>
 
+    <!-- Navegação -->
     <header>
       <div class="pesquisa">
         <svg
@@ -117,84 +116,58 @@
       </div>
     </header>
 
-   <div class="perfil-container">
-      <div class="perfil-topo">
-        <div class="perfil-avatar"></div>
-        <div class="perfil-info">
-          <div class="perfil-nome-row">
-            <div class="perfil-nome">
-              <h1 class="perfil-nome-comp">
-                <%= usuario.nome_comp %>
-              </h1>
-            </div>
-            <div class="perfil-usu">
-              <p class="perfil-nome-usu"><%= usuario.nome_usu %></p>
-            </div>
-            <div class="perfil-tipo_usu">
-              <span class="perfil-tipo"><%= usuario.tipo_usu %></span>
-            </div>
-            <div class="perfil-bio_usu">
-              <p class="perfil-bio"><%= usuario.bio_usu %></p>
-            </div>
-            <div class="perfil-editar">
-              <button class="perfil-botao-editar">Editar Perfil</button>
-            </div>
-            <div class="perfil-numeros">
-              <span><%= usuario.seguidores %> Seguindo</span>
-              <span><%= usuario.favoritos %> Favoritos</span>
-            </div>
+    <div class="formulario" id="formulario">
+      <div class="topo-formulario">
+        <% if (msg_criacao) { %>
+          <div class="retorno-container" id="erro">
+            <p><%= msg_criacao %></p>
+          </div>
+        <% } %>
+        <br>
+        <h1>CRIAR COLEÇÃO</h1>
+        <p>Preencha as informações abaixo para criar uma nova coleção:</p>
+      </div>
+  
+      <% if (sucesso) { %>
+        <div class="retorno">
+          <h1>Coleção criada com Sucesso!</h1>
+          <p>Aguarde enquanto redirecionamos você...</p>
+          <div class="retorno-container" id="sucesso">
+            <%= sucesso %>
           </div>
         </div>
-      </div>
-      <div class="perfil-switch-container">
-        <div class="perfil-switch-slider"></div>
-        <button
-          class="ativo"
-          onclick="togglePerfilTab('perfil-colecoes', this)"
-        >
-          Coleções
-        </button>
-        <button onclick="togglePerfilTab('perfil-favoritos', this)">
-          Favoritos
-        </button>
-      </div>
-      <div class="perfil-botoes-centro">
-        <div id="perfil-colecoes" class="perfil-aba-conteudo">
-          <section class="perfil-mid">
-            <h2>Coleções</h2>
-            <div class="colecoes-grid">
-              <% if (colecoes.length > 0) { %> <% for (var i = 0; i <
-              colecoes.length; i++) { var col = colecoes[i]; %>
-              <div class="colecao-card">
-                <img src="<%= col.foto %>" alt="<%= col.nome %>" />
-                <h3><%= col.nome_col %></h3>
-                <p><%= col.nome %></p>
-              </div>
-              <% } %> <% } else { %>
-              <p>Você ainda não criou nenhuma coleção.</p>
-              <% } %>
+        <% if (sucesso && typeof id_col !== "undefined") { %>
+          <script>
+            setTimeout(() => {
+              window.location.href = "/colecao/ver/<%= id_col %>";
+            }, 3000);
+          </script>
+        <% } %>
+      <% } else { %>
+        <% if (erros) { %>
+          <div class="retorno">
+            <div class="retorno-container" id="erro">
+              <%= erros %>
             </div>
-          </section>
-        </div>
-
-        <div id="perfil-favoritos" class="perfil-aba-conteudo hidden">
-          <section class="perfil-favoritos">
-            <h2>Favoritos</h2>
-            <div class="favoritos-grid">
-              <% if (favoritos.length > 0) { %> <% for (var i = 0; i <
-              favoritos.length; i++) { var fav = favoritos[i]; %>
-              <div class="obra-card">
-                <img src="<%= fav.foto %>" alt="<%= fav.nome %>" />
-                <h3><%= fav.nome %></h3>
-                <p><%= fav.art %></p>
-              </div>
-              <% } %> <% } else { %>
-              <p>Você ainda não favoritou nenhuma obra.</p>
-              <% } %>
-            </div>
-          </section>
-        </div>
-      </div>
+          </div>
+        <% } %>
+  
+        <form action="/colecao/criarColecao" method="post">
+          <div class="entrada">
+            <label for="nome_col">Nome da Coleção</label>
+            <input type="text" id="nome_col" name="nome_col" placeholder="Nome da Coleção">
+          </div>
+          <div class="envio">
+            <input type="submit" id="sucesso" value="CRIAR AGORA E ADICIONAR OBRAS">
+          </div>
+          <p class="centralizado">ou</p>
+          <div class="botao">
+            <a href="/" style="width: 500px; margin: 25px 0">
+              CANCELAR E RETORNAR
+            </a>
+          </div>
+        </form>
+      <% } %>
     </div>
 
     <footer>
