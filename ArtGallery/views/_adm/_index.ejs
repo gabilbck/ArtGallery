@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="icon" href="../uploads/icon-ag.svg" type="image/x-icon">
+    <link rel="stylesheet" href="../stylesheets/style.css">
+    <link rel="stylesheet" href="../stylesheets/adm.css">
+</head>
+<body>
+    <div class="topo-logo"> 
+        <h1>ArtGallery</h1>
+        <p>Administrativo</p>
+    </div>
+
+    <section>
+        <div class="conteudo">
+            <div class="resumo">
+
+                <!-- Usuários -->
+                <div class="resumo-card">
+                    <div class="r-c-tit">
+                        <H1>USUÁRIOS</H1>
+                    </div>
+                    <div class="r-c-desc">
+                        <div class="r-c-desc-linha">
+                            <a href="#">APRECIADORES</a>
+                            <span>0</span>
+                        </div>
+                        <div class="r-c-desc-linha">
+                            <a href="#">ARTISTAS</a>
+                            <span>0</span>
+                        </div>
+                        <div class="r-c-desc-linha">
+                            <a href="#">ARTISTAS P/ LIBERAÇÃO</a>
+                            <span>0</span>
+                        </div>
+                        <div class="r-c-desc-linha">
+                            <a href="#">ADMINISTRADORES</a>
+                            <span>0</span>
+                        </div>
+                        <div class="r-c-desc-linha">
+                            <a href="#">BANIDOS</a>
+                            <span>0</span>  
+                        </div>
+                        <div class="r-c-desc-linha">
+                            <a href="#">TOTAIS</a>
+                            <span>0</span>
+                        </div>
+                    </div>
+                    <div class="r-c-obs">
+                        (SELECIONE UMA OPÇÃO SUBLINHADA PARA LISTAR) 
+                    </div>
+                </div>
+
+                <!-- Obras -->
+                <div class="resumo-card">
+                    <div class="r-c-tit">
+                        <h1>OBRAS (PARÂMETROS)</h1>
+                    </div>
+                    <div class="r-c-desc">
+                        <div class="r-c-desc-linha">
+                            <a href="#">PUBLICADAS (ARTISTAS)</a>
+                            <span>0</span>
+                        </div>
+                        <div class="r-c-desc-linha">
+                            <a href="#">FAVORITOS (APRECIADORES)</a>
+                            <span>0</span>
+                        </div>
+                        <div class="r-c-desc-linha">
+                            <a href="#">COMNENTÁRIOS (APRECIADORES)</a>
+                            <span>0</span>
+                        </div>
+                        <div class="r-c-desc-linha">
+                            <a href="#">COLEÇÕES (APRECIADORES)</a>
+                            <span>0</span>
+                        </div>
+                        <div class="r-c-desc-linha">
+                            <a href="#">CATEGORIAS</a>
+                            <span>0</span>
+                        </div>
+                    </div>
+                    <div class="r-c-obs">
+                        (SELECIONE UMA OPÇÃO SUBLINHADA PARA LISTAR)
+                    </div>
+                </div>
+
+                <!-- SUPORTE -->
+                <div class="resumo-card">
+                    <div class="r-c-tit">
+                        <h1>SUPORTE</h1>
+                    </div>
+                    <div class="r-c-desc">
+                        <div class="r-c-desc-linha">
+                            <a href="#">PENDENTES</a>
+                            <span>0</span>
+                        </div>
+                        <div class="r-c-desc-linha">
+                            <a href="#">EM ANDAMENTO</a>
+                            <span>0</span>
+                        </div>
+                        <div class="r-c-desc-linha">
+                            <a href="#">CONCLUÍDOS</a>
+                            <span>0</span>
+                        </div>
+                        <div class="r-c-desc-linha">
+                            <a href="#">TODOS OS REPORTES</a>
+                            <span>0</span>
+                        </div>
+                    </div>
+                    <div class="r-c-obs">
+                        (SELECIONE UMA OPÇÃO SUBLINHADA PARA LISTAR)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="conteudo">
+            <div class="cadastros">
+                <div class="cadastros-tit">
+                    <h1>CADASTROS ADICIONAIS</h1>
+                </div>
+                <div class="cadastros-botoes">
+                    <div class="cadastro-btn">
+                        <a href="/adm/usuarios/cadastrar" class="btn-cadastro">CADASTRAR NOVO USUARIO</a>
+                    </div>
+                    <div class="cadastro-btn">
+                        <a href="/adm/obras/cadastrar" class="btn-cadastro">CADASTRAR NOVA CATEGORIA</a>
+                    </div>
+                    <div class="cadastro-btn">
+                        <a href="/adm/obras/cadastrar" class="btn-cadastro">CADASTRAR NOVO ARTISTA</a>
+                    </div>
+                    <div class="cadastro-btn">
+                        <a href="/adm/obras/cadastrar" class="btn-cadastro">CADASTRAR NOVA OBRA</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>

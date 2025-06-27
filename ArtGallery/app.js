@@ -15,7 +15,9 @@ const categoriasRouter = require("./routes/categorias");
 const perfilRouter = require("./routes/perfil");
 const obrasRouter = require("./routes/obras");
 const suporteRouter = require("./routes/suporte");
-const colecaoRouter = require("./routes/colecao")
+const colecaoRouter = require("./routes/colecao");
+
+const admIndexRouter = require("./routes/_adm/_index");
 
 const app = express();
 
@@ -89,6 +91,8 @@ app.use("/perfil", perfilRouter);
 app.use("/obras", obrasRouter);
 app.use("/suporte", suporteRouter);
 app.use("/colecao", colecaoRouter);
+
+app.use("/adm", admIndexRouter);
 
 
 const conexao = require('./banco');
