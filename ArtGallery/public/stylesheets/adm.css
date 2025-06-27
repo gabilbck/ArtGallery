@@ -12,3 +12,118 @@ body {
 .topo-logo{
     text-align: center;
 }
+
+.resumo{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 colunas de largura igual */
+    gap: 20px; /* espaço entre os itens (opcional) */
+}
+
+.resumo-card{
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: #000;
+    max-width: 300px;
+}
+
+.r-c-tit{
+    text-align: center;
+    padding: 20px 0;
+    font-size: 18px;
+}
+
+.r-c-tit h1{
+    font-weight: 600;
+}
+
+.r-c-desc{
+    padding: 0 10px 10px 10px;
+}
+
+.r-c-desc-linha{
+    padding: 10px 0;
+    width: 100%;
+    display: flex;
+}
+
+.r-c-desc-linha a{
+    width: 100%;
+    font-size: 16px;
+    cursor: auto;
+}
+
+.traco-inferior:hover{
+    text-shadow: 2px 2px 3px #aaa;
+    cursor: pointer;
+}
+
+.traco-inferior{
+    text-decoration: underline;
+}
+
+.r-c-desc-linha span{
+    text-align: right;
+    width: 25px;
+    font-size: 16px;
+    text-align: center;
+}
+
+.r-c-obs{
+    background-color: #979797;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+    border-radius: 0 0 0.5rem 0.5rem;
+    margin-top: auto;
+}
+
+.cadastros{
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: #000;
+    width: 100%;
+    max-width: 960px;
+    margin: 20px 0;
+    padding: 20px
+}
+
+.cadastros-tit{
+    text-align: center;
+    font-size: 18px;
+    padding: 0 0 20px 0;
+}
+
+.cadastros-botoes{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    justify-content: space-between;
+    padding: 10px;
+    gap: 30px;
+}
+
+.cadastro-btn{
+    display: flex;
+    flex-direction: column;
+    background-color: #979797;
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+    border-radius: 0.5rem;
+}
+
+.cadastro-btn a{
+    color: #fff;
+    text-shadow: 2px 2px 5px #444;
+}
+
+.cadastro-btn:hover{
+    transform: scale(1.025);
+    transition: transform 0.3s ease;
+    box-shadow: 0 4px 6px #444;
+}
