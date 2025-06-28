@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const nodemailer = require('nodemailer');
-const { verificarEmailExiste } = require('../banco');
+const { verificarEmailExiste, atualizarSenhaUsuario } = require('../banco'); // já antecipo o uso da função de atualizar senha
+const { conectarBD } = require('../banco');
 
+// Aqui suas rotas seguem normalmente
 router.get('/recuperar', (req, res) => {
   res.render('recuperar', { erro: null, mensagem: null });
 });
@@ -20,10 +22,8 @@ router.post('/recuperar', async (req, res) => {
       });
     }
 
-    // Gerar código
     const codigo = Math.floor(100000 + Math.random() * 900000);
 
-    // Configurar transporte do Gmail
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -32,23 +32,22 @@ router.post('/recuperar', async (req, res) => {
       },
     });
 
-    // Enviar e-mail
     await transporter.sendMail({
-      from: 'ArtGallery <SEU_EMAIL@gmail.com>',
+      from: 'ArtGallery <projeto.artgallery@gmail.com>',
       to: email,
       subject: 'Código de verificação - ArtGallery',
       text: `Seu código de verificação é: ${codigo}`,
     });
 
-    // Salvar código em memória ou sessão (temporário)
     req.session = req.session || {};
     req.session.codigoVerificacao = codigo;
     req.session.emailVerificacao = email;
 
-    res.render('recuperar', {
-      erro: null,
-      mensagem: 'Código enviado para seu e-mail.',
-    });
+    res.redirect('/verificar-codigo');
+
+
+    // redireciona para a página de verificação
+    return res.redirect('/verificar-codigo');
 
   } catch (err) {
     console.error('Erro ao enviar código:', err);
@@ -58,5 +57,44 @@ router.post('/recuperar', async (req, res) => {
     });
   }
 });
+
+router.get('/verificar-codigo', (req, res) => {
+  res.render('verificar-codigo', { erro: null });
+});
+
+router.post('/verificar-codigo', (req, res) => {
+  const { codigo } = req.body;
+
+  if (req.session.codigoVerificacao && req.session.codigoVerificacao.toString() === codigo.trim()) {
+    return res.redirect('/nova-senha');
+  }
+
+  res.render('verificar-codigo', { erro: 'Código incorreto. Tente novamente.' });
+});
+
+router.get('/nova-senha', (req, res) => {
+  res.render('nova-senha');
+});
+
+router.post('/nova-senha', async (req, res) => {
+  const { senha } = req.body;
+  const email = req.session.emailVerificacao;
+
+  try {
+    const conexao = await conectarBD();
+    await conexao.query('UPDATE usuario SET senha_usu = ? WHERE email_usu = ?', [senha, email]);
+
+    // Limpa a sessão
+    req.session.codigoVerificacao = null;
+    req.session.emailVerificacao = null;
+
+    res.send('<h2>Senha atualizada com sucesso! <a href="/login">Ir para o login</a></h2>');
+  } catch (erro) {
+    console.error('Erro ao atualizar senha:', erro);
+    res.send('<h2>Erro ao atualizar senha.</h2>');
+  }
+});
+
+
 
 module.exports = router;
