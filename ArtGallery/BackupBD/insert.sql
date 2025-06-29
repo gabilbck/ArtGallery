@@ -12,6 +12,15 @@ VALUES
 ('helen08', 'Helen Teixeira', 'helen08@email.com', 'senha123', 'apr'),
 ('igor09', 'Igor Fernandes', 'igor09@email.com', 'senha123', 'apr'),
 ('juliana10', 'Juliana Ribeiro', 'juliana10@email.com', 'senha123', 'apr');
+//novos
+INSERT INTO usuario (nome_usu, nome_comp, email_usu, senha_usu, tipo_usu)
+VALUES
+('mileinefreitas', 'Mileine Freitas', 'mileine.freitas@email.com', 'senha123', 'adm'),
+('artlover22', 'Ana Silva', 'ana.silva@email.com', 'senha123', 'art'),
+('paintmaster', 'Carlos Mendes', 'carlos.mendes@email.com', 'senha123', 'art'),
+('galleryadmin', 'Mariana Oliveira', 'admin@gallery.com', 'senha123', 'art'),
+('modern_art', 'Roberto Santos', 'roberto.art@email.com', 'senha123', 'art'),
+('artcollector', 'Fernanda Lima', 'fernanda.lima@email.com', 'senha123', 'art');
 
 INSERT INTO artista (nome_usu, nome_comp, bio_art, id_usu)
 VALUES

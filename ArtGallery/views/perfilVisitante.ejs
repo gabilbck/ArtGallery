@@ -139,38 +139,12 @@
                      <p class="perfil-bio"><%= usuario.bio_usu %></p>
                   </div>
                </div>
-               <div class="perfil-info-row">
-                  <div class="botoes-perfil">
-                     <div class="perfil-sair">
-                        <a class="perfil-botao-sair" href="/logout">Sair</a>
-                     </div>
-                     <div class="perfil-editar">
-                        <a class="perfil-botao-editar" href="">
-                           Editar Perfil
-                        </a>
-                     </div>
-                  </div>
-
-                  <div class="perfil-numeros">
-                     <span
-                        ><%= usuario.seguidores %>
-                        <p>0</p>
-                        Seguindo</span
-                     >
-                     <span
-                        ><%= usuario.favoritos %>
-                        <p>0</p>
-                        Favoritos</span
-                     >
-                  </div>
-               </div>
             </div>
          </div>
          <% if (usuario.tipo_usu === 'art') { %>
          <div id="perfil-favoritos" class="perfil-aba-conteudo hidden">
             <section class="perfil-favoritos">
                <h2>Obras</h2>
-                  <a class="nova-obra" href="">+ Adicionar nova obra</a>
                <div class="favoritos-grid">
                   <% if (favoritos.length > 0) { %> <% for (var i = 0; i <
                   favoritos.length; i++) { var fav = favoritos[i]; %>
@@ -180,13 +154,12 @@
                      <p><%= fav.art %></p>
                   </div>
                   <% } %> <% } else { %>
-                  <p>Você ainda não possui nenhuma obra.</p>
+                  <p>Artista ainda não possui nenhuma obra.</p>
                   <% } %>
                </div>
             </section>
          </div>
-         <% } %> <% if (usuario.tipo_usu === 'apr' || usuario.tipo_usu ===
-         'adm') { %>
+         <% } %> <% else if (usuario.tipo_usu === 'apr') { %>
          <div class="perfil-switch-container">
             <div class="perfil-switch-slider"></div>
             <button
@@ -199,18 +172,10 @@
                Favoritos
             </button>
          </div>
-         <div class="adicionar">
-            <% if (usuario.tipo_usu === 'adm') {%>
-            <a class="nova-obra" href="">+ Adicionar nova obra</a>
-            <% } %>
-         </div>
          <div class="perfil-botoes-centro">
             <div id="perfil-colecoes" class="perfil-aba-conteudo">
                <section class="perfil-mid">
                   <h2>Coleções</h2>
-                  <a class="nova-coleção" href="/colecao/criarColecao"
-                     >+ Adicionar nova Coleção</a
-                  >
                   <div class="colecoes-grid">
                      <% if (colecoes.length > 0) { %> <% for (var i = 0; i <
                      colecoes.length; i++) { var col = colecoes[i]; %>

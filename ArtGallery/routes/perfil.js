@@ -39,6 +39,32 @@ router.get("/", autenticado, async (req, res) => {
    }
 });
 
+// Página de perfil público
+router.get("/usuario/:id", autenticado, async (req, res) => {
+   const id = req.params.id;
+   const usuarioSessao = req.session.usuario;
+
+   try {
+      const usuario = await buscarDadosUsuarioPorId(id);
+      if (!usuario) return res.status(404).send("Usuário não encontrado");
+
+      const colecoes = await buscarColecoesPorUsuario(id);
+      const favoritos = await buscarObrasFavoritas(id);
+
+      res.render("perfil", {
+         title: `Perfil de ${usuario.nome_usu}`,
+         usuario,
+         colecoes,
+         favoritos,
+         ehDono: usuarioSessao.id_usu == id,
+         usuarioSessao
+      });
+   } catch (err) {
+      console.error("Erro ao carregar perfil visitante:", err);
+      res.status(500).send("Erro ao carregar perfil");
+   }
+});
+
 /*
 // Página de favoritos
 router.get("/favoritos", autenticado, async (req, res) => {
