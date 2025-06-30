@@ -163,7 +163,7 @@ UPDATE categoria SET descricao_cat = 'Representações artísticas de pessoas, c
 UPDATE categoria SET descricao_cat = 'Obras que retratam ambientes naturais como montanhas, florestas, praias e campos, com foco na beleza do cenário.' WHERE id_cat = 9;
 UPDATE categoria SET descricao_cat = 'Composições simples e diretas que valorizam o essencial, com poucos elementos, cores neutras e formas geométricas.' WHERE id_cat = 10;
 
--- VIEWS & TRIGGERS
+-- VIEWS &     S
 
 -- Quantidade de seguidores por artista
 CREATE VIEW qtd_seguidores AS

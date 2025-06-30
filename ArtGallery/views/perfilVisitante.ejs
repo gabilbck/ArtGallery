@@ -139,6 +139,25 @@
                      <p class="perfil-bio"><%= usuario.bio_usu %></p>
                   </div>
                </div>
+               <div class="perfil-info-row">
+                  <div class="botoes-perfil">
+                     <div class="perfil-seguir">
+                        <a class="perfil-botao-seguir" href="">Seguir</a>
+                     </div>
+                  </div>
+                  <div class="perfil-numeros">
+                     <span
+                        ><%= usuario.seguidores %>
+                        <p>0</p>
+                        Seguindo</span
+                     >
+                     <span
+                        ><%= usuario.favoritos %>
+                        <p>0</p>
+                        Favoritos</span
+                     >
+                  </div>
+               </div>
             </div>
          </div>
          <% if (usuario.tipo_usu === 'art') { %>
@@ -159,7 +178,7 @@
                </div>
             </section>
          </div>
-         <% } %> <% else if (usuario.tipo_usu === 'apr') { %>
+         <% } %> <% if (usuario.tipo_usu === 'apr') { %>
          <div class="perfil-switch-container">
             <div class="perfil-switch-slider"></div>
             <button

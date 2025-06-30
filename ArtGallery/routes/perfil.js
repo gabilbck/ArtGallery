@@ -8,7 +8,7 @@ const {
    buscarColecoesPorUsuario,
 } = require("../banco");
 
-const autenticado = require('../middlewares/autenticado');
+const autenticado = require("../middlewares/autenticado");
 
 // Página principal do perfil (usuário autenticado)
 router.get("/", autenticado, async (req, res) => {
@@ -21,14 +21,14 @@ router.get("/", autenticado, async (req, res) => {
 
       res.render("perfil", {
          title: "Perfil - ArtGallery",
-         usuario:{
-            id_usu: usuario.id_usu, 
-            nome_usu: usuario.nome_usu, 
-            nome_comp: usuario.nome_comp, 
-            email_usu: usuario.email_usu, 
-            foto_usu: usuario.foto_usu, 
-            bio_usu: usuario.bio_usu, 
-            tipo_usu: usuario.tipo_usu 
+         usuario: {
+            id_usu: usuario.id_usu,
+            nome_usu: usuario.nome_usu,
+            nome_comp: usuario.nome_comp,
+            email_usu: usuario.email_usu,
+            foto_usu: usuario.foto_usu,
+            bio_usu: usuario.bio_usu,
+            tipo_usu: usuario.tipo_usu,
          },
          colecoes,
          favoritos,
@@ -40,24 +40,38 @@ router.get("/", autenticado, async (req, res) => {
 });
 
 // Página de perfil público
-router.get("/usuario/:id", autenticado, async (req, res) => {
-   const id = req.params.id;
+router.get("/perfilVisitante/:id", autenticado, async (req, res) => {
+   const id_usu = req.params.id; // ID do usuário a ser visualizado
    const usuarioSessao = req.session.usuario;
 
+   // Validação do ID
+   if (!id_usu || isNaN(Number(id_usu))) {
+      return res.status(400).send("ID inválido");
+   }
+
    try {
-      const usuario = await buscarDadosUsuarioPorId(id);
+      const usuario = await buscarDadosUsuarioPorId(id_usu);
+      console.log(usuario);
       if (!usuario) return res.status(404).send("Usuário não encontrado");
 
-      const colecoes = await buscarColecoesPorUsuario(id);
-      const favoritos = await buscarObrasFavoritas(id);
+      const colecoes = await buscarColecoesPorUsuario(id_usu);
+      const favoritos = await buscarObrasFavoritas(id_usu);
 
-      res.render("perfil", {
+      res.render("perfilVisitante", {
          title: `Perfil de ${usuario.nome_usu}`,
-         usuario,
+         usuario: {
+            id_usu: usuario.id_usu,
+            nome_usu: usuario.nome_usu,
+            nome_comp: usuario.nome_comp,
+            email_usu: usuario.email_usu,
+            foto_usu: usuario.foto_usu,
+            bio_usu: usuario.bio_usu,
+            tipo_usu: usuario.tipo_usu,
+         },
          colecoes,
          favoritos,
-         ehDono: usuarioSessao.id_usu == id,
-         usuarioSessao
+         ehDono: usuarioSessao && String(usuarioSessao.id_usu) === String(id_usu),
+         usuarioSessao,
       });
    } catch (err) {
       console.error("Erro ao carregar perfil visitante:", err);

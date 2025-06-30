@@ -86,6 +86,22 @@ body {
    gap: 1rem;
    margin-top: 1rem;
 }
+
+.perfil-botao-seguir {
+   background-color: #e63946;
+   color: white;
+   padding: 0.5rem 1rem;
+   border: none;
+   border-radius: 8px;
+   font-size: 0.9rem;
+   cursor: pointer;
+   transition: background-color 0.3s ease;
+}
+
+.perfil-botao-seguir:hover {
+   background-color: #a62833;
+}
+
 .perfil-botao-sair {
    background-color: #e63946;
    color: white;
