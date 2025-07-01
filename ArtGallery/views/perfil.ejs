@@ -129,15 +129,15 @@
                      <p class="perfil-nome-usu">@<%= usuario.nome_usu %></p>
                   </div>
                   <div class="perfil-tipo_usu">
-                     <span class="perfil-tipo">
+                     <span class="<%= usuario.tipo_usu %>-bg perfil-tipo">
                         <% const tipos = { apr: "Apreciador", adm:
                         "Administrador", art: "Artista" }; %> <%=
                         tipos[usuario.tipo_usu] || "Desconhecido" %>
                      </span>
                   </div>
-                  <div class="perfil-bio_usu">
-                     <p class="perfil-bio"><%= usuario.bio_usu %></p>
-                  </div>
+               </div>
+               <div class="perfil-bio_usu">
+                  <p class="perfil-bio"><%= usuario.bio_usu %></p>
                </div>
                <div class="perfil-info-row">
                   <div class="botoes-perfil">
@@ -152,16 +152,14 @@
                   </div>
 
                   <div class="perfil-numeros">
-                     <span
-                        ><%= usuario.seguidores %>
-                        <p>0</p>
-                        Seguindo</span
-                     >
-                     <span
-                        ><%= usuario.favoritos %>
-                        <p>0</p>
-                        Favoritos</span
-                     >
+                     <span>
+                        <p><%= totalSeguidores %></p>
+                        Seguidores
+                     </span>
+                     <span>
+                        <p><%= totalSeguindo %></p>
+                        Seguindo
+                     </span>
                   </div>
                </div>
             </div>
@@ -170,7 +168,7 @@
          <div id="perfil-favoritos" class="perfil-aba-conteudo hidden">
             <section class="perfil-favoritos">
                <h2>Obras</h2>
-                  <a class="nova-obra" href="">+ Adicionar nova obra</a>
+               <a class="nova-obra" href="">+ Adicionar nova obra</a>
                <div class="favoritos-grid">
                   <% if (favoritos.length > 0) { %> <% for (var i = 0; i <
                   favoritos.length; i++) { var fav = favoritos[i]; %>

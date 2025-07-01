@@ -533,6 +533,47 @@ async function buscarSuporte(email, assunto, descricao) {
    return linhas.length > 0 ? linhas[0] : null;
 }
 
+//Segui ou Deixa de seguir
+async function seguirUsuario(seguidorId, seguidoId) {
+   const conexao = await conectarBD();
+   const sql = `INSERT IGNORE INTO seguidores (seguidor_id, seguido_id) VALUES (?, ?)`;
+   await conexao.query(sql, [seguidorId, seguidoId]);
+}
+
+async function deixarDeSeguirUsuario(seguidorId, seguidoId) {
+   const conexao = await conectarBD();
+   const sql = `DELETE FROM seguidores WHERE seguidor_id = ? AND seguido_id = ?`;
+   await conexao.query(sql, [seguidorId, seguidoId]);
+}
+
+async function estaSeguindo(seguidorId, seguidoId) {
+   const conexao = await conectarBD();
+   const sql = `SELECT 1 FROM seguidores WHERE seguidor_id = ? AND seguido_id = ?`;
+   const [rows] = await conexao.query(sql, [seguidorId, seguidoId]);
+   return rows.length > 0;
+}
+
+async function getUsuarioPorId(id) {
+   const conexao = await conectarBD();
+   const sql = `SELECT * FROM usuario WHERE id_usu = ?`;
+   const [[usuario]] = await conexao.query(sql, [id]);
+   return usuario;
+}
+
+async function getQtdSeguidores(id) {
+   const conexao = await conectarBD();
+   const sql = `SELECT total_seguidores FROM qtd_seguidores WHERE id_usu = ?`;
+   const [[res]] = await conexao.query(sql, [id]);
+   return res ? res.total_seguidores : 0;
+}
+
+async function getQtdSeguindo(id) {
+   const conexao = await conectarBD();
+   const sql = `SELECT total_seguindo FROM qtd_seguindo WHERE id_usu = ?`;
+   const [[res]] = await conexao.query(sql, [id]);
+   return res ? res.total_seguindo : 0;
+}
+
 module.exports = {
    conectarBD,
    buscarUsuario,
@@ -572,4 +613,10 @@ module.exports = {
    excluirObraColecao,
    buscarSuporte,
    inserirSuporte,
+   seguirUsuario,
+   deixarDeSeguirUsuario,
+   estaSeguindo,
+   getUsuarioPorId,
+   getQtdSeguidores,
+   getQtdSeguindo,
 };

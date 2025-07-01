@@ -35,8 +35,12 @@ body {
    background-position: center;
    border: 3px solid #eee;
 }
+.perfil-bio_usu {
+   margin: 20px;
+   font-style: italic;
+   color: #666;
+}
 .perfil-info-row {
-   margin-top: 30px;
    display: flex;
    justify-content: space-between;
    align-items: center;
@@ -66,14 +70,25 @@ body {
 }
 
 .perfil-tipo {
-   background-color: #f0f0f0;
    color: #555;
-   padding: 0.3rem 0.8rem;
    border-radius: 12px;
    font-size: 0.85rem;
    font-weight: 500;
 }
+.art-bg {
+   background: linear-gradient(to right, #ffecd2, #fcb69f); /* artista */
+   padding: 0.3rem 2.5rem;
+}
 
+.adm-bg {
+   background: linear-gradient(to right, #a1c4fd, #c2e9fb); /* admin */
+   padding: 0.3rem 1rem;
+}
+
+.apr-bg {
+   background: linear-gradient(to right, #d4fc79, #96e6a1); /* aprendiz */
+   padding: 0.3rem 1.6rem;
+}
 .perfil-bio {
    margin: 0.5rem 0;
    font-style: italic;
@@ -87,10 +102,11 @@ body {
    margin-top: 1rem;
 }
 
-.perfil-botao-seguir {
-   background-color: #e63946;
-   color: white;
-   padding: 0.5rem 1rem;
+.perfil-botao-seguir.seguir.ativo {
+   /* Unfollow */
+   background-color: #eb505c;
+   color: rgb(40, 40, 40);
+   padding: 0.5rem 3.1rem;
    border: none;
    border-radius: 8px;
    font-size: 0.9rem;
@@ -98,14 +114,30 @@ body {
    transition: background-color 0.3s ease;
 }
 
-.perfil-botao-seguir:hover {
-   background-color: #a62833;
+.perfil-botao-seguir.seguir.ativo:hover {
+   background-color: #c7434e;
+}
+
+.perfil-botao-seguir.seguir {
+   /* follow */
+   background-color: #67e459;
+   color: rgb(40, 40, 40);
+   padding: 0.5rem 3.5rem;
+   border: none;
+   border-radius: 8px;
+   font-size: 0.9rem;
+   cursor: pointer;
+   transition: background-color 0.3s ease;
+}
+
+.perfil-botao-seguir.seguir:hover {
+   background-color: #4ca142;
 }
 
 .perfil-botao-sair {
-   background-color: #e63946;
+   background-color: #eb505c;
    color: white;
-   padding: 0.5rem 1rem;
+   padding: 0.5rem 3.5rem;
    border: none;
    border-radius: 8px;
    font-size: 0.9rem;
@@ -113,12 +145,12 @@ body {
    transition: background-color 0.3s ease;
 }
 .perfil-botao-sair:hover {
-   background-color: #a62833;
+   background-color: #c7434e;
 }
 .perfil-botao-editar {
    background-color: #4f46e5;
    color: white;
-   padding: 0.5rem 1rem;
+   padding: 0.5rem 1.8rem;
    border: none;
    border-radius: 8px;
    font-size: 0.9rem;

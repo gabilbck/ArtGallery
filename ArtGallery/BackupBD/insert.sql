@@ -302,3 +302,83 @@ BEGIN
     END IF;
 END|
 DELIMITER ;
+
+--      |\        |          /\          |--------------|
+--      | \       |         /  \         |              |
+--      |  \      |        /    \        |              |
+--      |   \     |       /      \       |              |
+--      |    \    |      /        \      |              |
+--      |     \   |     /          \     |              |
+--      |      \  |    / ---------  \    |              |
+--      |       \ |   /              \\  |              |
+--      |        \|  /                \  |--------------|
+
+-- Estrutura de tabelas para seguidores e contagem
+--NOVOS INSERT
+
+CREATE TABLE seguidores (
+    ->   seguidor_id INT(11) NOT NULL,
+    ->   seguido_id INT(11) NOT NULL,
+    ->   PRIMARY KEY (seguidor_id, seguido_id),
+    ->   CONSTRAINT fk_seguidor FOREIGN KEY (seguidor_id) REFERENCES usuario(id_usu) ON DELETE CASCADE,
+    ->   CONSTRAINT fk_seguido FOREIGN KEY (seguido_id) REFERENCES usuario(id_usu) ON DELETE CASCADE
+    -> );
+
+CREATE TABLE qtd_seguidores (
+  id_usu INT PRIMARY KEY,
+  total_seguidores BIGINT DEFAULT 0,
+  FOREIGN KEY (id_usu) REFERENCES usuario(id_usu) ON DELETE CASCADE
+);
+
+CREATE TABLE qtd_seguindo (
+  id_usu INT PRIMARY KEY,
+  total_seguindo BIGINT DEFAULT 0,
+  FOREIGN KEY (id_usu) REFERENCES usuario(id_usu) ON DELETE CASCADE
+);
+
+
+INSERT INTO qtd_seguidores (id_usu)
+SELECT id_usu FROM usuario
+WHERE id_usu NOT IN (SELECT id_usu FROM qtd_seguidores);
+
+INSERT INTO qtd_seguindo (id_usu)
+SELECT id_usu FROM usuario
+WHERE id_usu NOT IN (SELECT id_usu FROM qtd_seguindo);
+
+
+--Trigger após inserção (seguindo alguém)
+CREATE TRIGGER trg_after_insert_seguidores
+AFTER INSERT ON seguidores
+FOR EACH ROW
+BEGIN
+  -- Incrementa total_seguindo do seguidor
+  UPDATE qtd_seguindo
+  SET total_seguindo = total_seguindo + 1
+  WHERE id_usu = NEW.seguidor_id;
+
+  -- Incrementa total_seguidores do seguido
+  UPDATE qtd_seguidores
+  SET total_seguidores = total_seguidores + 1
+  WHERE id_usu = NEW.seguido_id;
+END;
+//
+DELIMITER ;
+
+
+--Trigger após remoção (deixar de seguir)
+CREATE TRIGGER trg_after_delete_seguidores
+AFTER DELETE ON seguidores
+FOR EACH ROW
+BEGIN
+  -- Decrementa total_seguindo do seguidor
+  UPDATE qtd_seguindo
+  SET total_seguindo = total_seguindo - 1
+  WHERE id_usu = OLD.seguidor_id;
+
+  -- Decrementa total_seguidores do seguido
+  UPDATE qtd_seguidores
+  SET total_seguidores = total_seguidores - 1
+  WHERE id_usu = OLD.seguido_id;
+END;
+//
+DELIMITER ;
