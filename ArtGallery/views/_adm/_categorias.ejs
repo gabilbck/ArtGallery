@@ -4,9 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%= title %></title>
-    <link rel="icon" href="../uploads/icon-ag.svg" type="image/x-icon" />
-    <link rel="stylesheet" href="../stylesheets/style.css" />
-    <link rel="stylesheet" href="../stylesheets/adm.css" />
+    <link rel="icon" href="/uploads/icon-ag.svg" type="image/x-icon">
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="/stylesheets/adm.css">
   </head>
   <body>
     <div class="topo-logo">
@@ -36,8 +36,10 @@
                 <td class="col-a"><%= categoria.descricao %></td>
                 <td class="col-b"><img src="<%= categoria.foto %>" alt="<%= categoria.nome %>" /></td>
                 <td class="col-a">
-                  <a href="/adm/categorias/editar/<%= categoria.id %>">Editar</a> |
-                  <a href="/adm/categorias/excluir/<%= categoria.id %>">Excluir</a>
+                  <div class="acoes">
+                    <a class="btn-qua" id="padrao" href="/adm/categorias/editar/<%= categoria.id %>">🖉</a>
+                    <a class="btn-qua" id="erro" href="/adm/categorias/excluir/<%= categoria.id %>">X</a>
+                  </div>
                 </td>
               </tr>
             <% }) %>
@@ -45,5 +47,10 @@
         </table>
       </div>
     </section>
+
+    <section>
+      <a href="/adm/" class="votlar" style="color: #fff">Voltar ao Dashboard</a>
+    </section>
+    <br>
   </body>
 </html>

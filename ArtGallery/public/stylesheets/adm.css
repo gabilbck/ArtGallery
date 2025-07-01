@@ -144,8 +144,23 @@ body {
 }
 .tabela th,
 .tabela td {
-    padding: 10px;
+    padding: 7.5px;
 }
 .tabela table img{
     max-width: 100px;
+}
+.tabela #acoes{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+}
+.tabela .btn-qua{
+    font-size: 7px;
+    color: #fff;
+    text-decoration: none;
+    width: 25px;
+    padding: 5px;
+    border-radius: 0.5rem;
 }
