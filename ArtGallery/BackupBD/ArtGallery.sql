@@ -51,6 +51,7 @@ CREATE TABLE `artista` (
   `nome_comp` varchar(255) NOT NULL,
   `bio_art` text DEFAULT NULL,
   `foto_art` varchar(255) DEFAULT "/uploads/imagem.png",
+  `situacao_art` tinyint(1) NOT NULL DEFAULT 0,
   `id_usu` int(11) DEFAULT NULL,
   PRIMARY KEY (`id_art`),
   UNIQUE KEY `id_usu` (`id_usu`),
@@ -150,23 +151,6 @@ CREATE TABLE `favorito_obra` (
 
 LOCK TABLES `favorito_obra` WRITE;
 UNLOCK TABLES;
-
-
-DROP TABLE IF EXISTS `liberacao_artista`;
-
-CREATE TABLE `liberacao_artista` (
-  `id_lib` int(11) NOT NULL AUTO_INCREMENT,
-  `status_lib` char(1) NOT NULL DEFAULT 'p',
-  `id_art` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id_lib`),
-  UNIQUE KEY `id_art` (`id_art`),
-  CONSTRAINT `liberacao_artista_ibfk_1` FOREIGN KEY (`id_art`) REFERENCES `artista` (`id_art`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-
-LOCK TABLES `liberacao_artista` WRITE;
-UNLOCK TABLES;
-
 
 DROP TABLE IF EXISTS `seguidor_artista`;
 

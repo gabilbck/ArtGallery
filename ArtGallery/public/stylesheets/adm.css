@@ -52,11 +52,11 @@ body {
     font-size: 16px;
     cursor: auto;
 }
-.traco-inferior:hover{
+.traco-inferior a:hover{
     text-shadow: 2px 2px 3px #aaa;
     cursor: pointer;
 }
-.traco-inferior{
+.traco-inferior a{ 
     text-decoration: underline;
 }
 .r-c-desc-linha span{

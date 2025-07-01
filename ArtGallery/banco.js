@@ -529,6 +529,45 @@ async function buscarSuporte(email, assunto, descricao) {
   return linhas.length > 0 ? linhas[0] : null;
 }
 
+
+//ADMIN
+async function buscarQtdApreciadores(){
+  const conexao = await conectarBD();
+  const sql = `SELECT COUNT(*) AS total FROM usuario WHERE tipo_usu = 'apr'`;
+  const [linhas] = await conexao.query(sql);
+  return linhas[0].total;
+}
+async function buscarQtdArtistas(){
+  const conexao = await conectarBD();
+  const sql = `SELECT COUNT(*) AS total FROM artista WHERE situacao_art = 1`;
+  const [linhas] = await conexao.query(sql);
+}
+async function buscarQtdArtistasAguardandoLiberacao() {
+  const conexao = await conectarBD();
+  const sql = `SELECT COUNT(*) AS total FROM artista WHERE situacao_art = 0`;
+  const [linhas] = await conexao.query(sql);
+  return linhas[0].total;
+}
+async function buscarQtdAdm() {
+  const conexao = await conectarBD();
+  const sql = `SELECT COUNT(*) AS total FROM usuario WHERE tipo_usu = 'adm'`;
+  const [linhas] = await conexao.query(sql);
+  return linhas[0].total;
+}
+async function buscarQtdBan() {
+  const conexao = await conectarBD();
+  const sql = `SELECT COUNT(*) AS total FROM usuario WHERE ban_usu = 1`;
+  const [linhas] = await conexao.query(sql);
+  return linhas[0].total;
+}
+async function buscarTotalUsuarios() {
+  const conexao = await conectarBD();
+  const sql = `SELECT COUNT(*) AS total FROM usuario`;
+  const [linhas] = await conexao.query(sql);
+  return linhas[0].total;
+}
+
+
 module.exports = {
   conectarBD, 
   buscarUsuario,
@@ -568,4 +607,13 @@ module.exports = {
   excluirObraColecao,
   buscarSuporte,
   inserirSuporte,
+  // Admin
+  buscarQtdApreciadores,
+  buscarQtdArtistas,
+  buscarQtdArtistasAguardandoLiberacao,
+  buscarQtdAdm,
+  buscarQtdBan,
+  buscarTotalUsuarios
+
+
 };
