@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Verificar Código</title>
+  <link rel="stylesheet" href="/stylesheets/style.css">
+</head>
+<body>
+  <div class="formulario">
+    <h1>Verificar Código</h1>
+    <p>Digite o código que foi enviado para o seu e-mail.</p>
+
+    <% if (erro) { %>
+      <div class="retorno-container" id="erro"><%= erro %></div>
+    <% } %>
+
+    <form action="/verificar-codigo" method="post">
+      <input type="text" name="codigo" required placeholder="Digite o código">
+      <input type="submit" value="Verificar">
+    </form>
+  </div>
+</body>
+</html>
+

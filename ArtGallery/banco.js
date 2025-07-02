@@ -686,6 +686,17 @@ async function banirUsuario(id_usu) {
   await conexao.query(sql, [id_usu]);
 }
 
+
+async function verificarEmailExiste(email) {
+  const conexao = await conectarBD();
+  const [resultado] = await conexao.query(
+    "SELECT email_usu FROM usuario WHERE email_usu = ?",
+    [email]
+  );
+  return resultado.length > 0;
+}
+
+
 module.exports = {
   conectarBD,
   buscarUsuario,
@@ -745,4 +756,5 @@ module.exports = {
   liberarArtista,
   advertirUsuario,
   banirUsuario,
+  verificarEmailExiste,
 };

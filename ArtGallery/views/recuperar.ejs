@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Recuperar Conta</title>
+  <link rel="stylesheet" href="/stylesheets/styleRecuperar.css">
+</head>
+<body>
+  <div class="container">
+    <h1 class="logo">ArtGallery</h1>
+    <h2 class="titulo">Recuperar Conta</h2>
+
+    <div class="formulario">
+      <% if (erro) { %>
+      <div class="retorno-container" id="erro"><%= erro %></div>
+      <% } %>
+
+      <% if (mensagem) { %>
+      <div class="retorno-container" id="sucesso"><%= mensagem %></div>
+      <% } %>
+
+
+      <form action="/recuperar" method="post">
+          <label for="email">E-mail</label>
+          <input type="email" name="email" placeholder="Digite seu E-mail" required>       
+          <button type="submit" class="btn">Enviar</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

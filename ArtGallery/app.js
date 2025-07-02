@@ -24,6 +24,8 @@ const admSuporteRouter = require("./routes/_adm/_suporte");
 
 const app = express();
 
+
+
 app.set('views', path.join(__dirname, "views"));
 app.set('view engine', 'ejs');
 
@@ -40,6 +42,10 @@ app.use(session({
 // Middleware padrão para parse JSON e formulário
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+const recuperarRouter = require('./routes/recuperar');
+app.use('/', recuperarRouter);
+
 
 // Middleware para cookies, sessão, logger, estáticos
 app.use(cookieParser());
@@ -129,5 +135,7 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
    console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
+
+
 
 module.exports = app;
