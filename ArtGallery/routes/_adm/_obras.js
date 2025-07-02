@@ -5,6 +5,22 @@ const {
   buscarTodasCategorias,
 } = require("../../banco");
 
+router.get("/", async (req, res) => {
+
+});
+
+router.get("/favoritos", async (req, res) => {
+  
+});
+
+router.get("/comentarios", async (req, res) => {
+  
+});
+
+router.get("/colecoes", async (req, res) => {
+  
+});
+
 router.get("/categorias", async (req, res) => {
   if (!req.session.usuario) return res.redirect("/login");
   const tipo_usu = req.session.usuario.tipo_usu;
