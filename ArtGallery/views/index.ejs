@@ -111,7 +111,7 @@
                         <div class="top-info">
                             <div class="metrics">
                                 <span>
-                                    <!-- O usuário não fdeve desfavoritar/favoritar em um intervalo de 3 segundos -->       
+                                    <!-- O usuário não deve desfavoritar/favoritar em um intervalo de 3 segundos -->       
                                     <a href="/obras/<%= o.id %>/favoritar">
                                         <% if (o.favoritou) { %>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
@@ -147,7 +147,7 @@
                         </div>
                         <div class="bottom-info">
                             <strong>
-                                <a href="/perfil/id=<%= o.idArt %>"><%= o.art %></a>
+                                <a href="/perfil/perfilVisitante/<%= o.idUsuArt %>"><%= o.art %></a>
                             </strong>
                             <p><%= o.des %></p>
                         </div>
@@ -170,7 +170,7 @@
                     <p><%= oa.art %>?</p>
                 </div>
             </a>
-            <a href="/perfil/id=<%= oa.idArt %>" class="link-final">Veja mais sobre</a>
+            <a href="/perfil/id=<%= oa.idArt %>"" class="link-final">Veja mais sobre</a>
         </div>
         </a>
         <% }) %>

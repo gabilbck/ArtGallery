@@ -109,7 +109,7 @@ app.use("/adm/suporte", admSuporteRouter);
 const conexao = require('./banco');
 app.get('/', async (req, res) => {
   try {
-    const [categorias] = await conexao.promise().query('SELECT id_cat, nome_cat FROM categoria');
+    const [categorias] = await conexao.query('SELECT id_cat, nome_cat FROM categoria');
     res.render('index', { categorias });
   } catch (error) {
     console.error('Erro ao buscar categorias:', error);
