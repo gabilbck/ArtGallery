@@ -27,27 +27,31 @@
                     </div>
                     <div class="r-c-desc">
                         <div class="r-c-desc-linha traco-inferior">
-                            <a href="#">APRECIADORES</a>
+                            <a href="/adm/usuarios/apreciadores/">APRECIADORES</a>
                             <span><%= qtdApreciadores %></span>
                         </div>
                         <div class="r-c-desc-linha traco-inferior">
-                            <a href="#">ARTISTAS ATIVOS</a>
+                            <a href="/adm/usuarios/artistas/ativos/">ARTISTAS ATIVOS</a>
                             <span><%= qtdArtistas %></span>
                         </div>
                         <div class="r-c-desc-linha traco-inferior">
-                            <a href="#">ARTISTAS P/ LIBERAÇÃO</a>
+                            <a href="/adm/usuarios/artistas/liberados">ARTISTAS LIBERADOS</a>
+                            <span><%= qtdArtistasLiberados %></span>
+                        </div>
+                        <div class="r-c-desc-linha traco-inferior">
+                            <a href="/adm/usuarios/artistas/pendentes">ARTISTAS P/ LIBERAÇÃO</a>
                             <span><%= qtdArtistasAguardandoLiberacao %></span>
                         </div>
                         <div class="r-c-desc-linha traco-inferior">
-                            <a href="#">ADMINISTRADORES</a>
+                            <a href="/adm/usuarios/administradores">ADMINISTRADORES</a>
                             <span><%= qtdAdm %></span>
                         </div>
                         <div class="r-c-desc-linha traco-inferior">
-                            <a href="#">BANIDOS</a>
+                            <a href="/adm/usuarios/banidos">BANIDOS</a>
                             <span><%= qtdBan %></span>  
                         </div>
-                        <div class="r-c-desc-linha">
-                            <a href="#">TOTAIS</a>
+                        <div class="r-c-desc-linha traco-inferior">
+                            <a href="/adm/usuarios/">TOTAIS</a>
                             <span><%= totalUsuarios %></span>
                         </div>
                     </div>
@@ -127,16 +131,16 @@
                 </div>
                 <div class="cadastros-botoes">
                     <div class="cadastro-btn">
-                        <a href="/adm/usuarios/cadastrar" class="btn-cadastro">CADASTRAR NOVO USUARIO</a>
+                        <a href="/adm/cadastrar/usuario" class="btn-cadastro">CADASTRAR NOVO USUARIO</a>
                     </div>
                     <div class="cadastro-btn">
-                        <a href="/adm/obras/cadastrar" class="btn-cadastro">CADASTRAR NOVA CATEGORIA</a>
+                        <a href="/adm/cadastrar/categoria" class="btn-cadastro">CADASTRAR NOVA CATEGORIA</a>
                     </div>
                     <div class="cadastro-btn">
-                        <a href="/adm/obras/cadastrar" class="btn-cadastro">CADASTRAR NOVO ARTISTA</a>
+                        <a href="/adm/cadastrar/artista" class="btn-cadastro">CADASTRAR NOVO ARTISTA</a>
                     </div>
                     <div class="cadastro-btn">
-                        <a href="/adm/obras/cadastrar" class="btn-cadastro">CADASTRAR NOVA OBRA</a>
+                        <a href="/adm/cadastrar/obra" class="btn-cadastro">CADASTRAR NOVA OBRA</a>
                     </div>
                 </div>
             </div>

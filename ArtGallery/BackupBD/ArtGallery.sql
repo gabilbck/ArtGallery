@@ -51,7 +51,6 @@ CREATE TABLE `artista` (
   `nome_comp` varchar(255) NOT NULL,
   `bio_art` text DEFAULT NULL,
   `foto_art` varchar(255) DEFAULT "/uploads/imagem.png",
-  `situacao_art` tinyint(1) NOT NULL DEFAULT 0,
   `id_usu` int(11) DEFAULT NULL,
   PRIMARY KEY (`id_art`),
   UNIQUE KEY `id_usu` (`id_usu`),
@@ -152,6 +151,10 @@ CREATE TABLE `favorito_obra` (
 LOCK TABLES `favorito_obra` WRITE;
 UNLOCK TABLES;
 
+
+ 
+
+
 DROP TABLE IF EXISTS `seguidor_artista`;
 
 CREATE TABLE `seguidor_artista` (
@@ -181,3 +184,24 @@ CREATE TABLE `suporte` (
 
 LOCK TABLES `suporte` WRITE;
 UNLOCK TABLES;
+
+
+CREATE TABLE seguidores (
+  seguidor_id INT(11) NOT NULL,
+  seguido_id INT(11) NOT NULL,
+  PRIMARY KEY (seguidor_id, seguido_id),
+  CONSTRAINT fk_seguidor FOREIGN KEY (seguidor_id) REFERENCES usuario(id_usu) ON DELETE CASCADE,
+  CONSTRAINT fk_seguido FOREIGN KEY (seguido_id) REFERENCES usuario(id_usu) ON DELETE CASCADE
+);
+
+CREATE TABLE qtd_seguidores (
+  id_usu INT PRIMARY KEY,
+  total_seguidores BIGINT DEFAULT 0,
+  FOREIGN KEY (id_usu) REFERENCES usuario(id_usu) ON DELETE CASCADE
+);
+
+CREATE TABLE qtd_seguindo (
+  id_usu INT PRIMARY KEY,
+  total_seguindo BIGINT DEFAULT 0,
+  FOREIGN KEY (id_usu) REFERENCES usuario(id_usu) ON DELETE CASCADE
+);

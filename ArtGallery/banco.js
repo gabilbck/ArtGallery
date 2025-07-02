@@ -43,7 +43,7 @@ async function registrarUsuario(dadosUsuario) {
     console.log("Usuario cadastrado com sucesso: ", resultado);
     return resultado;
   } catch (erro) {
-    console.erro("Erro ao cadastrar usuario:", erro);
+    console.error("Erro ao cadastrar usuario:", erro); // <-- corrigido
     throw erro;
   }
 }
@@ -430,7 +430,8 @@ async function excluirComentario(id_com) {
 //Coleções
 async function buscarObrasPorColecao(id_col) {
   const conexao = await conectarBD();
-  const [obras] = await conexao.query(`
+  const [obras] = await conexao.query(
+    `
     SELECT 
       col.id_col AS id_col,
       col.nome_col AS nome_colecao,
@@ -444,7 +445,9 @@ async function buscarObrasPorColecao(id_col) {
     LEFT JOIN obra_colecao oc ON col.id_col = oc.id_col
     LEFT JOIN obra obr ON oc.id_obr = obr.id_obr
     WHERE col.id_col = ?
-  `, [id_col]);
+  `,
+    [id_col]
+  );
   return obras;
 }
 async function buscarColecaoPorUsu(id_usu) {
@@ -484,9 +487,9 @@ async function criarColecao(id_usu, nome_col) {
 async function excluirColecao(id_col) {
   const conexao = await conectarBD();
   // Primeiro, excluir todas as relações dessa coleção com obras
-  await conexao.query('DELETE FROM obra_colecao WHERE id_col = ?', [id_col]);
+  await conexao.query("DELETE FROM obra_colecao WHERE id_col = ?", [id_col]);
   // Agora sim, pode excluir a coleção
-  await conexao.query('DELETE FROM colecao WHERE id_col = ?', [id_col]);
+  await conexao.query("DELETE FROM colecao WHERE id_col = ?", [id_col]);
 }
 async function atualizarColecao(id_col, novo_nome) {
   const conexao = await conectarBD();
@@ -496,9 +499,9 @@ async function atualizarColecao(id_col, novo_nome) {
   await conexao.query(sql, [novo_nome, id_col]);
 }
 
-async function adicionarObraColecao(id_col, id_obra){
+async function adicionarObraColecao(id_col, id_obra) {
   const conexao = await conectarBD();
-  const sql =`
+  const sql = `
     INSERT INTO obra_colecao (id_obr, id_col)
     VALUES (?, ?)
   `;
@@ -512,7 +515,6 @@ async function excluirObraColecao(id_col, id_obra) {
   `;
   await conexao.query(sql, [id_obra, id_col]); // <- CORRETO!
 }
-
 
 // Suporte
 async function inserirSuporte(email_sup, assunto_sup, descricao_sup) {
@@ -529,22 +531,28 @@ async function buscarSuporte(email, assunto, descricao) {
   return linhas.length > 0 ? linhas[0] : null;
 }
 
-
 //ADMIN
-async function buscarQtdApreciadores(){
+async function buscarQtdApreciadores() {
   const conexao = await conectarBD();
   const sql = `SELECT COUNT(*) AS total FROM usuario WHERE tipo_usu = 'apr'`;
   const [linhas] = await conexao.query(sql);
   return linhas[0].total;
 }
-async function buscarQtdArtistas(){
+async function buscarQtdArtistas() {
   const conexao = await conectarBD();
-  const sql = `SELECT COUNT(*) AS total FROM artista WHERE situacao_art = 1`;
+  const sql = `SELECT COUNT(*) AS total FROM artista`;
   const [linhas] = await conexao.query(sql);
+  return linhas[0].total;
 }
 async function buscarQtdArtistasAguardandoLiberacao() {
   const conexao = await conectarBD();
-  const sql = `SELECT COUNT(*) AS total FROM artista WHERE situacao_art = 0`;
+  const sql = `SELECT COUNT(*) AS total FROM liberacao_artista WHERE status_lib = 'p'`;
+  const [linhas] = await conexao.query(sql);
+  return linhas[0].total;
+}
+async function buscarQtdArtistasLiberados() {
+  const conexao = await conectarBD();
+  const sql = `SELECT COUNT(*) AS total FROM liberacao_artista WHERE status_lib = 'l'`;
   const [linhas] = await conexao.query(sql);
   return linhas[0].total;
 }
@@ -567,9 +575,119 @@ async function buscarTotalUsuarios() {
   return linhas[0].total;
 }
 
+// ADMIN - LISTAS
+async function listarUsuarios() {
+  const conexao = await conectarBD();
+  const sql = ` SELECT id_usu as id, nome_usu as usu, nome_comp as nome, email_usu as email, foto_usu as foto, tipo_usu as tipo, advertencia_usu as adv, ban_usu as ban
+    FROM usuario
+    ORDER BY id_usu DESC `;
+  const [linhas] = await conexao.query(sql);
+  return linhas;
+}
+async function listarApreciadores() {
+  const conexao = await conectarBD();
+  const sql = `SELECT id_usu AS id, nome_usu AS usu, nome_comp AS nome, foto_usu AS foto, tipo_usu AS tipo
+    FROM usuario
+    WHERE tipo_usu = 'apr'
+    ORDER BY id_usu DESC`;
+  const [linhas] = await conexao.query(sql);
+  return linhas;
+}
+async function listarArtistasAtivos() {
+  const conexao = await conectarBD();
+  const sql = `
+    SELECT 
+        a.id_art AS id,
+        a.nome_usu AS usu,
+        a.nome_comp AS nome,
+        a.bio_art AS bio,
+        u.email_usu AS email,
+        COALESCE(a.foto_art, u.foto_usu, '/uploads/imagem.png') AS foto,
+        CASE 
+            WHEN u.id_usu IS NOT NULL THEN u.tipo_usu 
+            ELSE 'art' 
+        END AS tipo,
+        COALESCE(u.advertencia_usu, 0) AS adv,
+        COALESCE(u.ban_usu, 0) AS ban
+    FROM 
+        artista a
+    LEFT JOIN 
+        usuario u ON a.id_usu = u.id_usu
+    ORDER BY 
+        a.id_art DESC;
+  `;
+  const [linhas] = await conexao.query(sql);
+  return linhas;
+}
+async function listarArtistasLiberados() {
+  const conexao = await conectarBD();
+  const sql = `SELECT a.id_art AS id, a.nome_usu AS usu, a.nome_comp AS nome, a.foto_art AS foto, l.status_lib AS status
+    FROM artista a
+    INNER JOIN liberacao_artista l ON a.id_usu = l.id_usu
+    WHERE l.status_lib = 'l'
+    ORDER BY a.id_art DESC`;
+  const [linhas] = await conexao.query(sql);
+  return linhas;
+}
+async function listarArtistasAguardandoLiberacao() {
+  const conexao = await conectarBD();
+  const sql = `
+    SELECT 
+      u.id_usu AS id,
+      u.nome_usu AS usu,
+      u.nome_comp AS nome,
+      u.email_usu AS email,
+      u.foto_usu AS foto,
+      u.tipo_usu AS tipo,
+      u.advertencia_usu AS adv,
+      u.ban_usu AS ban,
+      l.status_lib AS status
+    FROM usuario u
+    INNER JOIN liberacao_artista l ON u.id_usu = l.id_usu
+    WHERE l.status_lib = 'p'
+    ORDER BY u.id_usu DESC
+  `;
+  const [linhas] = await conexao.query(sql);
+  return linhas;
+}
+async function listarAdministradores() {
+  const conexao = await conectarBD();
+  const sql = `SELECT id_usu AS id, nome_usu AS usu, nome_comp AS nome, foto_usu AS foto, tipo_usu AS tipo
+    FROM usuario
+    WHERE tipo_usu = 'adm'
+    ORDER BY id_usu DESC`;
+  const [linhas] = await conexao.query(sql);
+  return linhas;
+}
+async function listarUsuariosBanidos() {
+  const conexao = await conectarBD();
+  const sql = `SELECT id_usu AS id, nome_usu AS usu, nome_comp AS nome, foto_usu AS foto, tipo_usu AS tipo
+    FROM usuario
+    WHERE ban_usu = 1
+    ORDER BY id_usu DESC`;
+  const [linhas] = await conexao.query(sql);
+  return linhas;
+}
+
+// ADMIN - Ações diretas
+async function liberarArtista(id_usu) {
+  const conexao = await conectarBD();
+  const sql = `UPDATE liberacao_artista SET status_lib = 'l' WHERE id_usu = ?`;
+  await conexao.query(sql, [id_usu]);
+}
+async function advertirUsuario(id_usu) {
+  const conexao = await conectarBD();
+  const sql = `UPDATE usuario SET advertencia_usu = advertencia_usu + 1 WHERE id_usu = ?`;
+  await conexao.query(sql, [id_usu]);
+}
+async function banirUsuario(id_usu) {
+  const conexao = await conectarBD();
+  const sql = `UPDATE usuario SET ban_usu = 1 WHERE id_usu = ?`;
+  await conexao.query(sql, [id_usu]);
+}
 
 module.exports = {
-  conectarBD, 
+  conectarBD,
   buscarUsuario,
   registrarUsuario,
   buscarDadosUsuario,
@@ -611,9 +729,20 @@ module.exports = {
   buscarQtdApreciadores,
   buscarQtdArtistas,
   buscarQtdArtistasAguardandoLiberacao,
+  buscarQtdArtistasLiberados,
   buscarQtdAdm,
   buscarQtdBan,
-  buscarTotalUsuarios
-
-
+  buscarTotalUsuarios,
+  //Listas
+  listarUsuarios,
+  listarApreciadores,
+  listarArtistasAtivos,
+  listarArtistasLiberados,
+  listarArtistasAguardandoLiberacao,
+  listarAdministradores,
+  listarUsuariosBanidos,
+  //Funções ADM
+  liberarArtista,
+  advertirUsuario,
+  banirUsuario,
 };

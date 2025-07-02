@@ -104,7 +104,7 @@ VALUES
 (9, 9, 1),
 (10, 10, 1);
 
-INSERT INTO liberacao_artista (status_lib, id_art)
+INSERT INTO liberacao_artista (status_lib, id_usu)
 VALUES
 ('a', 1),
 ('a', 2),
@@ -154,19 +154,15 @@ UPDATE categoria SET descricao_cat = 'Representações artísticas de pessoas, c
 UPDATE categoria SET descricao_cat = 'Obras que retratam ambientes naturais como montanhas, florestas, praias e campos, com foco na beleza do cenário.' WHERE id_cat = 9;
 UPDATE categoria SET descricao_cat = 'Composições simples e diretas que valorizam o essencial, com poucos elementos, cores neutras e formas geométricas.' WHERE id_cat = 10;
 
+INSERT INTO qtd_seguidores (id_usu)
+SELECT id_usu FROM usuario
+WHERE id_usu NOT IN (SELECT id_usu FROM qtd_seguidores);
+
+INSERT INTO qtd_seguindo (id_usu)
+SELECT id_usu FROM usuario
+WHERE id_usu NOT IN (SELECT id_usu FROM qtd_seguindo);
+
 -- VIEWS & TRIGGERS
-
--- Quantidade de seguidores por artista
-CREATE VIEW qtd_seguidores AS
-SELECT id_artista, COUNT(*) AS total_seguidores
-FROM seguidor_artista
-GROUP BY id_artista;
-
--- Quantidade de artistas que cada seguidor segue
-CREATE VIEW qtd_seguindo AS
-SELECT id_seguidor, COUNT(*) AS total_seguindo
-FROM seguidor_artista
-GROUP BY id_seguidor;
 
 -- Quantidade de favoritos por obra
 CREATE VIEW qtd_favoritos AS
@@ -226,38 +222,36 @@ SELECT u.id_usu, u.nome_usu, u.nome_comp, u.ban_usu
 FROM usuario u
 WHERE u.ban_usu = 1;
 
--- Liberação automática ao cadastrar artista
-DELIMITER |
-CREATE TRIGGER adc_liberacao_de_artista
+-- Trigger para inserir artista automaticamente ao cadastrar usuário
+DELIMITER //
+CREATE TRIGGER trg_pos_insert_usuario_art
 AFTER INSERT ON usuario
 FOR EACH ROW
 BEGIN
-    IF NEW.tipo_usu = 'art' THEN
-        INSERT INTO liberacao_artista (status_lib, id_art)
-        VALUES ('p', NULL); -- será atualizado ao aprovar
-    END IF;
-END|
+  IF NEW.tipo_usu = 'art' THEN
+    INSERT INTO liberacao_artista (id_usu, status_lib)
+    VALUES (NEW.id_usu, 'p');
+  END IF;
+END;
+//
 DELIMITER ;
 
--- Aprovação gera registro na tabela artista
-DELIMITER |
-CREATE TRIGGER adc_artista_apr
+-- Trigger para atualizar artista ao liberar artista
+DELIMITER //
+CREATE TRIGGER trg_pos_update_liberacao_artista
 AFTER UPDATE ON liberacao_artista
 FOR EACH ROW
 BEGIN
-    IF NEW.status_lib = 'a' AND OLD.status_lib != 'a' THEN
-        INSERT INTO artista (nome_usu, nome_comp, bio_art, id_usu)
-        SELECT u.nome_usu, u.nome_comp, 
-               CONCAT('Bem-vindo ao perfil do artista ', u.nome_comp, '!'), 
-               u.id_usu
-        FROM usuario u
-        WHERE u.id_usu = (
-            SELECT a.id_usu
-            FROM artista a
-            WHERE a.id_art = NEW.id_art
-        );
-    END IF;
-END|
+  IF NEW.status_lib = 'l' AND OLD.status_lib != 'l' THEN
+    INSERT INTO artista (nome_usu, nome_comp, bio_art, id_usu)
+    SELECT nome_usu, nome_comp, 
+           CONCAT('Bem-vindo ao perfil do artista ', nome_comp, '!'), 
+           id_usu
+    FROM usuario
+    WHERE id_usu = NEW.id_usu;
+  END IF;
+END;
+//
 DELIMITER ;
 
 -- Marcar e desmarcar favoritos
@@ -292,4 +286,44 @@ BEGIN
         WHERE id_usu = NEW.id_usu;
     END IF;
 END|
+DELIMITER ;
+
+
+DELIMITER //
+--Trigger após inserção (seguindo alguém)
+CREATE TRIGGER trg_after_insert_seguidores
+AFTER INSERT ON seguidores
+FOR EACH ROW
+BEGIN
+  -- Incrementa total_seguindo do seguidor
+  UPDATE qtd_seguindo
+  SET total_seguindo = total_seguindo + 1
+  WHERE id_usu = NEW.seguidor_id;
+
+  -- Incrementa total_seguidores do seguido
+  UPDATE qtd_seguidores
+  SET total_seguidores = total_seguidores + 1
+  WHERE id_usu = NEW.seguido_id;
+END;
+//
+DELIMITER ;
+
+
+DELIMITER //
+--Trigger após remoção (deixar de seguir)
+CREATE TRIGGER trg_after_delete_seguidores
+AFTER DELETE ON seguidores
+FOR EACH ROW
+BEGIN
+  -- Decrementa total_seguindo do seguidor
+  UPDATE qtd_seguindo
+  SET total_seguindo = total_seguindo - 1
+  WHERE id_usu = OLD.seguidor_id;
+
+  -- Decrementa total_seguidores do seguido
+  UPDATE qtd_seguidores
+  SET total_seguidores = total_seguidores - 1
+  WHERE id_usu = OLD.seguido_id;
+END;
+//
 DELIMITER ;

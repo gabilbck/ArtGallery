@@ -25,7 +25,7 @@ router.post('/artista', async (req, res) => {
             nome: req.body.nome,
             usuario: req.body.usuario,
             senha: req.body.senha,
-            tipo_usu: 'artista'
+            tipo_usu: 'art'
         };
 
         await registrarUsuario(dadosUsuario);
@@ -52,7 +52,7 @@ router.post('/apreciador', async (req, res) => {
             nome: req.body.nome,
             usuario: req.body.usuario,
             senha: req.body.senha,
-            tipo_usu: 'apreciador'
+            tipo_usu: 'apr'
         };
 
         await registrarUsuario(dadosUsuario);
@@ -70,8 +70,5 @@ router.post('/apreciador', async (req, res) => {
         });
     }
 });
-
-
-
 
 module.exports = router;

@@ -5,6 +5,7 @@ const {
     buscarQtdApreciadores,
     buscarQtdArtistas,
     buscarQtdArtistasAguardandoLiberacao,
+    buscarQtdArtistasLiberados,
     buscarQtdAdm,
     buscarQtdBan,
     buscarTotalUsuarios
@@ -18,6 +19,7 @@ router.get("/", async (req, res) => {
     const qtdApreciadores = await buscarQtdApreciadores();
     const qtdArtistas = await buscarQtdArtistas();
     const qtdArtistasAguardandoLiberacao = await buscarQtdArtistasAguardandoLiberacao();
+    const qtdArtistasLiberados = await buscarQtdArtistasLiberados();
     const qtdAdm = await buscarQtdAdm();
     const qtdBan = await buscarQtdBan();
     const totalUsuarios = await buscarTotalUsuarios();
@@ -28,6 +30,7 @@ router.get("/", async (req, res) => {
         qtdApreciadores,
         qtdArtistas,
         qtdArtistasAguardandoLiberacao,
+        qtdArtistasLiberados,
         qtdAdm,
         qtdBan,
         totalUsuarios
