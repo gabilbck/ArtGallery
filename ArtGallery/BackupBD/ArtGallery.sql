@@ -205,3 +205,10 @@ CREATE TABLE qtd_seguindo (
   total_seguindo BIGINT DEFAULT 0,
   FOREIGN KEY (id_usu) REFERENCES usuario(id_usu) ON DELETE CASCADE
 );
+
+CREATE TABLE liberacao_artista (
+  id_lib INT AUTO_INCREMENT PRIMARY KEY,
+  id_usu INT NOT NULL,
+  status_lib CHAR(1) NOT NULL,
+  FOREIGN KEY (id_usu) REFERENCES usuario(id_usu)
+);
