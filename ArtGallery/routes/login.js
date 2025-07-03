@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { buscarUsuario } = require("../banco");
+const { buscarUsuario, conectarBD } = require("../banco");
 
 // GET /login — permite acesso somente se o usuário não estiver logado
 router.get("/", (req, res) => {
