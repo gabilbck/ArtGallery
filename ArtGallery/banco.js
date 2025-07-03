@@ -242,7 +242,7 @@ async function buscarObraAletoria() {
                 o.id_obr AS id,
                 o.titulo_obr AS nome,
                 a.nome_comp AS art,
-                a.id_usu AS id_usu_art,
+                a.id_usu AS idUsuArt,
                 COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto
             FROM obra o
             INNER JOIN artista a ON o.id_art = a.id_art

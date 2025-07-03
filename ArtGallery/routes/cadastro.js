@@ -66,8 +66,18 @@ router.post('/validar-codigo', (req, res) => {
 // ✅ Cadastro artista
 router.post('/artista', async (req, res) => {
     try {
+        const email = req.body.email;
+
+        // Verifica se o e-mail contém "@gmail"
+        if (!email.includes('@gmail')) {
+            return res.render('cadArtista', {
+                sucesso: false,
+                erros: 'É necessário um g-mail para criação da conta!'
+            });
+        }
+
         const dadosUsuario = {
-            email: req.body.email,
+            email: email,
             nome: req.body.nome,
             usuario: req.body.usuario,
             senha: req.body.senha,
@@ -93,8 +103,18 @@ router.post('/artista', async (req, res) => {
 // ✅ Cadastro apreciador
 router.post('/apreciador', async (req, res) => {
     try {
+        const email = req.body.email;
+
+        // Verifica se o e-mail contém "@gmail"
+        if (!email.includes('@gmail')) {
+            return res.render('cadArtista', {
+                sucesso: false,
+                erros: 'É necessário um g-mail para criação da conta!'
+            });
+        }
+
         const dadosUsuario = {
-            email: req.body.email,
+            email: email,
             nome: req.body.nome,
             usuario: req.body.usuario,
             senha: req.body.senha,
