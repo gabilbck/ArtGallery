@@ -107,7 +107,7 @@ router.post('/apreciador', async (req, res) => {
 
         // Verifica se o e-mail contém "@gmail"
         if (!email.includes('@gmail')) {
-            return res.render('cadArtista', {
+            return res.render('cadApreciador', {
                 sucesso: false,
                 erros: 'É necessário um g-mail para criação da conta!'
             });
