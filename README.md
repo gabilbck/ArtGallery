@@ -32,8 +32,6 @@ O ArtGallery é uma plataforma para artistas exporem suas obras digitais, onde u
 
 ``` npm install mysql2 ```
 
-``` npm install --save-dev jest ```
-
 ``` npm install multer ```
 
 ``` npm install nodemailer ```
