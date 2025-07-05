@@ -299,11 +299,9 @@ async function buscarObraMaisFavoritadaDoArtistaMaisSeguido() {
 
   // 1. Busca o artista com mais seguidores
   const [artistaMaisSeguido] = await conexao.query(`
-      SELECT a.id_art
-      FROM artista a
-      LEFT JOIN seguidor_artista sa ON a.id_art = sa.id_artista
-      GROUP BY a.id_art
-      ORDER BY COUNT(sa.id_seguidor) DESC
+      SELECT id_usu
+      FROM qtd_seguidores
+      ORDER BY total_seguidores DESC
       LIMIT 1
   `);
 
