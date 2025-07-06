@@ -211,7 +211,7 @@
                   </div>
                </div>
                <div class="obr-view-artobr">
-                  <a href="/perfil/perfilVisitante/<%= obra.id_art %>"
+                  <a href="/perfil/perfilArtista/<%= obra.id_art %>"
                      ><%= obra.artU %></a
                   >
                   <p><%= obra.des %></p>
@@ -220,6 +220,7 @@
          </div>
       </section>
 
+      <% if (usuario.tipo_usu != "art") { %>
       <section>
          <div class="conteudo">
             <div class="com-input">
@@ -236,6 +237,7 @@
             </div>
          </div>
       </section>
+      <% } %>
 
       <section>
          <div class="conteudo">
@@ -257,7 +259,7 @@
                         </div>
                      </div>
                      <% if ((usuario.id_usu == obra.id_usu_Art) ||
-                     (usuario.id_usu == c.id_usu)) { %>
+                     (usuario.id_usu == c.id_usu) || (usuario.tipo_usu == "adm")) { %>
                      <div class="com-del">
                         <form
                            action="/obras/<%= obra.id %>/comentarios/<%= c.id_com %>/excluir"
