@@ -650,6 +650,18 @@ async function buscarQtdBan() {
   const [linhas] = await conexao.query(sql);
   return linhas[0].total;
 }
+async function buscarIdUltimaCategoria(){
+  const conexao = await conectarBD();
+  const sql = `SELECT id_cat FROM categoria ORDER BY id_cat DESC LIMIT 1;`;
+  const [linhas] = await conexao.query(sql);
+  return linhas[0].id_cat;
+}
+async function buscarQtdObras() {
+  const conexao = await conectarBD();
+  const sql = `SELECT COUNT(*) AS total FROM obra;`;
+  const [linhas] = await conexao.query(sql);
+  return linhas[0].total;
+}
 async function buscarTotalUsuarios() {
   const conexao = await conectarBD();
   const sql = `SELECT COUNT(*) AS total FROM usuario`;
@@ -774,6 +786,14 @@ async function listarUsuariosBanidos() {
   const [linhas] = await conexao.query(sql);
   return linhas;
 }
+async function listarTodasObra(){
+  const conexao = await conectarBD();
+  const sql = `SELECT id_obr AS id, titulo_obr AS titulo, descricao_obr AS descricao, situacao_obr AS ativo, foto_obr AS foto, id_cat as idCat, id_art as idArt
+    FROM obra
+    ORDER BY id_obr DESC`;
+  const [linhas] = await conexao.query(sql);
+  return linhas;
+}
 async function listarTodosSup(){
   const conexao = await conectarBD();
   const sql = `SELECT id_sup as id, email_sup as email, assunto_sup as assunto, descricao_sup as descricao, status_sup as status
@@ -825,6 +845,36 @@ async function banirUsuario(id_usu) {
   const conexao = await conectarBD();
   const sql = `UPDATE usuario SET ban_usu = 1 WHERE id_usu = ?`;
   await conexao.query(sql, [id_usu]);
+}
+async function buscarUmaObraAdm(id_obr){
+  const conexao = await conectarBD();
+  const sql = ` SELECT id_obr, titulo_obr, descricao_obr, situacao_obr, foto_obr, id_cat, id_art
+    FROM obra WHERE id_obr = ?;
+  `;
+  const [linhas] = await conexao.query(sql, [id_obr]);
+  return linhas[0].total;
+}
+async function buscarUmaCategoriaAdm(id_cat){
+  const conexao = await conectarBD();
+  const sql = ` SELECT id_cat, nome_cat, descricao_cat, foto_cat FROM categoria WHERE id_cat = ?;`;
+  const [linhas] = await conexao.query(sql, [id_cat]);
+  return linhas[0].total;
+}
+async function editarUmaObraAdm(id_obr){
+  const conexao = await conectarBD();
+  const sql = ` UPDATE obra SET titulo_obr = ?, descricao_obr = ?, situacao_obr = ?, foto_obr = ?, id_cat = ? 
+  WHERE id_obr = ?;`;
+  await conexao.query(sql, [id_obr]);
+}
+async function excluirUmaObraAdm(id_obr) {
+  const conexao = await conectarBD();
+  const sql = `DELETE FROM obra WHERE id_obr = ?;`;
+  await conexao.query(sql, [id_obr]);
+}
+async function excluirUmaCategoriaAdm(id_cat) {
+  const conexao = await conectarBD();
+  const sql = `DELETE FROM categoria WHERE id_cat = ?;`;
+  await conexao.query(sql, [id_cat]);
 }
 async function mudarStatusSup(id_sup, status_sup){
   const conexao = await conectarBD();
@@ -888,6 +938,25 @@ async function getQtdSeguindo(id_usu) {
   return res ? res.total_seguindo : 0;
 }
 
+//Cadastros
+async function registrarCategoria(dados){
+  const { categoria, descricao } = dados;
+  const conexao = await conectarBD();
+  const sql =
+    "INSERT INTO categoria (nome_cat, descricao_cat, foto_cat) VALUES (?, ?, 'uploads/imagem.png')";
+  try {
+    const [resultado] = await conexao.execute(sql, [
+      categoria,
+      descricao
+    ]);
+    console.log("Categoria cadastrada com sucesso: ", resultado);
+    return resultado;
+  } catch (erro) {
+    console.error("Erro ao cadastrar categoria:", erro); // <-- corrigido
+    throw erro;
+  }
+}
+
 module.exports = {
   conectarBD,
   buscarUsuario,
@@ -947,7 +1016,11 @@ module.exports = {
   buscarQtdArtistasLiberados,
   buscarQtdAdm,
   buscarQtdBan,
+  buscarQtdObras,
   buscarTotalUsuarios,
+  buscarUmaObraAdm,
+  buscarUmaCategoriaAdm,
+  buscarIdUltimaCategoria,
   buscarTotalPendenteSup,
   buscarTotalEmAndamentoSup,
   buscarTotalConcluidoSup,
@@ -960,6 +1033,7 @@ module.exports = {
   listarArtistasAguardandoLiberacao,
   listarAdministradores,
   listarUsuariosBanidos,
+  listarTodasObra,
   listarTodosSup,
   listarPendenteSup,
   listarEmAndamentoSup,
@@ -968,5 +1042,10 @@ module.exports = {
   liberarArtista,
   advertirUsuario,
   banirUsuario,
+  editarUmaObraAdm,
+  excluirUmaObraAdm,
+  excluirUmaCategoriaAdm,
   mudarStatusSup,
+  //Cadastros
+  registrarCategoria,
 };

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="icon" href="/uploads/icon-ag.svg" type="image/x-icon" />
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+    <link rel="stylesheet" href="/stylesheets/adm.css" />
+  </head>
+  <body>
+    <div class="topo-logo">
+      <a href="../">
+        <h1>ArtGallery</h1>
+        <p>Administrativo</p>
+      </a>
+    </div>
+
+    <% if (menssagem == "atualizado"){ %>
+    <div class="retorno">
+      <div class="retorno-container" id="sucesso">
+        Alteração realizada com sucesso!
+      </div>
+    </div>
+    <script>
+      setTimeout(() => {
+        window.location.href = "/adm/obras/";
+      }, 3000);
+    </script>
+    <% } else if(menssagem == "erro") { %>
+    <div class="retorno">
+      <div class="retorno-container" id="erro">Erro ao atualizar dados.</div>
+    </div>
+    <script>
+      setTimeout(() => {
+        window.location.href = "/adm/obras/";
+      }, 3000);
+    </script>
+    <% } else { %>
+    <section>
+      <div class="tabela">
+        <table>
+          <thead>
+            <tr>
+              <th class="col-a">ID</th>
+              <th class="col-b">Título</th>
+              <th class="col-a">Descrição</th>
+              <th class="col-b">Ativo</th>
+              <th class="col-a">ID Cat.</th>
+              <th class="col-b">ID Art.</th>
+            <th class="col-a"> Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% obra.forEach((o) => { %>
+            <tr>
+              <td class="col-a"><%= o.id %></td>
+              <td class="col-b"><%= o.titulo %></td>
+              <td class="col-a"><%= o.descricao %></td>
+              <% if (o.ativo == 1) { %>
+              <td class="col-b">Sim</td>
+              <% } %> <% if (o.ativo == 0) { %>
+              <td class="col-b">Não</td>
+              <% } %>
+              <td class="col-a">
+                <a href="/categorias/<%= o.idCat %>"> <%= o.idCat %> </a>
+              </td>
+              <td class="col-b">
+                <a href="/perfil/perfilArtista/<%= o.idArt %>">
+                  <%= o.idArt %>
+                </a>
+              </td>
+              <td class="col-a">
+                <div class="acoes">
+                  <form action="/adm/obras/editar/<%= o.id %>">
+                    <input
+                      type="submit"
+                      id="padrao"
+                      class="btn-qua"
+                      value="🖉"
+                    />
+                  </form>
+                  <form action="/adm/obras/excluir/<%= o.id %>">
+                    <input
+                      type="submit"
+                      id="erro"
+                      class="btn-qua"
+                      value="X"
+                    />
+                  </form>
+                </div>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <% } %>
+    <section>
+      <a href="/adm/" class="votlar" style="color: #fff">Voltar ao Dashboard</a>
+    </section>
+    <br />
+  </body>
+</html>

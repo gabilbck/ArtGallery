@@ -21,6 +21,7 @@ const admIndexRouter = require("./routes/_adm/_index");
 const admObrasRouter = require("./routes/_adm/_obras");
 const admUsuariosRouter = require("./routes/_adm/_usuarios");
 const admSuporteRouter = require("./routes/_adm/_suporte");
+const admCadastrarRouter = require("./routes/_adm/_cadastros");
 
 const app = express();
 
@@ -105,6 +106,7 @@ app.use("/adm", admIndexRouter);
 app.use("/adm/obras", admObrasRouter);
 app.use("/adm/usuarios", admUsuariosRouter);
 app.use("/adm/suporte", admSuporteRouter);
+app.use("/adm/cadastrar", admCadastrarRouter);
 
 const conexao = require('./banco');
 app.get('/', async (req, res) => {

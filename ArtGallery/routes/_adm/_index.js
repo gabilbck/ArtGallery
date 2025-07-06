@@ -8,6 +8,7 @@ const {
     buscarQtdArtistasLiberados,
     buscarQtdAdm,
     buscarQtdBan,
+    buscarQtdObras,
     buscarTotalUsuarios,
     buscarTotalPendenteSup,
     buscarTotalEmAndamentoSup,
@@ -26,6 +27,7 @@ router.get("/", async (req, res) => {
     const qtdArtistasLiberados = await buscarQtdArtistasLiberados();
     const qtdAdm = await buscarQtdAdm();
     const qtdBan = await buscarQtdBan();
+    const qtdObras = await buscarQtdObras();
     const totalUsuarios = await buscarTotalUsuarios();
     const pendenteSup = await buscarTotalPendenteSup();
     const emAndamentoSup = await buscarTotalEmAndamentoSup();
@@ -42,6 +44,7 @@ router.get("/", async (req, res) => {
         qtdAdm,
         qtdBan,
         totalUsuarios,
+        qtdObras,
         pendenteSup,
         emAndamentoSup,
         concluidoSup,
