@@ -45,6 +45,7 @@ router.get("/", async (req, res) => {
                  id: obraArtDest.id,
                  nome: obraArtDest.nome,
                  art: obraArtDest.art,
+                 idArt: obraArtDest.idArt,
                  idUsuArt: obraArtDest.idUsuArt,
                  foto: obraArtDest.foto,
                  tabela: "obra",

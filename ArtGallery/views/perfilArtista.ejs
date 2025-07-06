@@ -163,37 +163,24 @@
                 <% } %>
               </div>
               <% } %>
+              <div class="perfil-numeros">
+                <span>
+                  <p><%= totalSeguidores %></p>
+                  Seguidores
+                </span>
+                <span>
+                  <p><%= favoritosPer %></p>
+                  Favoritos
+                </span>
+              </div>
             </div>
           </div>
-          <% if (pertencente == true) { %>
-          <div class="botoes-perfil">
-            <div class="perfil-sair">
-              <a class="perfil-botao-sair" href="/logout">Sair</a>
-            </div>
-            <div class="perfil-editar">
-              <a class="perfil-botao-editar" href=""> Editar Perfil </a>
-            </div>
-            <% } %>
-          </div>
-
-          <div class="perfil-numeros">
-            <span>
-              <p><%= totalSeguidores %></p>
-              Seguidores
-            </span>
-            <span>
-              <p><%= favoritosPer %></p>
-              Favoritos
-            </span>
-          </div>
+          
         </div>
       </div>
       <div id="perfil-favoritos" class="perfil-aba-conteudo hidden">
         <section class="perfil-favoritos">
           <h2>Obras</h2>
-          <% if (pertencente == true) { %>
-          <a class="nova-obra" href="">+ Adicionar nova obra</a>
-          <% } %>
           <div class="favoritos-grid">
             <% if(obras){ obras.forEach(o => { %>
             <div class="obra-card">

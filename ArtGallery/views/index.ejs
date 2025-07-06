@@ -164,13 +164,13 @@
         <% obraArtDest.forEach(oa => { %>
         <div class="descubra-container">
             <img src="<%= oa.foto %>" alt="<%= oa.nome %>" title="<%= oa.nome %>">
-            <a href="/perfil/perfiArtista/<%= oa.idArt %>">
+            <a href="/perfil/perfilArtista/<%= oa.idArt %>">
                 <div class="descubra-conteudo">
                     <h1>Você Conhece</h1>
                     <p><%= oa.art %>?</p>
                 </div>
             </a>
-            <a href="/perfil/perfilVisitante/<%= oa.idUsuArt %>"" class="link-final">Veja mais sobre</a>
+            <a href="/perfil/perfilArtista/<%= oa.idArt %>" class="link-final">Veja mais sobre</a>
         </div>
         </a>
         <% }) %>

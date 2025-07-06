@@ -300,7 +300,7 @@ async function buscarObraAletoria() {
                 o.id_obr AS id,
                 o.titulo_obr AS nome,
                 a.nome_comp AS art,
-                a.id_art ASid_art,
+                a.id_art AS idArt,
                 a.id_usu AS idUsuArt,
                 COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto
             FROM obra o
@@ -358,7 +358,7 @@ async function buscarObraMaisFavoritadaDoArtistaMaisSeguido() {
 
   // 1. Busca o artista com mais seguidores
   const [artistaMaisSeguido] = await conexao.query(`
-      SELECT id_usu
+      SELECT id_art
       FROM qtd_seguidores
       ORDER BY total_seguidores DESC
       LIMIT 1
@@ -371,19 +371,19 @@ async function buscarObraMaisFavoritadaDoArtistaMaisSeguido() {
   // 2. Busca a obra mais favoritada desse artista
   const [obras] = await conexao.query(
     `
-      SELECT 
-          o.id_obr AS id,
-          o.titulo_obr AS nome,
-          a.nome_comp AS art,
-          COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto,
-          COUNT(f.id_usu) AS qfav
-      FROM obra o
-      INNER JOIN artista a ON o.id_art = a.id_art
-      LEFT JOIN favorito_obra f ON o.id_obr = f.id_obr AND f.ativo = 1
-      WHERE o.situacao_obr = 1 AND o.id_art = ?
-      GROUP BY o.id_obr
-      ORDER BY qfav DESC
-      LIMIT 1
+    SELECT 
+        o.id_obr AS id,
+        o.titulo_obr AS nome,
+        a.nome_comp AS art,
+        COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto,
+        COUNT(f.id_usu) AS qfav
+    FROM obra o
+    INNER JOIN artista a ON o.id_art = a.id_art
+    INNER JOIN favorito_obra f ON o.id_obr = f.id_obr AND f.ativo = 1
+    WHERE o.situacao_obr = 1 AND o.id_art = ?
+    GROUP BY o.id_obr
+    ORDER BY qfav DESC
+    LIMIT 1
   `,
     [idArtista]
   );
