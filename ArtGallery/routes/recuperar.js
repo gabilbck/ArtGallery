@@ -42,12 +42,8 @@ router.post('/recuperar', async (req, res) => {
     req.session = req.session || {};
     req.session.codigoVerificacao = codigo;
     req.session.emailVerificacao = email;
-
     res.redirect('/verificar-codigo');
-
-
-    // redireciona para a página de verificação
-    return res.redirect('/verificar-codigo');
+    
 
   } catch (err) {
     console.error('Erro ao enviar código:', err);
@@ -73,7 +69,7 @@ router.post('/verificar-codigo', (req, res) => {
 });
 
 router.get('/nova-senha', (req, res) => {
-  res.render('nova-senha');
+  res.render('nova-senha', { mensagem: null, erro: null });
 });
 
 router.post('/nova-senha', async (req, res) => {
@@ -88,10 +84,17 @@ router.post('/nova-senha', async (req, res) => {
     req.session.codigoVerificacao = null;
     req.session.emailVerificacao = null;
 
-    res.send('<h2>Senha atualizada com sucesso! <a href="/login">Ir para o login</a></h2>');
+    return res.render('nova-senha', {
+      mensagem: 'Senha atualizada com sucesso!',
+      erro: null
+    });
+
   } catch (erro) {
     console.error('Erro ao atualizar senha:', erro);
-    res.send('<h2>Erro ao atualizar senha.</h2>');
+    return res.render('nova-senha', {
+      mensagem: null,
+      erro: 'Erro ao atualizar a senha. Tente novamente.'
+    });
   }
 });
 

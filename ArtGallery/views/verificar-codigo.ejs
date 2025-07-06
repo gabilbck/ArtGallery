@@ -3,22 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <title>Verificar Código</title>
-  <link rel="stylesheet" href="/stylesheets/style.css">
+  <link rel="stylesheet" href="/stylesheets/styleVerificarCodigo.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="formulario">
-    <h1>Verificar Código</h1>
-    <p>Digite o código que foi enviado para o seu e-mail.</p>
+  <div class="container">
+    <h1 class="logo">ArtGallery</h1>
+    <h2 class="titulo">Recuperar Uma Conta</h2>
+    <p class="descricao">Insira o código recebido pelo e-mail para continuar:</p>
 
     <% if (erro) { %>
-      <div class="retorno-container" id="erro"><%= erro %></div>
+      <div class="retorno-container erro"><%= erro %></div>
     <% } %>
 
-    <form action="/verificar-codigo" method="post">
-      <input type="text" name="codigo" required placeholder="Digite o código">
-      <input type="submit" value="Verificar">
+    <form action="/verificar-codigo" method="post" class="form">
+      <label for="codigo">Código de Validação:</label>
+      <input type="text" name="codigo" placeholder="000000" required>
+      <button type="submit" class="btn">Verificar Código de Validação</button>
     </form>
+
+    <a href="/recuperar" class="voltar">
+      <span class="seta">←</span> Voltar
+    </a>
   </div>
 </body>
 </html>
-

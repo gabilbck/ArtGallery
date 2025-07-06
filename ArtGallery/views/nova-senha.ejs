@@ -3,15 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <title>Nova Senha</title>
-  <link rel="stylesheet" href="/stylesheets/style.css">
+  <link rel="stylesheet" href="/stylesheets/styleNovaSenha.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="formulario">
-    <h1>Nova Senha</h1>
-    <form action="/nova-senha" method="post">
-      <input type="password" name="senha" required placeholder="Digite a nova senha">
-      <input type="submit" value="Alterar Senha">
-    </form>
+  <div class="container">
+    <h1 class="logo">ArtGallery</h1>
+    <h2 class="titulo">Recuperar Uma Conta</h2>
+    <p class="descricao">Insira uma nova senha:</p>
+
+    <% if (typeof mensagem !== 'undefined' && mensagem) { %>
+  <div class="mensagem-sucesso">
+    <h2 class="titulo">Recuperar Uma Conta</h2>
+    <p class="descricao">Sua senha foi atualizada com sucesso!<br>
+      Aguarde o redirecionamento...</p>
+    <div class="btn-sucesso">Senha Atualizada com sucesso!</div>
+  </div>
+
+  <script>
+    setTimeout(() => {
+      window.location.href = '/login';
+    }, 3000);
+  </script>
+<% } else { %>
+  <form action="/nova-senha" method="post" class="form">
+    <label for="senha">Nova Senha</label>
+    <input type="password" name="senha" placeholder="Senha" required>
+    <button type="submit" class="btn">Atualizar Senha</button>
+  </form>
+
+  <a href="/recuperar" class="voltar">
+    <span class="seta">←</span> Voltar
+  </a>
+<% } %>
   </div>
 </body>
 </html>

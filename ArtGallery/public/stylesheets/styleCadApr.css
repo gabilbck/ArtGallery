@@ -26,6 +26,7 @@ body {
   margin-bottom: 20px;
 }
 
+
 .titulo {
   font-size: 1.2rem;
   font-weight: bold;
@@ -37,6 +38,7 @@ body {
   color: #555;
   margin-bottom: 20px;
 }
+
 
 .form {
   display: flex;
@@ -86,4 +88,13 @@ body {
 
 .login-link a:hover {
   text-decoration: underline;
+}
+
+
+.aviso {
+  background-color: #d32f2f;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  font-weight: bold;
 }

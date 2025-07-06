@@ -4,28 +4,30 @@
   <meta charset="UTF-8">
   <title>Recuperar Conta</title>
   <link rel="stylesheet" href="/stylesheets/styleRecuperar.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="container">
     <h1 class="logo">ArtGallery</h1>
-    <h2 class="titulo">Recuperar Conta</h2>
+    <h2 class="titulo">Recuperar Uma Conta</h2>
+    <p class="descricao">Insira seu e-mail para receber o código de validação:</p>
 
-    <div class="formulario">
-      <% if (erro) { %>
-      <div class="retorno-container" id="erro"><%= erro %></div>
-      <% } %>
+    <% if (erro) { %>
+      <div class="retorno-container erro"><%= erro %></div>
+    <% } %>
+    <% if (mensagem) { %>
+      <div class="retorno-container sucesso"><%= mensagem %></div>
+    <% } %>
 
-      <% if (mensagem) { %>
-      <div class="retorno-container" id="sucesso"><%= mensagem %></div>
-      <% } %>
+    <form action="/recuperar" method="post" class="form">
+      <label for="email">E-mail</label>
+      <input type="email" name="email" placeholder="usuario@gmail.com" required>
+      <button type="submit" class="btn">Enviar Código de Validação</button>
+    </form>
 
-
-      <form action="/recuperar" method="post">
-          <label for="email">E-mail</label>
-          <input type="email" name="email" placeholder="Digite seu E-mail" required>       
-          <button type="submit" class="btn">Enviar</button>
-      </form>
-    </div>
+    <a href="/login" class="voltar">
+      <span class="seta">←</span> Voltar
+    </a>
   </div>
 </body>
 </html>
