@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="icon" href="/uploads/icon-ag.svg" type="image/x-icon" />
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+    <link rel="stylesheet" href="/stylesheets/adm.css" />
+  </head>
+  <body>
+    <div class="topo-logo">
+      <a href="../">
+        <h1>ArtGallery</h1>
+        <p>Administrativo</p>
+      </a>
+    </div>
+
+    <% if (menssagem == "atualizado"){ %>
+    <div class="retorno">
+        <div class="retorno-container" id="sucesso">
+            Status atualizado!
+        </div>
+    </div>
+    <script>
+        setTimeout(() => { 
+            window.location.href = "/adm/suporte/";
+        }, 3000);
+    </script>
+    <% } else if(menssagem == "erro") { %>
+    <div class="retorno">
+        <div class="retorno-container" id="erro">
+            Erro ao atualizar status
+        </div>
+    </div>
+    <script>
+        setTimeout(() => { 
+            window.location.href = "/adm/suporte/";
+        }, 3000);
+    </script>
+    <% } else { %>
+    <section>
+      <div class="tabela">
+        <table>
+          <thead>
+            <tr>
+              <th class="col-a">ID</th>
+              <th class="col-b">E-mail</th>
+              <th class="col-a">Assunto</th>
+              <th class="col-b">Descrição</th>
+              <th class="col-a">Status</th>
+              <th class="col-a">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% suporte.forEach((s) => { %>
+            <tr>
+              <td class="col-a"><%= s.id %></td>
+              <td class="col-b"><%= s.email %></td>
+              <td class="col-a"><%= s.assunto %></td>
+              <td class="col-b"><%= s.descricao %></td>
+              <% if (s.status == "1") { %><td class="col-a">Pendente</td><% } %> 
+              <% if (s.status == "2") { %><td class="col-a">Em Andamento</td><% } %>
+              <% if (s.status == "3") { %><td class="col-a">Concluído</td><% } %>
+              <td class="col-b">
+                <div class="acoes">
+                    <% if (s.status != "3") { %>
+                    <form action="/adm/suporte/status/<%= s.id %>/<%= s.status %>">
+                        <input type="submit" value="Mudar Status">
+                    </form>
+                    <% } %>
+                </div>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <% } %>
+    <section>
+      <a href="/adm/" class="votlar" style="color: #fff">Voltar ao Dashboard</a>
+    </section>
+    <br />
+  </body>
+</html>

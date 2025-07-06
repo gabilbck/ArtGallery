@@ -61,6 +61,7 @@ router.get("/:id", async (req, res) => {
         })),
         artistas3: artistas3.map(a => ({
           id: a.id,
+          idUsu: a.idUsu,
           nome: a.nome,
           nomec: a.nomec,
           foto: a.foto,

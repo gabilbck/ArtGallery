@@ -187,13 +187,13 @@ CREATE TABLE seguidores (
   seguido_id INT(11) NOT NULL,
   PRIMARY KEY (seguidor_id, seguido_id),
   CONSTRAINT fk_seguidor FOREIGN KEY (seguidor_id) REFERENCES usuario(id_usu) ON DELETE CASCADE,
-  CONSTRAINT fk_seguido FOREIGN KEY (seguido_id) REFERENCES usuario(id_usu) ON DELETE CASCADE
+  CONSTRAINT fk_seguido FOREIGN KEY (seguido_id) REFERENCES artista(id_art) ON DELETE CASCADE
 );
 
 CREATE TABLE qtd_seguidores (
-  id_usu INT PRIMARY KEY,
+  id_art INT PRIMARY KEY,
   total_seguidores BIGINT DEFAULT 0,
-  FOREIGN KEY (id_usu) REFERENCES usuario(id_usu) ON DELETE CASCADE
+  FOREIGN KEY (id_art) REFERENCES artista(id_art) ON DELETE CASCADE
 );
 
 CREATE TABLE qtd_seguindo (
@@ -205,6 +205,6 @@ CREATE TABLE qtd_seguindo (
 CREATE TABLE liberacao_artista (
   id_lib INT AUTO_INCREMENT PRIMARY KEY,
   id_usu INT NOT NULL,
-  status_lib CHAR(1) NOT NULL,
+  status_lib CHAR(1) NOT NULL DEFAULT "p",
   FOREIGN KEY (id_usu) REFERENCES usuario(id_usu)
 );

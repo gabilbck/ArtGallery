@@ -17,6 +17,10 @@ VALUES
 ('edu05', 'Eduardo Silva', 5),
 ('flavia06', 'Flávia Martins', 6);
 
+INSERT INTO liberacao_artista (id_usu, status_lib)
+VALUES
+(5, 'l'), (6, 'l');
+
 INSERT INTO categoria (nome_cat, descricao_cat, foto_cat)
 VALUES
 ('Pintura', 'Obras feitas com tinta', '/uploads/categorias/1.jpg'),
@@ -73,9 +77,9 @@ UPDATE categoria SET descricao_cat = 'Representações artísticas de pessoas, c
 UPDATE categoria SET descricao_cat = 'Obras que retratam ambientes naturais como montanhas, florestas, praias e campos, com foco na beleza do cenário.' WHERE id_cat = 9;
 UPDATE categoria SET descricao_cat = 'Composições simples e diretas que valorizam o essencial, com poucos elementos, cores neutras e formas geométricas.' WHERE id_cat = 10;
 
-INSERT INTO qtd_seguidores (id_usu)
-SELECT id_usu FROM usuario
-WHERE id_usu NOT IN (SELECT id_usu FROM qtd_seguidores);
+INSERT INTO qtd_seguidores (id_art)
+SELECT id_art FROM artista
+WHERE id_art NOT IN (SELECT id_art FROM qtd_seguidores);
 
 INSERT INTO qtd_seguindo (id_usu)
 SELECT id_usu FROM usuario
@@ -208,41 +212,37 @@ END|
 DELIMITER ;
 
 
-DELIMITER //
---Trigger após inserção (seguindo alguém)
+DELIMITER $$
+
 CREATE TRIGGER trg_after_insert_seguidores
 AFTER INSERT ON seguidores
 FOR EACH ROW
 BEGIN
-  -- Incrementa total_seguindo do seguidor
   UPDATE qtd_seguindo
   SET total_seguindo = total_seguindo + 1
   WHERE id_usu = NEW.seguidor_id;
 
-  -- Incrementa total_seguidores do seguido
   UPDATE qtd_seguidores
   SET total_seguidores = total_seguidores + 1
-  WHERE id_usu = NEW.seguido_id;
-END;
-//
+  WHERE id_art = NEW.seguido_id;
+END$$
+
 DELIMITER ;
 
 
-DELIMITER //
---Trigger após remoção (deixar de seguir)
+DELIMITER $$
+
 CREATE TRIGGER trg_after_delete_seguidores
 AFTER DELETE ON seguidores
 FOR EACH ROW
 BEGIN
-  -- Decrementa total_seguindo do seguidor
   UPDATE qtd_seguindo
   SET total_seguindo = total_seguindo - 1
   WHERE id_usu = OLD.seguidor_id;
 
-  -- Decrementa total_seguidores do seguido
   UPDATE qtd_seguidores
   SET total_seguidores = total_seguidores - 1
-  WHERE id_usu = OLD.seguido_id;
-END;
-//
+  WHERE id_art = OLD.seguido_id;
+END$$
+
 DELIMITER ;

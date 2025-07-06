@@ -84,14 +84,56 @@ async function buscarArtista(id_art) {
 async function buscarArtistasPorCategoriaDeObra(id_cat) {
   const conexao = await conectarBD();
   const sql = `
-    SELECT DISTINCT a.id_art AS id, a.nome_usu AS nome, a.nome_comp AS nomec, a.foto_art AS foto
+    SELECT a.id_art AS id, a.id_usu AS idUsu, a.nome_usu AS nome, a.nome_comp AS nomec, a.foto_art AS foto
     FROM artista a
     INNER JOIN obra o ON a.id_art = o.id_art
     WHERE o.id_cat = ? AND o.situacao_obr = 1
+    ORDER BY RAND()
     LiMIT 3;
 `;
   const [linhas] = await conexao.query(sql, [id_cat]);
   return linhas;
+}
+async function buscarArtistaPorIdUsu(id_usu) {
+  const conexao = await conectarBD();
+  const sql = `
+    SELECT 
+      a.id_art,
+      a.id_usu,
+      a.foto_art,
+      a.bio_art,
+      
+      u.nome_usu,
+      u.nome_comp,
+      u.email_usu,
+      u.bio_usu,
+      u.tipo_usu,
+      u.foto_usu,
+      u.advertencia_usu,
+      u.ban_usu
+      
+    FROM artista a
+    LEFT JOIN usuario u ON a.id_usu = u.id_usu
+    WHERE a.id_usu = ?;
+  `;
+  const [linhas] = await conexao.query(sql, [id_usu]);
+  return linhas;
+}
+async function buscarArtistaPorIdArt(id_art) {
+  const conexao = await conectarBD();
+  const sql = `
+    SELECT 
+      id_art,
+      foto_art,
+      bio_art,
+      nome_usu, 
+      nome_comp,
+      id_usu
+    FROM artista
+    WHERE id_art = ?;
+  `;
+  const [linhas] = await conexao.query(sql, [id_art]);
+  return linhas[0];
 }
 
 // Categorias
@@ -121,33 +163,49 @@ async function buscarTodasObras() {
   const [linhas] = await conexao.query(sql);
   return linhas;
 }
+async function buscarObrasArtista(id_art) {
+  const conexao = await conectarBD();
+  const sql = `
+    SELECT 
+    o.id_obr as id_obr,
+    o.titulo_obr as titulo,
+    o.descricao_obr as descricao,
+    o.foto_obr as foto,
+    a.nome_usu as nome_usu
+  FROM obra o
+  JOIN artista a ON o.id_art = a.id_art
+  WHERE a.id_art = ?;
+  `;
+  const [linhas] = await conexao.query(sql, [id_art]);
+  return linhas;
+}
 async function buscarUmaObra(id_obr) {
   const conexao = await conectarBD();
   const sql = `
-            SELECT 
-                o.id_obr AS id,
-                o.titulo_obr AS titulo,
-                a.id_art AS id_art,
-                a.id_usu as id_usu_art,
-                a.nome_usu AS artU,
-                a.nome_comp AS artC,
-                COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto,
-                o.descricao_obr AS des,
-                (
-                    SELECT COUNT(*) 
-                    FROM comentario c 
-                    WHERE c.id_obr = o.id_obr
-                ) AS qcom,
-                (
-                    SELECT COUNT(*) 
-                    FROM favorito_obra f 
-                    WHERE f.id_obr = o.id_obr AND f.ativo = 1
-                ) AS qfav
-            FROM obra o
-            INNER JOIN artista a ON o.id_art = a.id_art
-            WHERE o.id_obr = ? AND o.situacao_obr = 1
-            LIMIT 1
-        `;
+    SELECT 
+      o.id_obr AS id,
+      o.titulo_obr AS titulo,
+      a.id_art AS id_art,
+      a.id_usu as id_usu_art,
+      a.nome_usu AS artU,
+      a.nome_comp AS artC,
+      COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto,
+      o.descricao_obr AS des,
+      (
+          SELECT COUNT(*) 
+          FROM comentario c 
+          WHERE c.id_obr = o.id_obr
+      ) AS qcom,
+      (
+          SELECT COUNT(*) 
+          FROM favorito_obra f 
+          WHERE f.id_obr = o.id_obr AND f.ativo = 1
+      ) AS qfav
+    FROM obra o
+    INNER JOIN artista a ON o.id_art = a.id_art
+    WHERE o.id_obr = ? AND o.situacao_obr = 1
+    LIMIT 1
+  `;
   const [linhas] = await conexao.query(sql, [id_obr]);
   return linhas.length > 0 ? linhas[0] : null;
 }
@@ -212,7 +270,7 @@ async function buscarInicioObras(id) {
         SELECT 
         o.id_obr AS id,
         o.titulo_obr AS nome,
-        a.id_art AS id_art,
+        a.id_art AS idArt,
         a.id_usu AS idUsuArt,
         a.nome_usu AS art,
         o.foto_obr AS foto,
@@ -242,6 +300,7 @@ async function buscarObraAletoria() {
                 o.id_obr AS id,
                 o.titulo_obr AS nome,
                 a.nome_comp AS art,
+                a.id_art ASid_art,
                 a.id_usu AS idUsuArt,
                 COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto
             FROM obra o
@@ -352,6 +411,21 @@ async function contarFavoritos(idObra) {
   const conexao = await conectarBD();
   const sql = `SELECT COUNT(*) AS total FROM favorito_obra WHERE id_obr = ? AND ativo = 1`;
   const [linhas] = await conexao.query(sql, [idObra]);
+  return linhas[0].total;
+}
+async function contarFavoritosArtista(id_art){
+  const conexao = await conectarBD();
+  const sql = `SELECT COUNT(*) AS total FROM favorito_obra f
+  INNER JOIN obra as o on f.id_obr=o.id_obr
+  INNER JOIN artista as a on o.id_art=a.id_art
+  WHERE a.id_art = ? AND f.ativo = 1`;
+  const [linhas] = await conexao.query(sql, [id_art]);
+  return linhas[0].total;
+}
+async function contarFavoritosUsuario(id_usu){
+  const conexao = await conectarBD();
+  const sql = `SELECT COUNT(*) AS total FROM favorito_obra WHERE id_usu = ? AND ativo = 1`;
+  const [linhas] = await conexao.query(sql, [id_usu]);
   return linhas[0].total;
 }
 async function jaFavoritou(id_usu, id_obr) {
@@ -530,6 +604,14 @@ async function buscarSuporte(email, assunto, descricao) {
   const [linhas] = await conexao.query(sql, [email, assunto, descricao]);
   return linhas.length > 0 ? linhas[0] : null;
 }
+async function buscarSuportePorId(id_sup){
+  const conexao = await conectarBD();
+  const sql = `SELECT id_sup as id, email_sup as email, assunto_sup as assunto, descricao_sup as descricao, status_sup as status
+    FROM suporte 
+    WHERE id_sup = ?`;
+  const [linhas] = await conexao.query(sql, [email, assunto, descricao]);
+  return linhas.length > 0 ? linhas[0] : null;
+}
 
 //ADMIN
 async function buscarQtdApreciadores() {
@@ -571,6 +653,30 @@ async function buscarQtdBan() {
 async function buscarTotalUsuarios() {
   const conexao = await conectarBD();
   const sql = `SELECT COUNT(*) AS total FROM usuario`;
+  const [linhas] = await conexao.query(sql);
+  return linhas[0].total;
+}
+async function buscarTotalPendenteSup(){
+  const conexao = await conectarBD();
+  const sql = `SELECT COUNT(*) AS total FROM suporte where status_sup = "1"`;
+  const [linhas] = await conexao.query(sql);
+  return linhas[0].total;
+}
+async function buscarTotalEmAndamentoSup(){
+   const conexao = await conectarBD();
+  const sql = `SELECT COUNT(*) AS total FROM suporte where status_sup = "2"`;
+  const [linhas] = await conexao.query(sql);
+  return linhas[0].total;
+}
+async function buscarTotalConcluidoSup(){
+   const conexao = await conectarBD();
+  const sql = `SELECT COUNT(*) AS total FROM suporte where status_sup = "3"`;
+  const [linhas] = await conexao.query(sql);
+  return linhas[0].total;
+}
+async function buscarTotalSup(){
+   const conexao = await conectarBD();
+  const sql = `SELECT COUNT(*) AS total FROM suporte`;
   const [linhas] = await conexao.query(sql);
   return linhas[0].total;
 }
@@ -668,6 +774,41 @@ async function listarUsuariosBanidos() {
   const [linhas] = await conexao.query(sql);
   return linhas;
 }
+async function listarTodosSup(){
+  const conexao = await conectarBD();
+  const sql = `SELECT id_sup as id, email_sup as email, assunto_sup as assunto, descricao_sup as descricao, status_sup as status
+    FROM suporte
+    ORDER BY id_sup DESC`;
+  const [linhas] = await conexao.query(sql);
+  return linhas;
+}
+async function listarPendenteSup(){
+  const conexao = await conectarBD();
+  const sql = `SELECT id_sup as id, email_sup as email, assunto_sup as assunto, descricao_sup as descricao, status_sup as status
+    FROM suporte
+    WHERE status_sup = "1"
+    ORDER BY id_sup DESC`;
+  const [linhas] = await conexao.query(sql);
+  return linhas;
+}
+async function listarEmAndamentoSup(){
+  const conexao = await conectarBD();
+  const sql = `SELECT id_sup as id, email_sup as email, assunto_sup as assunto, descricao_sup as descricao, status_sup as status
+    FROM suporte
+    WHERE status_sup = "2"
+    ORDER BY id_sup DESC`;
+  const [linhas] = await conexao.query(sql);
+  return linhas;
+}
+async function listarConcluidoSup(){
+  const conexao = await conectarBD();
+  const sql = `SELECT id_sup as id, email_sup as email, assunto_sup as assunto, descricao_sup as descricao, status_sup as status
+    FROM suporte
+    WHERE status_sup = "3"
+    ORDER BY id_sup DESC`;
+  const [linhas] = await conexao.query(sql);
+  return linhas;
+}
 
 // ADMIN - Ações diretas
 async function liberarArtista(id_usu) {
@@ -684,6 +825,17 @@ async function banirUsuario(id_usu) {
   const conexao = await conectarBD();
   const sql = `UPDATE usuario SET ban_usu = 1 WHERE id_usu = ?`;
   await conexao.query(sql, [id_usu]);
+}
+async function mudarStatusSup(id_sup, status_sup){
+  const conexao = await conectarBD();
+  if (status_sup == "1") {
+    const sql = `UPDATE suporte SET status_sup = "2" WHERE id_sup = ?`;
+    await conexao.query(sql, [id_sup, status_sup]);
+  }
+  if (status_sup == "2"){
+    const sql = `UPDATE suporte SET status_sup = "3" WHERE id_sup = ?`;
+    await conexao.query(sql, [id_sup, status_sup]);
+  };
 }
 
 async function verificarEmailExiste(email) {
@@ -722,17 +874,17 @@ async function getUsuarioPorId(id) {
   return usuario;
 }
 
-async function getQtdSeguidores(id) {
+async function getQtdSeguidores(id_art) {
   const conexao = await conectarBD();
-  const sql = `SELECT total_seguidores FROM qtd_seguidores WHERE id_usu = ?`;
-  const [[res]] = await conexao.query(sql, [id]);
+  const sql = `SELECT total_seguidores FROM qtd_seguidores WHERE id_art = ?`;
+  const [[res]] = await conexao.query(sql, [id_art]);
   return res ? res.total_seguidores : 0;
 }
 
-async function getQtdSeguindo(id) {
+async function getQtdSeguindo(id_usu) {
   const conexao = await conectarBD();
   const sql = `SELECT total_seguindo FROM qtd_seguindo WHERE id_usu = ?`;
-  const [[res]] = await conexao.query(sql, [id]);
+  const [[res]] = await conexao.query(sql, [id_usu]);
   return res ? res.total_seguindo : 0;
 }
 
@@ -744,10 +896,13 @@ module.exports = {
   buscarDadosUsuarioPorId,
   buscarArtista,
   buscarArtistasPorCategoriaDeObra,
+  buscarArtistaPorIdUsu,
+  buscarArtistaPorIdArt,
   buscarTodasCategorias,
   buscarUmaCategoria,
   buscarInicioCategorias,
   buscarTodasObras,
+  buscarObrasArtista,
   buscarUmaObra,
   buscarUmaObraDetalhada,
   buscarObrasPorCategoria,
@@ -760,6 +915,8 @@ module.exports = {
   buscarColecoesPorUsuario,
   favoritarObra,
   contarFavoritos,
+  contarFavoritosArtista,
+  contarFavoritosUsuario,
   jaFavoritou,
   desfavoritarObra,
   buscarObrasFavoritas,
@@ -775,6 +932,14 @@ module.exports = {
   excluirObraColecao,
   buscarSuporte,
   inserirSuporte,
+  buscarSuportePorId,
+  verificarEmailExiste,
+  seguirUsuario,
+  deixarDeSeguirUsuario,
+  estaSeguindo,
+  getUsuarioPorId,
+  getQtdSeguidores,
+  getQtdSeguindo,
   // Admin
   buscarQtdApreciadores,
   buscarQtdArtistas,
@@ -783,6 +948,10 @@ module.exports = {
   buscarQtdAdm,
   buscarQtdBan,
   buscarTotalUsuarios,
+  buscarTotalPendenteSup,
+  buscarTotalEmAndamentoSup,
+  buscarTotalConcluidoSup,
+  buscarTotalSup,
   //Listas
   listarUsuarios,
   listarApreciadores,
@@ -791,15 +960,13 @@ module.exports = {
   listarArtistasAguardandoLiberacao,
   listarAdministradores,
   listarUsuariosBanidos,
+  listarTodosSup,
+  listarPendenteSup,
+  listarEmAndamentoSup,
+  listarConcluidoSup,
   //Funções ADM
   liberarArtista,
   advertirUsuario,
   banirUsuario,
-  verificarEmailExiste,
-  seguirUsuario,
-  deixarDeSeguirUsuario,
-  estaSeguindo,
-  getUsuarioPorId,
-  getQtdSeguidores,
-  getQtdSeguindo,
+  mudarStatusSup,
 };
