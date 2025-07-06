@@ -15,6 +15,12 @@ const categoriasRouter = require("./routes/categorias");
 const perfilRouter = require("./routes/perfil");
 const obrasRouter = require("./routes/obras");
 const suporteRouter = require("./routes/suporte");
+const colecaoRouter = require("./routes/colecao");
+
+const admIndexRouter = require("./routes/_adm/_index");
+const admObrasRouter = require("./routes/_adm/_obras");
+const admUsuariosRouter = require("./routes/_adm/_usuarios");
+const admSuporteRouter = require("./routes/_adm/_suporte");
 
 const app = express();
 
@@ -93,12 +99,17 @@ app.use("/categorias", categoriasRouter);
 app.use("/perfil", perfilRouter);
 app.use("/obras", obrasRouter);
 app.use("/suporte", suporteRouter);
+app.use("/colecao", colecaoRouter);
 
+app.use("/adm", admIndexRouter);
+app.use("/adm/obras", admObrasRouter);
+app.use("/adm/usuarios", admUsuariosRouter);
+app.use("/adm/suporte", admSuporteRouter);
 
 const conexao = require('./banco');
 app.get('/', async (req, res) => {
   try {
-    const [categorias] = await conexao.promise().query('SELECT id_cat, nome_cat FROM categoria');
+    const [categorias] = await conexao.query('SELECT id_cat, nome_cat FROM categoria');
     res.render('index', { categorias });
   } catch (error) {
     console.error('Erro ao buscar categorias:', error);
@@ -128,4 +139,3 @@ app.listen(PORT, () => {
 
 
 module.exports = app;
-

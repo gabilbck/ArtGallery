@@ -123,62 +123,69 @@
         <div class="perfil-info">
           <div class="perfil-nome-row">
             <div class="perfil-nome">
-              <h1 class="perfil-nome-comp"><%= usuario.nome_comp %></h1>
+              <h1 class="perfil-nome-comp"><%= artista.nome_comp %></h1>
             </div>
             <div class="perfil-usu">
-              <p class="perfil-nome-usu">@<%= usuario.nome_usu %></p>
+              <p class="perfil-nome-usu">@<%= artista.nome_usu %></p>
             </div>
             <div class="perfil-tipo_usu">
-              <span class="<%= usuario.tipo_usu %>-bg perfil-tipo">
-                <% const tipos = { apr: "Apreciador", adm: "Administrador", art:
-                "Artista" }; %> <%= tipos[usuario.tipo_usu] || "Desconhecido" %>
-              </span>
+              <span class="art-bg perfil-tipo"> Artista </span>
             </div>
           </div>
           <div class="perfil-bio_usu">
-            <p class="perfil-bio"><%= usuario.bio_usu %></p>
+            <p class="perfil-bio"><%= artista.bio_art %></p>
           </div>
           <div class="perfil-info-row">
             <div class="botoes-perfil">
-              <div class="perfil-sair">
-                <a class="perfil-botao-sair" href="/logout">Sair</a>
+              <% if (pertencente == false) { %>
+              <div class="perfil-seguir">
+                <% if (isFollowing) { %>
+                <form
+                  method="POST"
+                  action="/perfil/desseguir/<%= artista.id_art %>"
+                >
+                  <button
+                    class="perfil-botao-seguir seguir ativo"
+                    type="submit"
+                  >
+                    Deixar de Seguir
+                  </button>
+                </form>
+                <% } else { %>
+                <form
+                  method="POST"
+                  action="/perfil/seguir/<%= artista.id_art %>"
+                >
+                  <button class="perfil-botao-seguir seguir" type="submit">
+                    Seguir
+                  </button>
+                </form>
+                <% } %>
               </div>
-              <div class="perfil-editar">
-                <a class="perfil-botao-editar" href=""> Editar Perfil </a>
-              </div>
-            </div>
-
-            <div class="perfil-numeros">
-              <% if (usuario.tipo_usu === "art") { %>
-              <span>
-                <p><%= totalSeguidores %></p>
-                Seguidores
-              </span>
-              <% } else { %>
-              <span>
-                <p><%= totalSeguindo %></p>
-                Seguindo
-              </span>
               <% } %>
-              <span>
-                <p><%= favoritosPer %></p>
-                Favoritos
-              </span>
+              <div class="perfil-numeros">
+                <span>
+                  <p><%= totalSeguidores %></p>
+                  Seguidores
+                </span>
+                <span>
+                  <p><%= favoritosPer %></p>
+                  Favoritos
+                </span>
+              </div>
             </div>
           </div>
+          
         </div>
       </div>
-      <% if (usuario.tipo_usu === 'art') { %>
       <div id="perfil-favoritos" class="perfil-aba-conteudo hidden">
         <section class="perfil-favoritos">
           <h2>Obras</h2>
-          <a class="nova-obra" href="">+ Adicionar nova obra</a>
           <div class="favoritos-grid">
-            <% if(usuario.obras){
-            usuario.obras.forEach(o => { %>
+            <% if(obras){ obras.forEach(o => { %>
             <div class="obra-card">
               <a href="/obras/<% o.id_obr %>"></a>
-              <img src="<%= o.foto %>" alt="<%= usuario.nome_usu %>" />
+              <img src="<%= o.foto %>" alt="<%= o.nome_usu %>" />
             </div>
             <% })} else { %>
             <p>Artista ainda não possui nenhuma obra.</p>
@@ -186,64 +193,9 @@
           </div>
         </section>
       </div>
-      <% } %> <% if (usuario.tipo_usu === 'apr' || usuario.tipo_usu === 'adm') {
-      %>
-      <div class="perfil-switch-container">
-        <div class="perfil-switch-slider"></div>
-        <button
-          class="ativo"
-          onclick="togglePerfilTab('perfil-colecoes', this)"
-        >
-          Coleções
-        </button>
-        <button onclick="togglePerfilTab('perfil-favoritos', this) ">
-          Favoritos
-        </button>
-      </div>
       <div class="adicionar">
         <% if (usuario.tipo_usu === 'adm') {%>
         <a class="nova-obra" href="">+ Adicionar nova obra</a>
-        <% } %>
-      </div>
-      <div class="perfil-botoes-centro">
-        <div id="perfil-colecoes" class="perfil-aba-conteudo">
-          <section class="perfil-mid">
-            <h2>Coleções</h2>
-            <a class="nova-coleção" href="/colecao/criarColecao"
-              >+ Adicionar nova Coleção</a
-            >
-            <div class="colecoes-grid">
-              <% if (colecoes.length > 0) { %> <% for (var i = 0; i <
-              colecoes.length; i++) { var col = colecoes[i]; %>
-              <div class="colecao-card">
-                <img src="<%= col.foto %>" alt="<%= col.nome %>" />
-                <h3><%= col.nome_col %></h3>
-                <p><%= col.nome %></p>
-              </div>
-              <% } %> <% } else { %>
-              <p>Você ainda não criou nenhuma coleção.</p>
-              <% } %>
-            </div>
-          </section>
-        </div>
-
-        <div id="perfil-favoritos" class="perfil-aba-conteudo hidden">
-          <section class="perfil-favoritos">
-            <h2>Favoritos</h2>
-            <div class="favoritos-grid">
-              <% if (favoritos.length > 0) { %> <% for (var i = 0; i <
-              favoritos.length; i++) { var fav = favoritos[i]; %>
-              <div class="obra-card">
-                <img src="<%= fav.foto %>" alt="<%= fav.nome %>" />
-                <h3><%= fav.nome %></h3>
-                <p><%= fav.art %></p>
-              </div>
-              <% } %> <% } else { %>
-              <p>Você ainda não favoritou nenhuma obra.</p>
-              <% } %>
-            </div>
-          </section>
-        </div>
         <% } %>
       </div>
     </div>

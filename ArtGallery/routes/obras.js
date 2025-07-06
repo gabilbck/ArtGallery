@@ -55,6 +55,7 @@ router.get("/:id", async (req, res) => {
             id: obra.id, 
             titulo: obra.titulo,
             id_art: obra.id_art, 
+            id_usu_art: obra.id_usu_art,
             artU: obra.artU,
             artC: obra.artC,
             foto: obra.foto, 
@@ -76,7 +77,6 @@ router.get("/:id", async (req, res) => {
             tabela: "comentario"
         })),
         usuario: req.session.usuario, 
-        usuNome: req.session.usuario.nome_usu,
         erros,
         sucesso
     });

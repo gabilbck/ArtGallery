@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="icon" href="/uploads/icon-ag.svg" type="image/x-icon">
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="/stylesheets/adm.css">
+  </head>
+  <body>
+    <div class="topo-logo">
+      <a href="../">
+        <h1>ArtGallery</h1>
+        <p>Administrativo</p>
+      </a>
+    </div>
+
+    <section>
+      <div class="tabela">
+        <table>
+          <thead>
+            <tr>
+              <th class="col-a">ID</th>
+              <th class="col-b">Nome</th>
+              <th class="col-a">Descrição</th>
+              <th class="col-b">Imagem</th>
+              <th class="col-a">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% categorias.forEach((categoria) => { %>
+              <tr>
+                <td class="col-a"><%= categoria.id %></td>
+                <td class="col-b"><%= categoria.nome %></td>
+                <td class="col-a"><%= categoria.descricao %></td>
+                <td class="col-b"><img src="<%= categoria.foto %>" alt="<%= categoria.nome %>" /></td>
+                <td class="col-a">
+                  <div class="acoes">
+                    <a class="btn-qua" id="padrao" href="/adm/categorias/editar/<%= categoria.id %>">🖉</a>
+                    <a class="btn-qua" id="erro" href="/adm/categorias/excluir/<%= categoria.id %>">X</a>
+                  </div>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <a href="/adm/" class="votlar" style="color: #fff">Voltar ao Dashboard</a>
+    </section>
+    <br>
+  </body>
+</html>
