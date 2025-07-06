@@ -94,13 +94,13 @@
     <section class="espaco-contraste">
         <div class="obras-top">
             <h1>TODA ARTE, EM UM SÓ LUGAR!</h1>
-            <p>Confira a essas obras inspiradoras:</p>
+            <p>Confira a esses artistas inspiradores:</p>
         </div>
         <div class="conteudo">
             <div class="grid">
                 <% artistas3.forEach(a => { %>
                 <div class="artista-container">
-                    <a href="/artistas/id=<%= a.id %>">
+                    <a href="/perfil/artista/<%= a.id %>">
                         <% if (a.foto) { %>
                             <img src="<%= a.foto %>" alt="<%= a.nome %>">
                         <% } else { %>

@@ -8,7 +8,11 @@ const {
     buscarQtdArtistasLiberados,
     buscarQtdAdm,
     buscarQtdBan,
-    buscarTotalUsuarios
+    buscarTotalUsuarios,
+    buscarTotalPendenteSup,
+    buscarTotalEmAndamentoSup,
+    buscarTotalConcluidoSup,
+    buscarTotalSup,
 } = require("../../banco");
 
 router.get("/", async (req, res) => {
@@ -23,7 +27,11 @@ router.get("/", async (req, res) => {
     const qtdAdm = await buscarQtdAdm();
     const qtdBan = await buscarQtdBan();
     const totalUsuarios = await buscarTotalUsuarios();
-
+    const pendenteSup = await buscarTotalPendenteSup();
+    const emAndamentoSup = await buscarTotalEmAndamentoSup();
+    const concluidoSup = await buscarTotalConcluidoSup();
+    const todosSup = await buscarTotalSup();
+    
     res.render("_adm/_index", {
         usuario: req.session.usuario,
         title: "Administração - ArtGallery",
@@ -33,7 +41,11 @@ router.get("/", async (req, res) => {
         qtdArtistasLiberados,
         qtdAdm,
         qtdBan,
-        totalUsuarios
+        totalUsuarios,
+        pendenteSup,
+        emAndamentoSup,
+        concluidoSup,
+        todosSup
     });
 });
 

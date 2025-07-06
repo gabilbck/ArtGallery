@@ -147,7 +147,7 @@
                         </div>
                         <div class="bottom-info">
                             <strong>
-                                <a href="/perfil/perfilVisitante/<%= o.idUsuArt %>"><%= o.art %></a>
+                                <a href="/perfil/perfilArtista/<%= o.idArt %>"><%= o.art %></a>
                             </strong>
                             <p><%= o.des %></p>
                         </div>
@@ -164,7 +164,7 @@
         <% obraArtDest.forEach(oa => { %>
         <div class="descubra-container">
             <img src="<%= oa.foto %>" alt="<%= oa.nome %>" title="<%= oa.nome %>">
-            <a href="/perfil/perfilVisitante/<%= oa.idUsuArt %>">
+            <a href="/perfil/perfiArtista/<%= oa.idArt %>">
                 <div class="descubra-conteudo">
                     <h1>Você Conhece</h1>
                     <p><%= oa.art %>?</p>

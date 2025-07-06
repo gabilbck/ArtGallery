@@ -2,7 +2,6 @@ CREATE DATABASE artg
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;
 
-
 USE artg
 
 
@@ -30,7 +29,7 @@ CREATE TABLE `usuario` (
   `email_usu` varchar(255) DEFAULT NULL,
   `senha_usu` varchar(255) DEFAULT NULL,
   `foto_usu` varchar(255) DEFAULT "/uploads/imagem.png",
-  `bio_usu` text DEFAULT NULL,
+  `bio_usu` text DEFAULT "Seja bem-vindo ao meu perfil!",
   `tipo_usu` varchar(3) NOT NULL DEFAULT 'apr',
   `advertencia_usu` smallint(2) DEFAULT 0,
   `ban_usu` tinyint(1) DEFAULT 0,
@@ -49,7 +48,7 @@ CREATE TABLE `artista` (
   `id_art` int(11) NOT NULL AUTO_INCREMENT,
   `nome_usu` varchar(255) NOT NULL,
   `nome_comp` varchar(255) NOT NULL,
-  `bio_art` text DEFAULT NULL,
+  `bio_art` text DEFAULT "Seja bem-vindo ao meu perfil!",
   `foto_art` varchar(255) DEFAULT "/uploads/imagem.png",
   `id_usu` int(11) DEFAULT NULL,
   PRIMARY KEY (`id_art`),
@@ -151,10 +150,6 @@ CREATE TABLE `favorito_obra` (
 LOCK TABLES `favorito_obra` WRITE;
 UNLOCK TABLES;
 
-
- 
-
-
 DROP TABLE IF EXISTS `seguidor_artista`;
 
 CREATE TABLE `seguidor_artista` (
@@ -178,6 +173,7 @@ CREATE TABLE `suporte` (
   `email_sup` varchar(255) NOT NULL,
   `assunto_sup` varchar(255) NOT NULL,
   `descricao_sup` text NOT NULL,
+  `status_sup` char(1) NOT NULL DEFAULT "1",
   PRIMARY KEY (`id_sup`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -191,13 +187,13 @@ CREATE TABLE seguidores (
   seguido_id INT(11) NOT NULL,
   PRIMARY KEY (seguidor_id, seguido_id),
   CONSTRAINT fk_seguidor FOREIGN KEY (seguidor_id) REFERENCES usuario(id_usu) ON DELETE CASCADE,
-  CONSTRAINT fk_seguido FOREIGN KEY (seguido_id) REFERENCES usuario(id_usu) ON DELETE CASCADE
+  CONSTRAINT fk_seguido FOREIGN KEY (seguido_id) REFERENCES artista(id_art) ON DELETE CASCADE
 );
 
 CREATE TABLE qtd_seguidores (
-  id_usu INT PRIMARY KEY,
+  id_art INT PRIMARY KEY,
   total_seguidores BIGINT DEFAULT 0,
-  FOREIGN KEY (id_usu) REFERENCES usuario(id_usu) ON DELETE CASCADE
+  FOREIGN KEY (id_art) REFERENCES artista(id_art) ON DELETE CASCADE
 );
 
 CREATE TABLE qtd_seguindo (
@@ -209,6 +205,6 @@ CREATE TABLE qtd_seguindo (
 CREATE TABLE liberacao_artista (
   id_lib INT AUTO_INCREMENT PRIMARY KEY,
   id_usu INT NOT NULL,
-  status_lib CHAR(1) NOT NULL,
+  status_lib CHAR(1) NOT NULL DEFAULT "p",
   FOREIGN KEY (id_usu) REFERENCES usuario(id_usu)
 );

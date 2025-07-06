@@ -14,7 +14,7 @@ const {
   banirUsuario
 } = require("../../banco");
 
-function validarPermissao(req, res) {
+function validarPermissaoAdm(req, res) {
   if (!req.session.usuario) return res.redirect("/login");
   const tipo_usu = req.session.usuario.tipo_usu;
   if (tipo_usu !== "adm") return res.redirect("/");
@@ -22,7 +22,7 @@ function validarPermissao(req, res) {
 
 // GET /adm/usuarios - Exibe a lista de usuários
 router.get("/", async (req, res) => {
-  validarPermissao(req, res);
+  validarPermissaoAdm(req, res);
 
   const usuarios = await listarUsuarios();
 
@@ -45,7 +45,7 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/apreciadores", async (req, res) => {
-  validarPermissao(req, res);
+  validarPermissaoAdm(req, res);
 
   const usuarios = await listarApreciadores();
 
@@ -68,7 +68,7 @@ router.get("/apreciadores", async (req, res) => {
 });
 
 router.get("/artistas/ativos", async (req, res) => {
-    validarPermissao(req, res);
+    validarPermissaoAdm(req, res);
 
     const usuarios = await listarArtistasAtivos();
     res.render("_adm/_usuariosTotal", {
@@ -90,7 +90,7 @@ router.get("/artistas/ativos", async (req, res) => {
 })
 
 router.get("/artistas/liberados", async (req, res) => {
-  validarPermissao(req, res);
+  validarPermissaoAdm(req, res);
 
   const usuarios = await listarArtistasLiberados();
 
@@ -113,7 +113,7 @@ router.get("/artistas/liberados", async (req, res) => {
 });
 
 router.get("/artistas/pendentes", async (req, res) => {
-  validarPermissao(req, res);
+  validarPermissaoAdm(req, res);
 
   const usuarios = await listarArtistasAguardandoLiberacao();
 
@@ -136,7 +136,7 @@ router.get("/artistas/pendentes", async (req, res) => {
 });
 
 router.get("/administradores", async (req, res) => {
-  validarPermissao(req, res);
+  validarPermissaoAdm(req, res);
 
   const usuarios = await listarAdministradores();
 
@@ -159,7 +159,7 @@ router.get("/administradores", async (req, res) => {
 });
 
 router.get("/banidos", async (req, res) => {
-  validarPermissao(req, res);
+  validarPermissaoAdm(req, res);
 
   const usuarios = await listarUsuariosBanidos();
 
@@ -183,7 +183,7 @@ router.get("/banidos", async (req, res) => {
 
 // Funções de editar/liberar/advertir/banir
 router.get("/editar/:id", async (req, res) => {
-  validarPermissao(req, res);
+  validarPermissaoAdm(req, res);
 
   const usuario = await buscarDadosUsuarioPorId(req.params.id);
   res.render("_adm/_usuarioEditar", {
@@ -194,7 +194,7 @@ router.get("/editar/:id", async (req, res) => {
 });
 
 router.post("/editar/:id", async (req, res) => {
-  validarPermissao(req, res);
+  validarPermissaoAdm(req, res);
 
   // Aqui você implementaria a lógica para atualizar os dados do usuário
   // Exemplo: await atualizarUsuario(req.params.id, req.body);
@@ -204,7 +204,7 @@ router.post("/editar/:id", async (req, res) => {
 });
 
 router.get("/liberacao/:id", async (req, res) => {
-  validarPermissao(req, res);
+  validarPermissaoAdm(req, res);
 
   try {
     await liberarArtista(req.params.id);
@@ -217,7 +217,7 @@ router.get("/liberacao/:id", async (req, res) => {
 });
 
 router.post("/liberacao/:id", async (req, res) => {
-  validarPermissao(req, res);
+  validarPermissaoAdm(req, res);
 
   try {
     await liberarArtista(req.params.id);
@@ -230,7 +230,7 @@ router.post("/liberacao/:id", async (req, res) => {
 });
 
 router.get("/advertir/:id", async (req, res) => {
-  validarPermissao(req, res);
+  validarPermissaoAdm(req, res);
 
   try {
     await advertirUsuario(req.params.id);
@@ -243,7 +243,7 @@ router.get("/advertir/:id", async (req, res) => {
 });
 
 router.post("/advertir/:id", async (req, res) => {
-  validarPermissao(req, res);
+  validarPermissaoAdm(req, res);
 
   try {
     await advertirUsuario(req.params.id);
@@ -256,7 +256,7 @@ router.post("/advertir/:id", async (req, res) => {
 });
 
 router.get("/banir/:id", async (req, res) => {
-  validarPermissao(req, res);
+  validarPermissaoAdm(req, res);
 
   try {
     await banirUsuario(req.params.id);
@@ -269,7 +269,7 @@ router.get("/banir/:id", async (req, res) => {
 });
 
 router.post("/banir/:id", async (req, res) => {
-  validarPermissao(req, res);
+  validarPermissaoAdm(req, res);
 
   try {
     await banirUsuario(req.params.id);
