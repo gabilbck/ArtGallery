@@ -40,16 +40,44 @@ const autenticado = (req, res, next) => {
 };
 
 router.get("/nova", autenticado, async (req, res) => {
-  validarSessao(req, res);
-  const tipo = req.session.usuario.tipo_usu;
-  if (tipo != ("art" || "adm")) return res.redirect("/");
+  
   try {
-    const [categorias] = await conexao.query("SELECT * FROM categoria");
-    res.render("novaObra", {
-      title: "Nova Obra",
-      categorias,
-      usuario: req.session.usuario
-    });
+    validarSessao(req, res);
+    const tipo = req.session.usuario.tipo_usu;
+    if (tipo == "apr"){
+      return res.redirect("/");
+    } else {
+      const [categorias] = await conexao.query("SELECT id_cat, nome_cat FROM categoria");
+      if (tipo == "adm") {
+        const [artistas] = await conexao.query("SELECT id_art, nome_comp as nome_art from artista;");
+        res.render("novaObra", {
+          title: "Nova Obra",
+          categorias: categorias.map(c => ({
+            id_cat: c.id_cat,
+            nome_cat: c.nome_cat,
+            tabela: "categoria"
+          })),
+          artistas: artistas.map(a => ({
+            id_art: a.id_art,
+            nome_art: a.nome_art,
+            tabela: "artista"
+          })),
+          tipo,
+          usuario: req.session.usuario
+        });
+      } else{
+        res.render("novaObra", {
+        title: "Nova Obra",
+        categorias: categorias.map(c => ({
+          id_cat: c.id_cat,
+          nome_cat: c.nome_cat,
+          tabela: "categoria"
+        })),
+        asrtistas: null,
+        usuario: req.session.usuario
+      });
+      }
+    }
   } catch (error) {
     console.error("Erro ao carregar categorias:", error);
     res.status(500).send("Erro ao carregar página de nova obra");
@@ -58,19 +86,23 @@ router.get("/nova", autenticado, async (req, res) => {
 
 // POST para salvar nova obra
 router.post("/nova", uploadObra.single("imagem"), async (req, res) => {
-  try {
-    const { titulo, descricao, categoria } = req.body;
-    const usuarioId = req.session.usuario.ID_USU;
-
-    // Caminho salvo no banco de dados
-    const caminhoImagem = "/uploads/obras/" + req.file.filename;
-
-    await banco.salvarNovaObra(titulo, descricao, categoria, caminhoImagem, usuarioId);
-
-    res.redirect("/perfil"); // Redirecionar após publicar
-  } catch (error) {
-    console.error("Erro ao salvar nova obra:", error);
-    res.status(500).send("Erro ao salvar nova obra.");
+  validarSessao(req, res);
+  const tipo = req.session.usuario.tipo_usu;
+  if (tipo == "apr"){
+    return res.redirect("/");
+  } else {
+    try {
+      const { titulo, descricao, categoria, artista } = req.body;
+      const caminhoImagem = "/uploads/obras/" + req.file.filename;
+      const enviar = await banco.salvarNovaObra(titulo, descricao, categoria, caminhoImagem, artista);
+      console.log(enviar);
+      const obraNova = await banco.consultarUltimaObraArtista(artista);
+      console.log(consultar);
+      res.redirect(`obras/${obraNova}`); // Redirecionar após publicar
+    } catch (error) {
+      console.error("Erro ao salvar nova obra:", error);
+      res.status(500).send("Erro ao salvar nova obra.");
+    }
   }
 });
 

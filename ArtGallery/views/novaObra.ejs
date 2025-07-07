@@ -32,22 +32,23 @@
             <label for="categoria">Categoria</label>
             <select id="categoria" name="categoria" required>
               <option value="">Selecionar Categoria</option>
-              <option value="1">Pintura</option>
-              <option value="2">Escultura</option>
-              <option value="3">Fotografia</option>
-              <option value="4">Arte Digital</option>
-              <option value="5">Desenho</option>
-              <option value="6">Abstrata</option>
-              <option value="7">Surrealismo</option>
-              <option value="8">Retrato</option>
-              <option value="9">Paisagem</option>
-              <option value="10">Minimalista</option>
+              <% categorias.forEach((c) => { %>
+                <option value="<% c.id_cat %>"><% c.nome_cat %></option>
+              <% }) %>
             </select>
           </div>
         </div>
 
         <div class="campo">
           <label for="artista">Artista</label>
+          <% if (tipo == "adm") { %>
+            <select id="artista" name="artista" required>
+              <option value="">Selecionar Artista</option>
+              <% artistas.forEach((a) => { %>
+                <option value="<% a.id_art %>"><% a.nome_art %></option>
+              <% }) %>
+            </select>
+          <% } %>
         </div>
 
         <div class="campo">

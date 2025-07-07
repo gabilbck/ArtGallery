@@ -996,6 +996,12 @@ async function salvarNovaObra(titulo, descricao, categoriaId, caminhoImagem, idA
  );
  return rows;
 }
+async function consultarUltimaObraArtista(id_art) {
+  const conexao = await conectarBD();
+  const sql = `SELECT id_obr WHERE id_art = ? ORDER BY id_obr DESC LIMIT 1`;
+  const [linhas] = await conexao.query(sql, [id_art]);
+  return linhas;
+}
 
 module.exports = {
   conectarBD,
@@ -1093,5 +1099,6 @@ module.exports = {
   mudarStatusSup,
   //Cadastros
   registrarCategoria,
-  salvarNovaObra
+  salvarNovaObra,
+  consultarUltimaObraArtista
 };
