@@ -138,6 +138,7 @@ router.get("/perfilVisitante/:id", autenticado, async (req, res) => {
       const colecoes = await buscarColecoesPorUsuario(id_usu);
       const favoritos = await buscarObrasFavoritas(id_usu);
       const totalSeguindo = await getQtdSeguindo(id_usu);
+      const favoritosPer = await contarFavoritosUsuario(id_usu);
 
       res.render("perfilVisitante", {
          title: `Perfil de ${usuario.nome_usu}`,
@@ -154,6 +155,7 @@ router.get("/perfilVisitante/:id", autenticado, async (req, res) => {
          favoritos,
          usuarioSessao,
          totalSeguindo,
+         favoritosPer
       });
    } catch (err) {
       console.error("Erro ao carregar perfil visitante:", err);

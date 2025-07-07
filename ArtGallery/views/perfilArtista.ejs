@@ -119,7 +119,13 @@
 
     <div class="perfil-container">
       <div class="perfil-topo">
-        <div class="perfil-avatar"></div>
+        <div class="perfil-avatar">
+          <% if (artista.foto_art) { %>
+            <img src="<%= artista.foto_art %>" alt="Foto de perfil" class="foto-perfil">
+          <% } else { %>
+            <img src="/imagens/avatar-default.png" alt="Foto padrão" class="foto-perfil">
+          <% } %>
+        </div>
         <div class="perfil-info">
           <div class="perfil-nome-row">
             <div class="perfil-nome">
@@ -137,7 +143,7 @@
           </div>
           <div class="perfil-info-row">
             <div class="botoes-perfil">
-              <% if (pertencente == false) { %>
+              <% if (usuario.tipo_usu != "art") { %>
               <div class="perfil-seguir">
                 <% if (isFollowing) { %>
                 <form
