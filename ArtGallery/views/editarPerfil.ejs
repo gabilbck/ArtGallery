@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Editar Perfil</title>
+  <link rel="stylesheet" href="/stylesheets/styleEditarPerfil.css" />
+</head>
+<body>
+  <h1 class="titulo">EDITAR PERFIL</h1>
+  <p class="subtitulo">Preencha as informações abaixo para atualizá-las em seu perfil:</p>
+
+  <form action="/perfil/editar-perfil" method="POST" enctype="multipart/form-data" class="form-editar">
+
+    <div class="col-esquerda">
+      <label class="img-container" for="foto_usu">
+        <% if (usuario.foto_usu) { %>
+          <img id="preview-img" src="<%= usuario.foto_usu %>" alt="Foto de Perfil" class="img-preview"/>
+        <% } else { %>
+          <div class="img-placeholder">+</div>
+        <% } %>
+        <span class="label-foto">CARREGAR FOTO</span>
+        <input type="file" name="foto_usu" id="foto_usu" accept="image/*" onchange="previewImagem(this)" hidden />
+      </label>
+    </div>
+
+    <div class="col-direita">
+      <div class="form-group">
+        <label for="nome_comp">Nome Completo</label>
+        <input type="text" name="nome_comp" id="nome_comp" value="<%= usuario.nome_comp %>" required />
+      </div>
+
+      <div class="form-group">
+        <label for="nome_usu">Nome de Usuário</label>
+        <input type="text" name="nome_usu" id="nome_usu" value="<%= usuario.nome_usu %>" required />
+      </div>
+
+      <div class="form-group">
+        <label for="email">E-mail</label>
+        <input type="email" id="email" value="<%= usuario.email_usu %>" disabled />
+      </div>
+
+      <div class="form-group">
+        <label for="senha">Senha</label>
+        <input type="password" id="senha" value="********" disabled />
+      </div>
+
+      <div class="form-group">
+        <label for="bio_usu">Biografia</label>
+        <textarea name="bio_usu" id="bio_usu" rows="4"><%= usuario.bio_usu %></textarea>
+      </div>
+    </div>
+
+    <div class="botoes-acao">
+      <button type="submit" class="btn-verde">ATUALIZAR AGORA</button>
+      <span class="ou">ou</span>
+      <a href="/perfil" class="btn-cinza">CANCELAR E RETORNAR</a>
+    </div>
+  </form>
+
+  <script>
+    function previewImagem(input) {
+      const preview = document.getElementById('preview-img');
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          if (preview) preview.src = e.target.result;
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+  </script>
+</body>
+</html>

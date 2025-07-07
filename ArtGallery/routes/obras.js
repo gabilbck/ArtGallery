@@ -1,6 +1,7 @@
 // routes/obras.js (ou onde preferir agrupar)
 const express = require("express");
 const router = express.Router();
+const { uploadObra } = require("../utils/upload");
 const {
   jaFavoritou, // bool  -> usuário já marcou?
   favoritarObra, // void  -> grava favorito
