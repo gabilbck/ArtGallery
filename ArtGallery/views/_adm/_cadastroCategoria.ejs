@@ -16,18 +16,7 @@
       </a>
     </div>
 
-    <% if (menssagem == "cadastrado"){ %>
-    <div class="retorno">
-      <div class="retorno-container" id="sucesso">
-        Cadastro realizado com sucesso!
-      </div>
-    </div>
-    <script>
-      setTimeout(() => {
-        window.location.href = "/adm/obras/";
-      }, 3000);
-    </script>
-    <% } else if(menssagem == "erro") { %>
+    <% if(menssagem == "erro") { %>
     <div class="retorno">
       <div class="retorno-container" id="erro">Erro ao cadastrar dados.</div>
     </div>
@@ -44,7 +33,7 @@
                     <h1>CADASTRO DE CATEGORIA</h1>
                 </div>
                 <div class="cadastros-entradas">
-                    <form action="/adm/cadastrar/categoria" method="post">
+                    <form action="/adm/cadastrar/categoria" method="post" enctype="multipart/form-data">
                         <div class="entrada">
                             <label for="categoria">Categoria</label>
                             <input type="text" id="categoria" name="categoria" placeholder="Categoria" required>
@@ -52,6 +41,17 @@
                         <div class="entrada">
                             <label for="descricao">Descricao</label>
                             <input type="textarea" id="descricao" name="descricao" placeholder="Descricao" required>
+                        </div>
+                        <div>
+                          <label for="foto">
+                            <% if (dados.foto) { %>
+                              <img id="preview-img" src="<%= dados.foto %>" alt="Foto de Perfil" class="img-preview"/>
+                            <% } else { %>
+                              <div class="img-placeholder">+</div>
+                            <% } %>
+                            <span class="label-foto">CARREGAR FOTO</span>
+                            <input type="file" name="foto" id="foto" accept="image/*" onchange="previewImagem(this)" hidden />
+                          </label>
                         </div>
                         <div class="envio">
                             <input type="submit" value="CADASTRAR CATEGORIA">

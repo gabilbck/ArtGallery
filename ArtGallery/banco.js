@@ -974,12 +974,12 @@ async function getQtdSeguindo(id_usu) {
 
 //Cadastros
 async function registrarCategoria(dados) {
-  const { categoria, descricao } = dados;
+  const { categoria, descricao, foto } = dados;
   const conexao = await conectarBD();
   const sql =
-    "INSERT INTO categoria (nome_cat, descricao_cat, foto_cat) VALUES (?, ?, 'uploads/imagem.png')";
+    "INSERT INTO categoria (nome_cat, descricao_cat, foto_cat) VALUES (?, ?, ?)";
   try {
-    const [resultado] = await conexao.execute(sql, [categoria, descricao]);
+    const [resultado] = await conexao.execute(sql, [categoria, descricao, foto]);
     console.log("Categoria cadastrada com sucesso: ", resultado);
     return resultado;
   } catch (erro) {

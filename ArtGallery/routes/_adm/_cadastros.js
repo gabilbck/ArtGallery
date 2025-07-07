@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { validarPermissaoAdm } = require("../../middlewares/adm");
+const { uploadObra, uploadPerfil, uploadCategoria } = require("../../utils/upload");
 const {
     registrarCategoria,
     buscarIdUltimaCategoria,
@@ -16,16 +17,24 @@ router.get("/categoria", async (req, res) => {
     usuario: req.session.usuario,
     title: "Administração - Cadastro de Categorias - ArtGallery",
     menssagem: null,
-  });
+    dados: {}, // <-- Adicionado aqui
+    });
 });
 
-router.post("/categoria", async (req, res) => {
+router.post("/categoria", uploadCategoria.single("foto"), async (req, res) => {
     validarPermissaoAdm(req, res);
     try{
+        let fotoPath = null;
+        if (req.file) {
+            fotoPath = "/uploads/categorias/" + req.file.filename;
+        }
+
         const dados = {
             categoria: req.body.categoria,
             descricao: req.body.descricao,
+            foto: fotoPath, // agora está correto
         };
+
         await registrarCategoria(dados);
         const id_cat = await buscarIdUltimaCategoria();
         res.redirect(`/categorias/${id_cat}`);
@@ -35,6 +44,7 @@ router.post("/categoria", async (req, res) => {
             usuario: req.session.usuario,
             title: "Administração - Cadastro de Categorias - ArtGallery",
             menssagem: "erro",
+            dados: req.body // reutiliza os dados que o usuário enviou
         });
     }
     });

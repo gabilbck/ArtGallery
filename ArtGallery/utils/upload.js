@@ -38,4 +38,9 @@ const uploadPerfil = multer({
   fileFilter,
 });
 
-module.exports = { uploadObra, uploadPerfil };
+const uploadCategoria = multer({
+  storage: criarStorage("public/uploads/categorias"),
+  fileFilter,
+});
+
+module.exports = { uploadObra, uploadPerfil, uploadCategoria };
