@@ -54,7 +54,11 @@
           <tbody>
             <% obra.forEach((o) => { %>
             <tr>
-              <td class="col-a"><%= o.id %></td>
+              <td class="col-a">
+                <a href="/obras/<%= o.id %>">
+                  <%= o.id %>
+                </a>
+              </td>
               <td class="col-b"><%= o.titulo %></td>
               <td class="col-a"><%= o.descricao %></td>
               <% if (o.ativo == 1) { %>

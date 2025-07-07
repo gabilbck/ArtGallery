@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 const {
   listarTodasObra,
+  listarTodosFavorito,
   buscarTodasCategorias,
   buscarUmaObraAdm,
   excluirUmaObraAdm,
@@ -22,7 +23,7 @@ router.get("/", async (req, res) => {
   }
   res.render("_adm/_obras", {
     usuario: req.session.usuario,
-    title: "Suporte - ArtGallery",
+    title: "Obras - ArtGallery",
     menssagem,
     obra: obra.map((o) => ({
       id: o.id,
@@ -56,10 +57,52 @@ router.get("/excluir/:id_obr", async (req, res) => {
   }
 });
 
-router.get("/favoritos", async (req, res) => {});
+router.get("/favoritos", async (req, res) => {
+  validarPermissaoAdm(req, res);
+  const favorito = await listarTodosFavorito();
+  const menssagem = req.query.menssagem || null;
+  if (favorito < 1) {
+    conteudoNulo = "Não há registros para este filtro.";
+  } else {
+    conteudoNulo = null;
+  }
+  res.render("_adm/_favoritos", {
+    usuario: req.session.usuario,
+    title: "Favoritos - ArtGallery",
+    menssagem,
+    favorito: favorito.map((f) => ({
+      id_usu: f.id_usu,
+      nome: f.nome,
+      id_obr: f.id_obr,
+      titulo: f.titulo,
+      ativo: f.ativo,
+      tabela: "obra",
+    })),
+  });
+});
 
 router.get("/comentarios", async (req, res) => {
-  
+  validarPermissaoAdm(req, res);
+  const favorito = await listarTodosComentario();
+  const menssagem = req.query.menssagem || null;
+  if (favorito < 1) {
+    conteudoNulo = "Não há registros para este filtro.";
+  } else {
+    conteudoNulo = null;
+  }
+  res.render("_adm/_favoritos", {
+    usuario: req.session.usuario,
+    title: "Favoritos - ArtGallery",
+    menssagem,
+    favorito: favorito.map((f) => ({
+      id_usu: f.id_usu,
+      nome: f.nome,
+      id_obr: f.id_obr,
+      titulo: f.titulo,
+      ativo: f.ativo,
+      tabela: "obra",
+    })),
+  });
 });
 
 router.get("/colecoes", async (req, res) => {

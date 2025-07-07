@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="icon" href="/uploads/icon-ag.svg" type="image/x-icon" />
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+    <link rel="stylesheet" href="/stylesheets/adm.css" />
+  </head>
+  <body>
+    <div class="topo-logo">
+      <a href="../">
+        <h1>ArtGallery</h1>
+        <p>Administrativo</p>
+      </a>
+    </div>
+
+    <section>
+      <div class="tabela">
+        <table>
+          <thead>
+            <tr>
+              <th class="col-a">ID Usu.</th>
+              <th class="col-b">Nome</th>
+              <th class="col-a">ID Obra</th>
+              <th class="col-b">Título</th>
+              <th class="col-a">Ativo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% favorito.forEach((f) => { %>
+            <tr>
+              <td class="col-a">
+                <a href="/perfil/perfilVisitante/<%= f.id_usu %>">
+                  <%= f.id_usu %>
+                </a>
+              </td>
+              <td class="col-b"><%= f.nome %></td>
+              <td class="col-a">
+                <a href="/obras/<%= f.id_obr %>">
+                    <%= f.id_obr %>
+                </a>
+              </td>
+              <td class="col-b"><%= f.titulo %></td>
+              <% if (f.ativo == 1) { %>
+              <td class="col-a">Sim</td>
+              <% } %> <% if (f.ativo == 0) { %>
+              <td class="col-a">Não</td>
+              <% } %>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <a href="/adm/" class="votlar" style="color: #fff">Voltar ao Dashboard</a>
+    </section>
+    <br />
+  </body>
+</html>

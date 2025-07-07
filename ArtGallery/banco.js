@@ -212,32 +212,32 @@ async function buscarUmaObra(id_obr) {
 async function buscarUmaObraDetalhada(id_obr, id_usu = 0) {
   const conexao = await conectarBD();
   const sql = `
-            SELECT 
-                o.id_obr AS id,
-                o.titulo_obr AS nome,
-                a.nome_usu AS art,
-                COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto,
-                o.descricao_obr AS des,
-                (
-                    SELECT COUNT(*) 
-                    FROM comentario c 
-                    WHERE c.id_obr = o.id_obr
-                ) AS qcom,
-                (
-                    SELECT COUNT(*) 
-                    FROM favorito_obra f 
-                    WHERE f.id_obr = o.id_obr AND f.ativo = 1
-                ) AS qfav,
-                (
-                    SELECT COUNT(*)
-                    FROM favorito_obra f
-                    WHERE f.id_obr = o.id_obr AND f.id_usu = ? AND f.ativo = 1
-                ) > 0 AS favoritou
-            FROM obra o
-            INNER JOIN artista a ON o.id_art = a.id_art
-            WHERE o.id_obr = ? AND o.situacao_obr = 1
-            LIMIT 1
-        `;
+  SELECT 
+    o.id_obr AS id,
+    o.titulo_obr AS nome,
+    a.nome_usu AS art,
+    COALESCE(o.foto_obr, '/uploads/imagem.png') AS foto,
+    o.descricao_obr AS des,
+    (
+        SELECT COUNT(*) 
+        FROM comentario c 
+        WHERE c.id_obr = o.id_obr
+    ) AS qcom,
+    (
+        SELECT COUNT(*) 
+        FROM favorito_obra f 
+        WHERE f.id_obr = o.id_obr AND f.ativo = 1
+    ) AS qfav,
+    (
+        SELECT COUNT(*)
+        FROM favorito_obra f
+        WHERE f.id_obr = o.id_obr AND f.id_usu = ? AND f.ativo = 1
+    ) > 0 AS favoritou
+  FROM obra o
+  INNER JOIN artista a ON o.id_art = a.id_art
+  WHERE o.id_obr = ? AND o.situacao_obr = 1
+  LIMIT 1
+`;
   const [linhas] = await conexao.query(sql, [id_usu, id_obr]);
   return linhas.length > 0 ? linhas[0] : null;
 }
@@ -413,7 +413,7 @@ async function contarFavoritos(idObra) {
   const [linhas] = await conexao.query(sql, [idObra]);
   return linhas[0].total;
 }
-async function contarFavoritosArtista(id_art){
+async function contarFavoritosArtista(id_art) {
   const conexao = await conectarBD();
   const sql = `SELECT COUNT(*) AS total FROM favorito_obra f
   INNER JOIN obra as o on f.id_obr=o.id_obr
@@ -422,7 +422,7 @@ async function contarFavoritosArtista(id_art){
   const [linhas] = await conexao.query(sql, [id_art]);
   return linhas[0].total;
 }
-async function contarFavoritosUsuario(id_usu){
+async function contarFavoritosUsuario(id_usu) {
   const conexao = await conectarBD();
   const sql = `SELECT COUNT(*) AS total FROM favorito_obra WHERE id_usu = ? AND ativo = 1`;
   const [linhas] = await conexao.query(sql, [id_usu]);
@@ -604,7 +604,7 @@ async function buscarSuporte(email, assunto, descricao) {
   const [linhas] = await conexao.query(sql, [email, assunto, descricao]);
   return linhas.length > 0 ? linhas[0] : null;
 }
-async function buscarSuportePorId(id_sup){
+async function buscarSuportePorId(id_sup) {
   const conexao = await conectarBD();
   const sql = `SELECT id_sup as id, email_sup as email, assunto_sup as assunto, descricao_sup as descricao, status_sup as status
     FROM suporte 
@@ -650,7 +650,7 @@ async function buscarQtdBan() {
   const [linhas] = await conexao.query(sql);
   return linhas[0].total;
 }
-async function buscarIdUltimaCategoria(){
+async function buscarIdUltimaCategoria() {
   const conexao = await conectarBD();
   const sql = `SELECT id_cat FROM categoria ORDER BY id_cat DESC LIMIT 1;`;
   const [linhas] = await conexao.query(sql);
@@ -662,32 +662,56 @@ async function buscarQtdObras() {
   const [linhas] = await conexao.query(sql);
   return linhas[0].total;
 }
+async function buscarQtdFavoritos() {
+  const conexao = await conectarBD();
+  const sql = `SELECT COUNT(*) AS total FROM favorito_obra WHERE ativo = 1;`;
+  const [linhas] = await conexao.query(sql);
+  return linhas[0].total;
+}
+async function buscarQtdComentarios() {
+  const conexao = await conectarBD();
+  const sql = `SELECT COUNT(*) AS total FROM comentario;`;
+  const [linhas] = await conexao.query(sql);
+  return linhas[0].total;
+}
+async function buscarQtdColecoes() {
+  const conexao = await conectarBD();
+  const sql = `SELECT COUNT(*) AS total FROM colecao;`;
+  const [linhas] = await conexao.query(sql);
+  return linhas[0].total;
+}
+async function buscarQtdCategorias() {
+  const conexao = await conectarBD();
+  const sql = `SELECT COUNT(*) AS total FROM categoria;`;
+  const [linhas] = await conexao.query(sql);
+  return linhas[0].total;
+}
 async function buscarTotalUsuarios() {
   const conexao = await conectarBD();
   const sql = `SELECT COUNT(*) AS total FROM usuario`;
   const [linhas] = await conexao.query(sql);
   return linhas[0].total;
 }
-async function buscarTotalPendenteSup(){
+async function buscarTotalPendenteSup() {
   const conexao = await conectarBD();
   const sql = `SELECT COUNT(*) AS total FROM suporte where status_sup = "1"`;
   const [linhas] = await conexao.query(sql);
   return linhas[0].total;
 }
-async function buscarTotalEmAndamentoSup(){
-   const conexao = await conectarBD();
+async function buscarTotalEmAndamentoSup() {
+  const conexao = await conectarBD();
   const sql = `SELECT COUNT(*) AS total FROM suporte where status_sup = "2"`;
   const [linhas] = await conexao.query(sql);
   return linhas[0].total;
 }
-async function buscarTotalConcluidoSup(){
-   const conexao = await conectarBD();
+async function buscarTotalConcluidoSup() {
+  const conexao = await conectarBD();
   const sql = `SELECT COUNT(*) AS total FROM suporte where status_sup = "3"`;
   const [linhas] = await conexao.query(sql);
   return linhas[0].total;
 }
-async function buscarTotalSup(){
-   const conexao = await conectarBD();
+async function buscarTotalSup() {
+  const conexao = await conectarBD();
   const sql = `SELECT COUNT(*) AS total FROM suporte`;
   const [linhas] = await conexao.query(sql);
   return linhas[0].total;
@@ -786,7 +810,7 @@ async function listarUsuariosBanidos() {
   const [linhas] = await conexao.query(sql);
   return linhas;
 }
-async function listarTodasObra(){
+async function listarTodasObra() {
   const conexao = await conectarBD();
   const sql = `SELECT id_obr AS id, titulo_obr AS titulo, descricao_obr AS descricao, situacao_obr AS ativo, foto_obr AS foto, id_cat as idCat, id_art as idArt
     FROM obra
@@ -794,7 +818,17 @@ async function listarTodasObra(){
   const [linhas] = await conexao.query(sql);
   return linhas;
 }
-async function listarTodosSup(){
+async function listarTodosFavorito() {
+  const conexao = await conectarBD();
+  const sql = `SELECT f.id_usu as id_usu, u.nome_usu as nome, f.id_obr as id_obr, o.titulo_obr as titulo, f.ativo as ativo
+    FROM favorito_obra f
+    INNER JOIN usuario u on f.id_usu=u.id_usu
+    INNER JOIN obra o on f.id_obr=o.id_obr
+    ORDER BY id_obr DESC`;
+  const [linhas] = await conexao.query(sql);
+  return linhas;
+}
+async function listarTodosSup() {
   const conexao = await conectarBD();
   const sql = `SELECT id_sup as id, email_sup as email, assunto_sup as assunto, descricao_sup as descricao, status_sup as status
     FROM suporte
@@ -802,7 +836,7 @@ async function listarTodosSup(){
   const [linhas] = await conexao.query(sql);
   return linhas;
 }
-async function listarPendenteSup(){
+async function listarPendenteSup() {
   const conexao = await conectarBD();
   const sql = `SELECT id_sup as id, email_sup as email, assunto_sup as assunto, descricao_sup as descricao, status_sup as status
     FROM suporte
@@ -811,7 +845,7 @@ async function listarPendenteSup(){
   const [linhas] = await conexao.query(sql);
   return linhas;
 }
-async function listarEmAndamentoSup(){
+async function listarEmAndamentoSup() {
   const conexao = await conectarBD();
   const sql = `SELECT id_sup as id, email_sup as email, assunto_sup as assunto, descricao_sup as descricao, status_sup as status
     FROM suporte
@@ -820,7 +854,7 @@ async function listarEmAndamentoSup(){
   const [linhas] = await conexao.query(sql);
   return linhas;
 }
-async function listarConcluidoSup(){
+async function listarConcluidoSup() {
   const conexao = await conectarBD();
   const sql = `SELECT id_sup as id, email_sup as email, assunto_sup as assunto, descricao_sup as descricao, status_sup as status
     FROM suporte
@@ -846,7 +880,7 @@ async function banirUsuario(id_usu) {
   const sql = `UPDATE usuario SET ban_usu = 1 WHERE id_usu = ?`;
   await conexao.query(sql, [id_usu]);
 }
-async function buscarUmaObraAdm(id_obr){
+async function buscarUmaObraAdm(id_obr) {
   const conexao = await conectarBD();
   const sql = ` SELECT id_obr, titulo_obr, descricao_obr, situacao_obr, foto_obr, id_cat, id_art
     FROM obra WHERE id_obr = ?;
@@ -854,13 +888,13 @@ async function buscarUmaObraAdm(id_obr){
   const [linhas] = await conexao.query(sql, [id_obr]);
   return linhas[0].total;
 }
-async function buscarUmaCategoriaAdm(id_cat){
+async function buscarUmaCategoriaAdm(id_cat) {
   const conexao = await conectarBD();
   const sql = ` SELECT id_cat, nome_cat, descricao_cat, foto_cat FROM categoria WHERE id_cat = ?;`;
   const [linhas] = await conexao.query(sql, [id_cat]);
   return linhas[0].total;
 }
-async function editarUmaObraAdm(id_obr){
+async function editarUmaObraAdm(id_obr) {
   const conexao = await conectarBD();
   const sql = ` UPDATE obra SET titulo_obr = ?, descricao_obr = ?, situacao_obr = ?, foto_obr = ?, id_cat = ? 
   WHERE id_obr = ?;`;
@@ -876,16 +910,16 @@ async function excluirUmaCategoriaAdm(id_cat) {
   const sql = `DELETE FROM categoria WHERE id_cat = ?;`;
   await conexao.query(sql, [id_cat]);
 }
-async function mudarStatusSup(id_sup, status_sup){
+async function mudarStatusSup(id_sup, status_sup) {
   const conexao = await conectarBD();
   if (status_sup == "1") {
     const sql = `UPDATE suporte SET status_sup = "2" WHERE id_sup = ?`;
     await conexao.query(sql, [id_sup, status_sup]);
   }
-  if (status_sup == "2"){
+  if (status_sup == "2") {
     const sql = `UPDATE suporte SET status_sup = "3" WHERE id_sup = ?`;
     await conexao.query(sql, [id_sup, status_sup]);
-  };
+  }
 }
 
 async function verificarEmailExiste(email) {
@@ -939,16 +973,13 @@ async function getQtdSeguindo(id_usu) {
 }
 
 //Cadastros
-async function registrarCategoria(dados){
+async function registrarCategoria(dados) {
   const { categoria, descricao } = dados;
   const conexao = await conectarBD();
   const sql =
     "INSERT INTO categoria (nome_cat, descricao_cat, foto_cat) VALUES (?, ?, 'uploads/imagem.png')";
   try {
-    const [resultado] = await conexao.execute(sql, [
-      categoria,
-      descricao
-    ]);
+    const [resultado] = await conexao.execute(sql, [categoria, descricao]);
     console.log("Categoria cadastrada com sucesso: ", resultado);
     return resultado;
   } catch (erro) {
@@ -1019,6 +1050,10 @@ module.exports = {
   buscarQtdObras,
   buscarTotalUsuarios,
   buscarUmaObraAdm,
+  buscarQtdFavoritos,
+  buscarQtdComentarios,
+  buscarQtdColecoes,
+  buscarQtdCategorias,
   buscarUmaCategoriaAdm,
   buscarIdUltimaCategoria,
   buscarTotalPendenteSup,
@@ -1034,6 +1069,7 @@ module.exports = {
   listarAdministradores,
   listarUsuariosBanidos,
   listarTodasObra,
+  listarTodosFavorito,
   listarTodosSup,
   listarPendenteSup,
   listarEmAndamentoSup,
