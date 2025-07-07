@@ -998,9 +998,9 @@ async function salvarNovaObra(titulo, descricao, categoriaId, caminhoImagem, idA
 }
 async function consultarUltimaObraArtista(id_art) {
   const conexao = await conectarBD();
-  const sql = `SELECT id_obr WHERE id_art = ? ORDER BY id_obr DESC LIMIT 1`;
+  const sql = `SELECT id_obr FROM obra WHERE id_art = ? ORDER BY id_obr DESC LIMIT 1`;
   const [linhas] = await conexao.query(sql, [id_art]);
-  return linhas;
+  return linhas.length > 0 ? linhas[0] : null;
 }
 
 module.exports = {

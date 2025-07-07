@@ -33,7 +33,7 @@
             <select id="categoria" name="categoria" required>
               <option value="">Selecionar Categoria</option>
               <% categorias.forEach((c) => { %>
-                <option value="<% c.id_cat %>"><% c.nome_cat %></option>
+                <option value="<%= c.id_cat %>"><%= c.nome_cat %></option>
               <% }) %>
             </select>
           </div>
@@ -45,7 +45,7 @@
             <select id="artista" name="artista" required>
               <option value="">Selecionar Artista</option>
               <% artistas.forEach((a) => { %>
-                <option value="<% a.id_art %>"><% a.nome_art %></option>
+                <option value="<%= a.id_art %>"><%= a.nome_art %></option>
               <% }) %>
             </select>
           <% } %>

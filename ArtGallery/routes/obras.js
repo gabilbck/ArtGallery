@@ -97,8 +97,8 @@ router.post("/nova", uploadObra.single("imagem"), async (req, res) => {
       const enviar = await banco.salvarNovaObra(titulo, descricao, categoria, caminhoImagem, artista);
       console.log(enviar);
       const obraNova = await banco.consultarUltimaObraArtista(artista);
-      console.log(consultar);
-      res.redirect(`obras/${obraNova}`); // Redirecionar após publicar
+      console.log(obraNova);
+      res.redirect(`/obras/${obraNova.id_obr}`); // Redirecionar após publicar
     } catch (error) {
       console.error("Erro ao salvar nova obra:", error);
       res.status(500).send("Erro ao salvar nova obra.");
