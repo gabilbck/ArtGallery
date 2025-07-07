@@ -1,0 +1,158 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #fafafa;
+  padding: 40px;
+  text-align: center;
+}
+
+.titulo {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.subtitulo {
+  margin-bottom: 30px;
+  color: #444;
+}
+
+.form-editar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 40px;
+  background: #fff;
+  padding: 40px;
+  max-width: 960px;
+  margin: 0 auto;
+  border-radius: 18px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.05);
+}
+
+.col-esquerda {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.img-container {
+  width: 180px;
+  height: 220px;
+  background: #ccc;
+  border-radius: 10px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.3s;
+  border: 2px solid #777;
+}
+
+.img-container:hover {
+  background: #bbb;
+}
+
+.img-preview {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.img-placeholder {
+  font-size: 48px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 180px;
+  width: 100%;
+}
+
+.label-foto {
+  font-weight: bold;
+  font-size: 14px;
+  margin-top: 10px;
+  color: #333;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.col-direita {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 280px;
+  flex: 1;
+  text-align: left;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.botoes-acao {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 30px;
+}
+
+.btn-verde {
+  background: #4CAF50;
+  color: #fff;
+  padding: 14px 36px;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn-verde:hover {
+  background: #3e9641;
+}
+
+.ou {
+  margin: 12px 0;
+  font-weight: bold;
+  color: #444;
+}
+
+.btn-cinza {
+  background: #888;
+  color: #fff;
+  padding: 14px 36px;
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+.btn-cinza:hover {
+  background: #666;
+}

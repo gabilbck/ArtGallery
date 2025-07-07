@@ -68,7 +68,7 @@ app.use((req, res, next) => {
 // Configuração do Multer para upload de arquivos 
 const storage = multer.diskStorage({ 
   destination: (req, file, cb) => { 
-    cb(null, 'public/uploads/'); 
+    cb(null, 'public/uploads/fotos-perfil'); 
   }, 
   filename: (req, file, cb) => { 
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9); 
@@ -138,4 +138,4 @@ app.listen(PORT, () => {
 
 
 
-module.exports = app;
+module.exports = app ;

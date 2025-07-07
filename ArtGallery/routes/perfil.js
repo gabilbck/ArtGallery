@@ -1,6 +1,7 @@
 // routes/perfil.js
 const express = require("express");
 const router = express.Router();
+const { uploadPerfil } = require("../utils/upload");
 const {
    conectarBD,
    buscarObrasFavoritas,
@@ -84,6 +85,41 @@ router.get("/", autenticado, async (req, res) => {
       res.status(500).send("Erro ao carregar perfil");
    }
 });
+
+router.get("/editar-perfil", autenticado, async (req, res) => {
+  const usuario = await buscarDadosUsuarioPorId(req.session.usuario.id_usu);
+  if (!usuario) return res.status(404).send("Usuário não encontrado.");
+  res.render("editarPerfil", { usuario });
+});
+
+router.post("/editar-perfil", autenticado, uploadPerfil.single("foto_usu"), async (req, res) => {
+  const conexao = await conectarBD();
+  const { nome_comp, nome_usu, bio_usu } = req.body;
+  const id_usu = req.session.usuario.id_usu;
+  let fotoPath = req.session.usuario.foto_usu;
+
+  if (req.file) {
+    fotoPath = "/uploads/fotos-perfil/" + req.file.filename;
+  }
+
+  try {
+    await conexao.query(
+      "UPDATE usuario SET nome_comp = ?, nome_usu = ?, bio_usu = ?, foto_usu = ? WHERE id_usu = ?",
+      [nome_comp, nome_usu, bio_usu, fotoPath, id_usu]
+    );
+
+    req.session.usuario.nome_usu = nome_usu;
+    req.session.usuario.foto_usu = fotoPath;
+
+    res.redirect("/perfil");
+  } catch (err) {
+    console.error("Erro ao atualizar perfil:", err);
+    res.status(500).send("Erro ao atualizar perfil.");
+  }
+});
+
+
+
 
 // Página de perfil público
 router.get("/perfilVisitante/:id", autenticado, async (req, res) => {
