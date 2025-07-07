@@ -1,7 +1,8 @@
-// middlewares/autenticado.js
-module.exports = (req, res, next) => {
-  if (!req.session.usuario) {
-    return res.redirect('/login');
+function autenticado(req, res, next) {
+  if (req.session && req.session.usuario) {
+    return next();
   }
-  next();
-};
+  res.redirect("/login");
+}
+
+module.exports = autenticado;

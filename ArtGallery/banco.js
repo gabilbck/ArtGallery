@@ -987,6 +987,15 @@ async function registrarCategoria(dados) {
     throw erro;
   }
 }
+async function salvarNovaObra(titulo, descricao, categoriaId, caminhoImagem, idArtista) {
+ const [rows] = await conectarBD().then(conn =>
+   conn.query(
+     "INSERT INTO obra (titulo_obr, descricao_obr, foto_obr, id_cat, id_art) VALUES (?, ?, ?, ?, ?)",
+     [titulo, descricao, caminhoImagem, categoriaId, idArtista]
+   )
+ );
+ return rows;
+}
 
 module.exports = {
   conectarBD,
@@ -1084,4 +1093,5 @@ module.exports = {
   mudarStatusSup,
   //Cadastros
   registrarCategoria,
+  salvarNovaObra
 };

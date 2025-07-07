@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Adicionar Nova Obra</title>
+  <link rel="stylesheet" href="/stylesheets/styleNovaObra.css">
+</head>
+<body>
+  <div class="nova-obra-container">
+    <h1>ADICIONAR UMA NOVA OBRA</h1>
+    <p class="subtitulo">Preencha as informações abaixo para publicar sua obra:</p>
+
+    <form class="nova-obra-form" action="/obras/novaObra" method="POST" enctype="multipart/form-data">
+      <div class="upload-wrapper">
+        <div class="upload-area" id="upload-area">
+          <label for="imagemObra" id="upload-label">
+            <span>+</span>
+            <p>CARREGAR OBRA</p>
+          </label>
+          <input type="file" id="imagemObra" name="imagem" accept="image/*" hidden required />
+          <img id="preview-img" src="#" alt="Prévia da obra" style="display: none;" />
+        </div>
+      </div>
+
+      <div class="info-obra">
+        <div class="linha">
+          <div class="campo">
+            <label for="titulo">Título da Obra</label>
+            <input type="text" id="titulo" name="titulo" required>
+          </div>
+          <div class="campo">
+            <label for="categoria">Categoria</label>
+            <select id="categoria" name="categoria" required>
+              <option value="">Selecionar Categoria</option>
+              <option value="1">Pintura</option>
+              <option value="2">Escultura</option>
+              <option value="3">Fotografia</option>
+              <option value="4">Arte Digital</option>
+              <option value="5">Desenho</option>
+              <option value="6">Abstrata</option>
+              <option value="7">Surrealismo</option>
+              <option value="8">Retrato</option>
+              <option value="9">Paisagem</option>
+              <option value="10">Minimalista</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="campo">
+          <label for="artista">Artista</label>
+        </div>
+
+        <div class="campo">
+          <label for="descricao">Descrição</label>
+          <textarea id="descricao" name="descricao" rows="4"></textarea>
+        </div>
+
+        <button type="submit" class="btn-enviar">PUBLICAR OBRA</button>
+
+        <p class="ou">ou</p>
+
+        <a href="/perfil" class="btn-cancelar">← CANCELAR E RETORNAR</a>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById("upload-label").addEventListener("click", function () {
+      document.getElementById("imagemObra").click();
+    });
+
+    document.getElementById("imagemObra").addEventListener("change", function (event) {
+      const file = event.target.files[0];
+      const preview = document.getElementById("preview-img");
+
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          preview.src = e.target.result;
+          preview.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  </script>
+</body>
+</html>
