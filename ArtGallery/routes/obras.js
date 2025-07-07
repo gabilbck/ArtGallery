@@ -1,6 +1,7 @@
 // routes/obras.js (ou onde preferir agrupar)
 const express = require("express");
 const router = express.Router();
+const path = require("path");
 const { uploadObra } = require("../utils/upload");
 const {
   jaFavoritou, // bool  -> usuário já marcou?
@@ -12,6 +13,7 @@ const {
   comentarObra,
   excluirComentario
 } = require("../banco");
+const { validarSessao } = require("../middlewares/adm")
 
 // router.get("/", async (req, res) => {
 //   if (!req.session.usuario) {
@@ -28,6 +30,49 @@ const {
 //     res.status(500).send("Erro ao carregar obras");
 //   }
 // });
+
+const autenticado = (req, res, next) => {
+  if (req.session && req.session.usuario) {
+    next();
+  } else {
+    res.redirect("/login");
+  }
+};
+
+router.get("/nova", autenticado, async (req, res) => {
+  validarSessao(req, res);
+  const tipo = req.session.usuario.tipo_usu;
+  if (tipo != ("art" || "adm")) return res.redirect("/");
+  try {
+    const [categorias] = await conexao.query("SELECT * FROM categoria");
+    res.render("novaObra", {
+      title: "Nova Obra",
+      categorias,
+      usuario: req.session.usuario
+    });
+  } catch (error) {
+    console.error("Erro ao carregar categorias:", error);
+    res.status(500).send("Erro ao carregar página de nova obra");
+  }
+});
+
+// POST para salvar nova obra
+router.post("/nova", uploadObra.single("imagem"), async (req, res) => {
+  try {
+    const { titulo, descricao, categoria } = req.body;
+    const usuarioId = req.session.usuario.ID_USU;
+
+    // Caminho salvo no banco de dados
+    const caminhoImagem = "/uploads/obras/" + req.file.filename;
+
+    await banco.salvarNovaObra(titulo, descricao, categoria, caminhoImagem, usuarioId);
+
+    res.redirect("/perfil"); // Redirecionar após publicar
+  } catch (error) {
+    console.error("Erro ao salvar nova obra:", error);
+    res.status(500).send("Erro ao salvar nova obra.");
+  }
+});
 
 router.get("/:id", async (req, res) => {
   if (!req.session.usuario) {
