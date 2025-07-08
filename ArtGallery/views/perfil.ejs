@@ -121,9 +121,17 @@
       <div class="perfil-topo">
         <div class="perfil-avatar">
           <% if (usuario.foto_usu) { %>
-            <img src="<%= usuario.foto_usu %>" alt="Foto de perfil" class="foto-perfil">
+          <img
+            src="<%= usuario.foto_usu %>"
+            alt="Foto de perfil"
+            class="foto-perfil"
+          />
           <% } else { %>
-            <img src="/imagens/avatar-default.png" alt="Foto padrão" class="foto-perfil">
+          <img
+            src="/imagens/avatar-default.png"
+            alt="Foto padrão"
+            class="foto-perfil"
+          />
           <% } %>
         </div>
         <div class="perfil-info">
@@ -150,7 +158,9 @@
                 <a class="perfil-botao-sair" href="/logout">Sair</a>
               </div>
               <div class="perfil-editar">
-                <a class="perfil-botao-editar" href="/perfil/editar-perfil"> Editar Perfil </a>
+                <a class="perfil-botao-editar" href="/perfil/editar-perfil">
+                  Editar Perfil
+                </a>
               </div>
             </div>
 
@@ -180,11 +190,11 @@
           <h2>Obras</h2>
           <a class="nova-obra" href="/obras/nova">+ Adicionar nova obra</a>
           <div class="favoritos-grid">
-            <% if(usuario.obras){
-            usuario.obras.forEach(o => { %>
+            <% if(usuario.obras){ usuario.obras.forEach(o => { %>
             <div class="obra-card">
-              <a href="/obras/<% o.id_obr %>"></a>
-              <img src="<%= o.foto %>" alt="<%= usuario.nome_usu %>" />
+              <a href="/obras/<% o.id_obr %>">
+                <img src="<%= o.foto %>" alt="<%= usuario.nome_usu %>" />
+              </a>
             </div>
             <% })} else { %>
             <p>Artista ainda não possui nenhuma obra.</p>
@@ -208,7 +218,7 @@
       </div>
       <div class="adicionar">
         <% if (usuario.tipo_usu === 'adm') {%>
-        <a class="nova-obra" href="">+ Adicionar nova obra</a>
+        <a class="nova-obra" href="/obras/nova">+ Adicionar nova obra</a>
         <% } %>
       </div>
       <div class="perfil-botoes-centro">
@@ -240,9 +250,11 @@
               <% if (favoritos.length > 0) { %> <% for (var i = 0; i <
               favoritos.length; i++) { var fav = favoritos[i]; %>
               <div class="obra-card">
-                <img src="<%= fav.foto %>" alt="<%= fav.nome %>" />
-                <h3><%= fav.nome %></h3>
-                <p><%= fav.art %></p>
+                <a href="/obras/<%= fav.id %>">
+                  <img src="<%= fav.foto %>" alt="<%= fav.nome %>" />
+                  <h3><%= fav.nome %></h3>
+                  <p><%= fav.art %></p>
+                </a>
               </div>
               <% } %> <% } else { %>
               <p>Você ainda não favoritou nenhuma obra.</p>
