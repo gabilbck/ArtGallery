@@ -46,7 +46,7 @@ O ArtGallery é uma plataforma para artistas exporem suas obras digitais, onde u
 * Insira os dados descritos nos arquivos: ArtGallery > BackupBD > insert.sql
 
 ### 4. Usuario
-* Você pode usar um dos nosso pré-cadastrados no insert.sql ou criar seus prórpios usuários. O ideal é testar com um de cada tipo:
+* Você pode usar um dos usuários pré-cadastrados no insert.sql ou criar seus prórpios usuários. O ideal é testar com um de cada tipo:
     * Artista
     * Apreciador/ usuário comum
     * Administrador
