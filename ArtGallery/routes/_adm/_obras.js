@@ -11,6 +11,7 @@ const {
   excluirUmaCategoriaAdm
 } = require("../../banco");
 const { validarPermissaoAdm } = require("../../middlewares/adm");
+const { uploadCategoria } = require("../../utils/upload");
 
 router.get("/", async (req, res) => {
   validarPermissaoAdm(req, res);
@@ -132,12 +133,52 @@ router.get("/categorias", async (req, res) => {
   }
 });
 
-router.get("/categorias/editar/:id_cat", async (req, res) => {
-  // validarPermissaoAdm(req, res);
-  // const id_cat = req.params.id_cat;
-  // const dados = await buscarUmaObraAdm(id_cat);
-  // const editar = await editarObra(id_cat);
+const { editarCategoria, buscarUmaCategoria } = require("../../banco");
+
+// Página de edição
+router.get("/categorias/editar/:id", async (req, res) => {
+  validarPermissaoAdm(req, res);
+  const id = req.params.id;
+  const categoria = await buscarUmaCategoria(id);
+  res.render("_adm/_edicaoCategoria", {
+    usuario: req.session.usuario,
+    title: "Administração - Editar Categoria - ArtGallery",
+    menssagem: null,
+    dados: categoria,
+    edicao: true,
+    id_cat: id
+  });
 });
+
+// Envio da edição
+router.post("/categorias/editar/:id", uploadCategoria.single("foto"), async (req, res) => {
+  validarPermissaoAdm(req, res);
+  try {
+    const id = req.params.id;
+    let fotoPath = null;
+    if (req.file) {
+      fotoPath = "/uploads/categorias/" + req.file.filename;
+    }
+    const dados = {
+      categoria: req.body.categoria,
+      descricao: req.body.descricao,
+      foto: fotoPath
+    };
+    await editarCategoria(id, dados);
+    res.redirect(`/adm/obras/categorias`);
+  } catch (erro) {
+    console.error('Erro ao editar categoria:', erro);
+    res.render('_adm/_edicaoCategoriaS', {
+      usuario: req.session.usuario,
+      title: "Administração - Editar Categoria - ArtGallery",
+      menssagem: "erro",
+      dados: req.body,
+      edicao: true,
+      id_cat: req.params.id
+    });
+  }
+});
+
 
 router.get("/categorias/excluir/:id_cat", async (req, res) => {
   validarPermissaoAdm(req, res);

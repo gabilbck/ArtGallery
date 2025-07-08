@@ -23,7 +23,7 @@ const uploadObra = multer({ storage: storageObra });
 
 // UPLOAD DE CATEGORIA
 const storageCategoria = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "public/uploads/categoria"),
+  destination: (req, file, cb) => cb(null, "public/uploads/categorias"),
   filename: (req, file, cb) => {
     const nome = Date.now() + "-" + Math.round(Math.random() * 1e9) + path.extname(file.originalname);
     cb(null, nome);

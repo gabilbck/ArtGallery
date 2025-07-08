@@ -34,10 +34,8 @@ router.post("/categoria", uploadCategoria.single("foto"), async (req, res) => {
             descricao: req.body.descricao,
             foto: fotoPath, // agora está correto
         };
-
         await registrarCategoria(dados);
-        const id_cat = await buscarIdUltimaCategoria();
-        res.redirect(`/categorias/${id_cat}`);
+        res.redirect(`/adm/obras/categorias`);
     } catch (erro) {
         console.error('Erro ao cadastrar categoria:', erro);
         res.render('_adm/_cadastroCategoria', {

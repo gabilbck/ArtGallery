@@ -1002,6 +1002,22 @@ async function consultarUltimaObraArtista(id_art) {
   const [linhas] = await conexao.query(sql, [id_art]);
   return linhas.length > 0 ? linhas[0] : null;
 }
+async function editarCategoria(id_cat, dados) {
+  const { categoria, descricao, foto } = dados;
+  const conexao = await conectarBD();
+
+  let sql, params;
+  if (foto) {
+    sql = `UPDATE categoria SET nome_cat = ?, descricao_cat = ?, foto_cat = ? WHERE id_cat = ?`;
+    params = [categoria, descricao, foto, id_cat];
+  } else {
+    sql = `UPDATE categoria SET nome_cat = ?, descricao_cat = ? WHERE id_cat = ?`;
+    params = [categoria, descricao, id_cat];
+  }
+
+  await conexao.query(sql, params);
+}
+
 
 module.exports = {
   conectarBD,
@@ -1055,7 +1071,6 @@ module.exports = {
   getUsuarioPorId,
   getQtdSeguidores,
   getQtdSeguindo,
-  // Admin
   buscarQtdApreciadores,
   buscarQtdArtistas,
   buscarQtdArtistasAguardandoLiberacao,
@@ -1075,7 +1090,6 @@ module.exports = {
   buscarTotalEmAndamentoSup,
   buscarTotalConcluidoSup,
   buscarTotalSup,
-  //Listas
   listarUsuarios,
   listarApreciadores,
   listarArtistasAtivos,
@@ -1089,7 +1103,6 @@ module.exports = {
   listarPendenteSup,
   listarEmAndamentoSup,
   listarConcluidoSup,
-  //Funções ADM
   liberarArtista,
   advertirUsuario,
   banirUsuario,
@@ -1097,8 +1110,8 @@ module.exports = {
   excluirUmaObraAdm,
   excluirUmaCategoriaAdm,
   mudarStatusSup,
-  //Cadastros
   registrarCategoria,
   salvarNovaObra,
-  consultarUltimaObraArtista
+  consultarUltimaObraArtista,
+  editarCategoria,
 };
