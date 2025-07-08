@@ -21,7 +21,7 @@ async function conectarBD() {
 // Usuários
 async function buscarUsuario(usuario) {
   const conexao = await conectarBD();
-  const sql = `SELECT id_usu, nome_usu, email_usu, tipo_usu, foto_usu 
+  const sql = `SELECT id_usu, nome_usu, email_usu, tipo_usu, foto_usu, ban_usu
     FROM usuario 
     WHERE email_usu = ? AND senha_usu = ?`;
   const [linhas] = await conexao.query(sql, [usuario.email, usuario.senha]);
@@ -872,9 +872,30 @@ async function liberarArtista(id_usu) {
 }
 async function advertirUsuario(id_usu) {
   const conexao = await conectarBD();
-  const sql = `UPDATE usuario SET advertencia_usu = advertencia_usu + 1 WHERE id_usu = ?`;
-  await conexao.query(sql, [id_usu]);
+
+  // Buscar número atual de advertências
+  const [[usuario]] = await conexao.query(
+    `SELECT advertencia_usu FROM usuario WHERE id_usu = ?`,
+    [id_usu]
+  );
+
+  const novaAdvertencia = usuario.advertencia_usu + 1;
+
+  // Atualizar advertência
+  await conexao.query(
+    `UPDATE usuario SET advertencia_usu = ? WHERE id_usu = ?`,
+    [novaAdvertencia, id_usu]
+  );
+
+  // Se passou de 2 advertências, banir o usuário
+  if (novaAdvertencia >= 2) {
+    await conexao.query(
+      `UPDATE usuario SET ban_usu = 1 WHERE id_usu = ?`,
+      [id_usu]
+    );
+  }
 }
+
 async function banirUsuario(id_usu) {
   const conexao = await conectarBD();
   const sql = `UPDATE usuario SET ban_usu = 1 WHERE id_usu = ?`;

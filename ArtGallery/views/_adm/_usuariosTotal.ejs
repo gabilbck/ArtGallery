@@ -47,17 +47,19 @@
               <td class="col-b"><%= u.ban %></td>
               <td class="col-a">
                 <div class="acoes">
+                  <% if (u.tipo == "art" && u.status == "p") { %>
+                    <form method="POST" action="/adm/usuarios/liberar/<%= u.id %>" style="display:inline;" onsubmit="return confirm('Deseja liberar este artista?')">
+                      <button type="submit" class="btn-qua" id="padrao">✔</button>
+                    </form>
+                  <% } %>
+                  <form method="POST" action="/adm/usuarios/advertir/<%= u.id %>" style="display:inline;">
+                    <button type="submit" class="btn-qua" id="padrao">!</button>
+                  </form>
                   <a
                     class="btn-qua"
                     id="padrao"
                     href="/adm/usuarios/editar/<%= u.id %>"
                     >🖉</a
-                  >
-                  <a
-                    class="btn-qua"
-                    id="erro"
-                    href="/adm/usuarios/excluir/<%= u.id %>"
-                    >X</a
                   >
                 </div>
               </td>

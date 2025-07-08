@@ -107,6 +107,7 @@ router.get("/artistas/liberados", async (req, res) => {
       tipo: u.tipo,
       adv: u.adv,
       ban: u.ban,
+      status: u.status,
       tabela: "artista",
     })),
   });
@@ -130,6 +131,7 @@ router.get("/artistas/pendentes", async (req, res) => {
       tipo: u.tipo,
       adv: u.adv,
       ban: u.ban,
+      status: u.status,
       tabela: "artista",
     })),
   });
@@ -193,92 +195,26 @@ router.get("/editar/:id", async (req, res) => {
   });
 });
 
-router.post("/editar/:id", async (req, res) => {
+router.post("/liberar/:id", async (req, res) => {
   validarPermissaoAdm(req, res);
-
-  // Aqui você implementaria a lógica para atualizar os dados do usuário
-  // Exemplo: await atualizarUsuario(req.params.id, req.body);
-  
-  req.flash("success", "Usuário atualizado com sucesso");
-  res.redirect("/adm/usuarios");
-});
-
-router.get("/liberacao/:id", async (req, res) => {
-  validarPermissaoAdm(req, res);
-
   try {
     await liberarArtista(req.params.id);
-    req.flash("success", "Artista liberado com sucesso");
+    res.redirect("/adm/usuarios");
   } catch (error) {
-    req.flash("error", "Erro ao liberar artista");
+    console.log(error);
+    res.redirect("/adm/usuarios");
   }
-  
-  res.redirect("/adm/usuarios/artistas/pendentes");
-});
-
-router.post("/liberacao/:id", async (req, res) => {
-  validarPermissaoAdm(req, res);
-
-  try {
-    await liberarArtista(req.params.id);
-    req.flash("success", "Artista liberado com sucesso");
-  } catch (error) {
-    req.flash("error", "Erro ao liberar artista");
-  }
-  
-  res.redirect("/adm/usuarios/artistas/pendentes");
-});
-
-router.get("/advertir/:id", async (req, res) => {
-  validarPermissaoAdm(req, res);
-
-  try {
-    await advertirUsuario(req.params.id);
-    req.flash("success", "Usuário advertido com sucesso");
-  } catch (error) {
-    req.flash("error", "Erro ao advertir usuário");
-  }
-  
-  res.redirect("/adm/usuarios");
 });
 
 router.post("/advertir/:id", async (req, res) => {
   validarPermissaoAdm(req, res);
-
   try {
     await advertirUsuario(req.params.id);
-    req.flash("success", "Usuário advertido com sucesso");
+    res.redirect("/adm/usuarios");
   } catch (error) {
-    req.flash("error", "Erro ao advertir usuário");
+    console.log(error);
+    res.redirect("/adm/usuarios");
   }
-  
-  res.redirect("/adm/usuarios");
-});
-
-router.get("/banir/:id", async (req, res) => {
-  validarPermissaoAdm(req, res);
-
-  try {
-    await banirUsuario(req.params.id);
-    req.flash("success", "Usuário banido com sucesso");
-  } catch (error) {
-    req.flash("error", "Erro ao banir usuário");
-  }
-  
-  res.redirect("/adm/usuarios");
-});
-
-router.post("/banir/:id", async (req, res) => {
-  validarPermissaoAdm(req, res);
-
-  try {
-    await banirUsuario(req.params.id);
-    req.flash("success", "Usuário banido com sucesso");
-  } catch (error) {
-    req.flash("error", "Erro ao banir usuário");
-  }
-  
-  res.redirect("/adm/usuarios");
 });
 
 module.exports = router;

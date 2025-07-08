@@ -36,6 +36,13 @@ router.post("/", async (req, res) => {
 
     if (usuario) {
       // 🔒 VERIFICAÇÃO DE ARTISTA NÃO LIBERADO
+      if (usuario.ban === true){
+        return res.render("login", {
+          title: "Login - ArtGallery",
+          erros: "Este usuário está permanemente bloqueado.",
+          sucesso: false,
+        });
+      }
       if (usuario.tipo_usu === "art") {
         const conexao = await conectarBD();
         const [[liberacao]] = await conexao.query(
