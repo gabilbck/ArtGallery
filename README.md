@@ -21,6 +21,12 @@ O ArtGallery é uma plataforma para artistas exporem suas obras digitais, onde u
 * Dashboard administrativo.
 * Cadastro e gerenciamento de obras e artistas. Controle de usuários e permissões.
 
+### 1.3. Adicionais
+* Criação de coleções (pastas) para apreciadores e administradores
+* Implementação de categorias
+* Advertêncoia e banimento
+* Liberação de contas do tipo artista somente pelos administradores, com barrramento no login para contas não liberadas
+
 ### 2. Bibliotecas necessárias para funcionamento:
 ``` npm install ```
 
@@ -39,4 +45,14 @@ O ArtGallery é uma plataforma para artistas exporem suas obras digitais, onde u
 ### 3. Banco de dados
 * Dump para banco de dados se encontra disponível no caminho: ArtGallery > BackupBD > ArtGallery.sql
 * Crie um banco de dados com o nome ``` artg ``` para importar dump 
-* Insira os dados descritos nos arquivos: ArtGallery > BackupBD > insert.sql e insertObras.sql 
+* Insira os dados descritos nos arquivos: ArtGallery > BackupBD > insert.sql
+
+### 4. Usuario
+* Você pode usar um dos nosso pré-cadastrados no insert.sql ou criar seus prórpios usuários. O ideal é testar com um de cada tipo:
+    * Artista
+    * Apreciador/ usuário comum
+    * Administrador
+
+### 5. Administrador
+* Para visualizar as páginas de administração, vá para rota:
+``` localhost:3001/adm ```
