@@ -6,8 +6,6 @@ Gabrieli Eduarda Lembeck
 Julio Bezerra de Mattos Manoel      
 Mileine da Silva de Freitas
 
-### Estágio Atual: Implementação da Página de login, conectada ao banco de dados
-
 ### 1. Visão Geral
 O ArtGallery é uma plataforma para artistas exporem suas obras digitais, onde usuários podem favoritar, comentar e interagir com os trabalhos.
 
