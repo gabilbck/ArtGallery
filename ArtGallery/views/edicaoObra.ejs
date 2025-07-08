@@ -1,0 +1,85 @@
+<!-- views/_adm/_edicaoObra.ejs -->
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Editar Obra</title>
+  <link rel="stylesheet" href="/stylesheets/styleNovaObra.css">
+</head>
+<body>
+  <div class="nova-obra-container">
+    <h1>EDIÇÃO DE OBRA</h1>
+    <p class="subtitulo">Atualize as informações abaixo da obra:</p>
+
+    <form class="nova-obra-form" action="/obras/editar/<%= id_obr %>" method="POST" enctype="multipart/form-data">
+      <div class="upload-wrapper">
+        <div class="upload-area" id="upload-area">
+          <label for="imagemObra" id="upload-label">
+            <span>+</span>
+            <p>CARREGAR OBRA</p>
+          </label>
+          <input type="file" id="imagemObra" name="imagem" accept="image/*" hidden />
+          <% console.log("DEBUG FOTO: ", dados.foto); %>
+        <img id="preview-img" src="<%= dados.foto %>" alt="Prévia da obra" onerror="this.src='/uploads/imagem.png'" />
+        </div>
+      </div>
+
+      <div class="info-obra">
+        <div class="linha">
+          <div class="campo">
+            <label for="titulo">Título da Obra</label>
+            <input type="text" id="titulo" name="titulo" value="<%= dados.titulo %>" required>
+          </div>
+          <div class="campo">
+            <label for="categoria">Categoria</label>
+            <select id="categoria" name="categoria" required>
+              <% categorias.forEach((c) => { %>
+                <option value="<%= c.id_cat %>" <%= dados.id_cat == c.id_cat ? "selected" : "" %>><%= c.nome_cat %></option>
+              <% }) %>
+            </select>
+          </div>
+        </div>
+
+        <div class="campo">
+          <label for="artista">Artista</label>
+          <select id="artista" name="artista" required>
+            <% artistas.forEach((a) => { %>
+              <option value="<%= a.id_art %>" <%= dados.id_art == a.id_art ? "selected" : "" %>><%= a.nome_art %></option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="campo">
+          <label for="descricao">Descrição</label>
+          <textarea id="descricao" name="descricao" rows="4"><%= dados.descricao %></textarea>
+        </div>
+
+        <button type="submit" class="btn-enviar">ATUALIZAR OBRA</button>
+
+        <p class="ou">ou</p>
+
+        <a href="/adm/obras" class="btn-cancelar">← CANCELAR E RETORNAR</a>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById("upload-label").addEventListener("click", function () {
+      document.getElementById("imagemObra").click();
+    });
+
+    document.getElementById("imagemObra").addEventListener("change", function (event) {
+      const file = event.target.files[0];
+      const preview = document.getElementById("preview-img");
+
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          preview.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  </script>
+</body>
+</html>

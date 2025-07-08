@@ -11,25 +11,19 @@ const {
   buscarUmaObra,
   buscarComentariosPorObra,
   comentarObra,
-  excluirComentario
+  excluirComentario,
+  buscarTodasCategorias,
+  editarUmaObraAdm
 } = require("../banco");
-const { validarSessao } = require("../middlewares/adm")
+const { validarSessao } = require("../middlewares/adm");
 
-// router.get("/", async (req, res) => {
-//   if (!req.session.usuario) {
-//     return res.redirect("/login");
-//   }
-
-//   try {
-//     const usuario = req.session.usuario.id;
-//     const obras = await contarFavoritos(usuario);
-
-//     res.render("obras", { obras, usuario });
-//   } catch (err) {
-//     console.error("Erro ao carregar obras:", err);
-//     res.status(500).send("Erro ao carregar obras");
-//   }
-// });
+router.get("/", async (req, res) => {
+  if (!req.session.usuario) {
+    return res.redirect("/login");
+  } else{
+    return res.redirect("/explorar");
+  }
+});
 
 const autenticado = (req, res, next) => {
   if (req.session && req.session.usuario) {
@@ -105,6 +99,96 @@ router.post("/nova", uploadObra.single("imagem"), async (req, res) => {
     }
   }
 });
+
+router.get("/editar/:id", async (req, res) => {
+  if (!req.session.usuario) return res.redirect("/login");
+  const id = req.params.id;
+  const usuario = req.session.usuario;
+  try {
+    const dados = await buscarUmaObra(id); // retorna { id, titulo, foto, des, id_art, idCat, ... }
+
+    // Segurança: artista só edita se for dono
+    if (usuario.tipo_usu !== "adm" && usuario.id_usu !== dados.id_usu_art) {
+      return res.status(403).send("Você não tem permissão para editar esta obra.");
+    }
+
+    const categorias = (await buscarTodasCategorias()).map(c => ({
+      id_cat: c.id,
+      nome_cat: c.nome
+    }));
+    const [artistas] = await require("../banco").conectarBD().then(conn =>
+      conn.query("SELECT id_art, nome_comp AS nome_art FROM artista")
+    );
+
+    res.render("edicaoObra", {
+      title: "Editar Obra - ArtGallery",
+      usuario,
+      id_obr: id,
+      dados: {
+        titulo: dados.titulo,
+        descricao: dados.des,
+        foto: dados.foto,
+        id_art: dados.id_art,
+        id_cat: dados.idCat || dados.id_cat
+      },
+      categorias,
+      artistas: artistas.map(a => ({
+        id_art: a.id_art,
+        nome_art: a.nome_art
+      }))
+    });
+  } catch (err) {
+    console.error("Erro ao carregar edição:", err);
+    res.redirect("/obras/" + id + "?menssagem=erro");
+  }
+});
+
+router.post("/editar/:id", uploadObra.single("imagem"), async (req, res) => {
+  if (!req.session.usuario) return res.redirect("/login");
+
+  const id = req.params.id;
+  const usuario = req.session.usuario;
+  const { titulo, descricao, categoria, artista } = req.body;
+
+  let fotoPath = null;
+  if (req.file) {
+    fotoPath = "/uploads/obras/" + req.file.filename;
+  }
+
+  try {
+    const obraAtual = await buscarUmaObra(id);
+
+    // Segurança: só admin ou artista dono pode editar
+    if (usuario.tipo_usu !== "adm" && usuario.id_usu !== obraAtual.id_usu_art) {
+      return res.status(403).send("Você não tem permissão para editar esta obra.");
+    }
+
+    const conexao = await require("../banco").conectarBD();
+
+    const sql = `
+      UPDATE obra SET
+        titulo_obr = ?,
+        descricao_obr = ?,
+        ${fotoPath ? "foto_obr = ?," : ""}
+        id_cat = ?,
+        id_art = ?
+      WHERE id_obr = ?
+    `;
+
+    const params = fotoPath
+      ? [titulo, descricao, fotoPath, categoria, artista, id]
+      : [titulo, descricao, categoria, artista, id];
+
+    await conexao.query(sql, params);
+
+    res.redirect(`/obras/${id}`);
+  } catch (erro) {
+    console.error("Erro ao salvar edição:", erro);
+    res.status(500).send("Erro ao editar a obra.");
+  }
+});
+
+
 
 router.get("/:id", async (req, res) => {
   if (!req.session.usuario) {
