@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="icon" href="/uploads/icon-ag.svg" type="image/x-icon" />
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+    <link rel="stylesheet" href="/stylesheets/adm.css" />
+  </head>
+  <body>
+    <div class="topo-logo">
+      <a href="../">
+        <h1>ArtGallery</h1>
+        <p>Administrativo</p>
+      </a>
+    </div>
+
+    <% if(menssagem == "erro") { %>
+    <div class="retorno">
+      <div class="retorno-container" id="erro">Erro ao cadastrar dados.</div>
+    </div>
+    <script>
+      setTimeout(() => {
+        window.location.href = "/adm/obras/";
+      }, 3000);
+    </script>
+    <% } else { %>
+    <section>
+        <div class="conteudo">
+            <div class="cadastros">
+                <div class="cadastros-tit">
+                    <h1>CADASTRO DE ARTISTA</h1>
+                </div>
+                <div class="cadastros-entradas">
+                    <form action="/adm/cadastrar/artista" method="post" enctype="multipart/form-data">
+                        <div class="entrada">
+                            <label for="nome_comp">Nome Completo</label>
+                            <input type="text" id="nome_comp" name="nome_comp" placeholder="Nome Completo" required>
+                        </div>
+                        <div class="entrada">
+                            <label for="nome_usu">Nome de Usuário</label>
+                            <input type="textarea" id="nome_usu" name="nome_usu" placeholder="Nome de Usuário" required>
+                        </div>
+                        <div class="entrada">
+                            <label for="bio_art">Biografia</label>
+                            <textarea type="textarea" id="bio_art" name="bio_art" placeholder="Biografia" required></textarea>
+                        </div>
+                        <div>
+                          <label for="foto">
+                          <% if (dados.foto_art) { %>
+                            <img id="preview-img" src="<%= dados.foto %>" alt="Foto do Artista" class="img-preview"/>
+                          <% } else { %>
+                            <img id="preview-img" src="/uploads/imagem.png" alt="Preview" class="img-preview"/>
+                          <% } %>
+                          <span class="label-foto">CARREGAR FOTO</span>
+                          <input type="file" name="foto" id="foto" accept="image/*" hidden />
+                          </label>
+                          <script>
+                            const inputFoto = document.getElementById("foto");
+                            const previewImg = document.getElementById("preview-img");
+                            inputFoto.addEventListener("change", function () {
+                              if (this.files && this.files[0]) {
+                                const reader = new FileReader();
+                                reader.onload = function (e) {previewImg.src = e.target.result;};
+                                reader.readAsDataURL(this.files[0]);
+                              }});
+                          </script>
+                        </div>
+                        <div class="envio">
+                            <input type="submit" value="CADASTRAR ARTISTA">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    <% } %>
+    <section>
+      <a href="/adm/" class="votlar" style="color: #fff">Voltar ao Dashboard</a>
+    </section>
+    <br />
+  </body>
+</html>

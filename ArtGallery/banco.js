@@ -1008,6 +1008,21 @@ async function registrarCategoria(dados) {
     throw erro;
   }
 }
+async function registrarArtista(dados) {
+  const { nome_comp, nome_usu, bio_art, foto } = dados;
+  const conexao = await conectarBD();
+  const sql =
+    "INSERT INTO artista (nome_comp, nome_usu, bio_art, foto_art, id_usu) VALUES (?, ?, ?, :, null)";
+  try {
+    const [resultado] = await conexao.execute(sql, [nome_comp, nome_usu, bio_art, foto]);
+    console.log("Artista cadastrada com sucesso: ", resultado);
+    return resultado;
+  } catch (erro) {
+    console.error("Erro ao cadastrar artista:", erro); // <-- corrigido
+    throw erro;
+  }
+}
+
 async function salvarNovaObra(titulo, descricao, categoriaId, caminhoImagem, idArtista) {
  const [rows] = await conectarBD().then(conn =>
    conn.query(
@@ -1135,4 +1150,5 @@ module.exports = {
   salvarNovaObra,
   consultarUltimaObraArtista,
   editarCategoria,
+  registrarArtista
 };

@@ -5,6 +5,7 @@ const { uploadObra, uploadPerfil, uploadCategoria } = require("../../utils/uploa
 const {
     registrarCategoria,
     buscarIdUltimaCategoria,
+    registrarArtista
 } = require("../../banco");
 
 router.get("/", async (req, res) => {
@@ -28,7 +29,6 @@ router.post("/categoria", uploadCategoria.single("foto"), async (req, res) => {
         if (req.file) {
             fotoPath = "/uploads/categorias/" + req.file.filename;
         }
-
         const dados = {
             categoria: req.body.categoria,
             descricao: req.body.descricao,
@@ -45,6 +45,42 @@ router.post("/categoria", uploadCategoria.single("foto"), async (req, res) => {
             dados: req.body // reutiliza os dados que o usuário enviou
         });
     }
+});
+
+router.get("/artista", async (req, res) => {
+    validarPermissaoAdm(req, res);
+    res.render("_adm/_cadastroArtista", {
+        usuario: req.session.usuario,
+        title: "Administração - Cadastro de Artista - ArtGallery",
+        menssagem: null,
+        dados: {},
     });
+})
+
+router.post("/artista", uploadPerfil.single("foto"), async (req, res) => {
+    validarPermissaoAdm(req, res);
+    try{
+        let fotoPath = null;
+        if (req.file) {
+            fotoPath = "/uploads/fotos-perfil/" + req.file.filename;
+        }
+        const dados = {
+            nome_comp: req.body.nome_comp,
+            nome_usu: req.body.nome_usu,
+            bio_art: req.body.bio_Art,
+            foto: fotoPath, 
+        };
+        await registrarArtista(dados);
+        res.redirect(`/adm/usuarios/artistas/ativos`);
+    } catch (erro) {
+        console.error('Erro ao cadastrar categoria:', erro);
+        res.render('_adm/_usuariosTotal', {
+            usuario: req.session.usuario,
+            title: "Administração - Cadastro de Artistas - ArtGallery",
+            menssagem: "erro",
+            dados: req.body // reutiliza os dados que o usuário enviou
+        });
+    }
+});
 
 module.exports = router;
