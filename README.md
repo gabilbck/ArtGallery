@@ -24,6 +24,7 @@ O ArtGallery é uma plataforma para artistas exporem suas obras digitais, onde u
 * Implementação de categorias
 * Advertêncoia e banimento
 * Liberação de contas do tipo artista somente pelos administradores, com barrramento no login para contas não liberadas
+* Recuperação de senha via API com sistema de token temporário para validação
 
 ### 2. Bibliotecas necessárias para funcionamento:
 ``` npm install ```
