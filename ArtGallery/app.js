@@ -136,6 +136,12 @@ app.listen(PORT, () => {
    console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
 
+// Implementação de loggers
+const logger = require('./logger');
 
+app.use((req, res, next) => {
+  logger.info({ method: req.method, url: req.url });
+  next();
+});
 
 module.exports = app ;
