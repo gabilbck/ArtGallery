@@ -45,8 +45,10 @@ O ArtGallery é uma plataforma para artistas exporem suas obras digitais, onde u
 
 ``` npm install -g license-checker ```
 
-*vBiblioteca Adicional do Python:*
+*Biblioteca Adicional do Python:*
+
 ``` pip install semgrep ``` (Instalar globalmente)
+
 ``` semgrep --config auto . ``` (Executar dentro do projeto)
 
 ### 3. Banco de dados
