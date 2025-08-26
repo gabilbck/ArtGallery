@@ -41,6 +41,14 @@ O ArtGallery é uma plataforma para artistas exporem suas obras digitais, onde u
 
 ``` npm install nodemailer ```
 
+``` npm install winston @opentelemetry/api @opentelemetry/sdk-node ```
+
+``` npm install -g license-checker ```
+
+*vBiblioteca Adicional do Python:*
+``` pip install semgrep ``` (Instalar globalmente)
+``` semgrep --config auto . ``` (Executar dentro do projeto)
+
 ### 3. Banco de dados
 * Dump para banco de dados se encontra disponível no caminho: ArtGallery > BackupBD > ArtGallery.sql
 * Crie um banco de dados com o nome ``` artg ``` para importar dump 
