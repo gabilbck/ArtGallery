@@ -1,0 +1,35 @@
+name: CI Pipeline
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - run: npm install
+      - run: npm test
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run Semgrep
+        run: pip install semgrep && semgrep --config auto .
+
+  licensing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: npm install -g license-checker && license-checker --json > licenses.json
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: licenses
+          path: licenses.json
