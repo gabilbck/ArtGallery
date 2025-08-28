@@ -1,9 +1,10 @@
 const createError = require("http-errors");
 const express = require("express");
+const logger = require('./logger');
 const multer = require("multer");
 const path = require("path");
 const cookieParser = require("cookie-parser");
-const logger = require("morgan");
+//const logger = require("morgan");
 const session = require("express-session");
 
 const indexRouter = require("./routes/index");
@@ -49,7 +50,6 @@ app.use('/', recuperarRouter);
 
 // Middleware para cookies, sessão, logger, estáticos
 app.use(cookieParser());
-app.use(logger("dev"));
 app.use(
    session({
       secret: "ok",
@@ -58,6 +58,11 @@ app.use(
       cookie: { secure: false }, // trocar para true em produção com HTTPS
    })
 );
+
+const { loggerMiddleware } = require("./logger");
+app.use(loggerMiddleware);
+
+
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use((req, res, next) => {
@@ -136,12 +141,6 @@ app.listen(PORT, () => {
    console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
 
-// Implementação de loggers
-const logger = require('./logger');
 
-app.use((req, res, next) => {
-  logger.info({ method: req.method, url: req.url });
-  next();
-});
 
 module.exports = app ;
