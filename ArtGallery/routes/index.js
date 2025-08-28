@@ -1,6 +1,7 @@
 // routes/index.js
 const express = require("express");
 const router = express.Router();
+const { logger } = require('../logger'); //->impoirt o logger
 const {
    buscarInicioCategorias,
    buscarInicioObras,
@@ -11,12 +12,14 @@ const {
 
 // Rota principal: exibe vários “itens” (categorias, produtos, etc.)
 router.get("/", async (req, res) => {
+   logger.info(`[INDEX] Usuário acessou a página inicial | IP: ${req.ip} | UsuarioID: ${req.session.usuario?.id_usu || "visitante"}`);
    try {
-      // busca de cada tipo
       const categorias = await buscarInicioCategorias();
       const obras = await buscarInicioObras();
       const obraArtDest = await buscarObraAletoria();
-      // monte um array unificado de “itens”
+
+      logger.info(`[INDEX] Dados carregados para página inicial | Categorias: ${categorias.length} | Obras: ${obras.length} | IP: ${req.ip}`);
+
       const itensC = [
          ...categorias.map((c) => ({
             id: c.id,
@@ -59,7 +62,7 @@ router.get("/", async (req, res) => {
          obraArtDest: itensOArtDest,
       });
    } catch (erro) {
-      console.error("Erro ao buscar dados:", erro);
+      logger.error(`[INDEX] Erro ao buscar dados para página inicial | IP: ${req.ip} | UsuarioID: ${req.session.usuario?.id_usu || "visitante"} | Erro: ${erro.message}`);
       res.status(500).send("Erro ao carregar dados");
    }
 });
@@ -67,8 +70,10 @@ router.get("/", async (req, res) => {
 // Rota de logout
 router.get("/logout", (req, res) => {
    if (req.session.usuario) {
+      logger.info(`[INDEX] Usuário fez logout | UsuarioID: ${req.session.usuario.id_usu} | IP: ${req.ip}`);
       req.session.destroy(() => res.redirect("/"));
    } else {
+      logger.info(`[INDEX] Logout acessado sem usuário logado | IP: ${req.ip}`);
       res.redirect("/");
    }
 });

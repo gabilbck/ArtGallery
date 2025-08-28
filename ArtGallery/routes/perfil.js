@@ -2,6 +2,7 @@
 const express = require("express");
 const router = express.Router();
 const { uploadPerfil } = require("../utils/upload");
+const { logger } = require('../logger'); //->impoirt o logger
 const {
    conectarBD,
    buscarObrasFavoritas,
@@ -25,9 +26,11 @@ const autenticado = require("../middlewares/autenticado");
 router.get("/", autenticado, async (req, res) => {
    try {
       const usuarioSessao = req.session.usuario;
+      logger.info(`[PERFIL] Usuário acessou seu perfil | UsuarioID: ${usuarioSessao.id_usu} | IP: ${req.ip}`);
 
       const usuario = await buscarDadosUsuarioPorId(usuarioSessao.id_usu);
       if (!usuario) {
+         logger.warn(`[PERFIL] Usuário não encontrado ao acessar perfil | UsuarioID: ${usuarioSessao.id_usu} | IP: ${req.ip}`);
          return res.status(404).send("Usuário não encontrado");
       }
       
@@ -36,59 +39,64 @@ router.get("/", autenticado, async (req, res) => {
          const favoritos = await buscarObrasFavoritas(usuarioSessao.id_usu);
          const totalSeguindo = await getQtdSeguindo(usuarioSessao.id_usu);
          const favoritosPer = await contarFavoritosUsuario(usuario.id_usu);
+         logger.info(`[PERFIL] Dados carregados para perfil de usuário | UsuarioID: ${usuarioSessao.id_usu} | IP: ${req.ip}`);
          res.render("perfil", {
-         title: "Perfil - ArtGallery",
-         usuario: {
-            id_usu: usuario.id_usu,
-            nome_usu: usuario.nome_usu,
-            nome_comp: usuario.nome_comp,
-            email_usu: usuario.email_usu,
-            foto_usu: usuario.foto_usu,
-            bio_usu: usuario.bio_usu,
-            tipo_usu: usuario.tipo_usu,
-         },
-         favoritosPer,
-         colecoes,
-         favoritos,
-         totalSeguindo,
-         totalSeguidores: null
-      });
+            title: "Perfil - ArtGallery",
+            usuario: {
+               id_usu: usuario.id_usu,
+               nome_usu: usuario.nome_usu,
+               nome_comp: usuario.nome_comp,
+               email_usu: usuario.email_usu,
+               foto_usu: usuario.foto_usu,
+               bio_usu: usuario.bio_usu,
+               tipo_usu: usuario.tipo_usu,
+            },
+            favoritosPer,
+            colecoes,
+            favoritos,
+            totalSeguindo,
+            totalSeguidores: null
+         });
       } else{
          const artista = await buscarArtistaPorIdArt(usuarioSessao.id_art);
          const totalSeguidores = await getQtdSeguidores(usuarioSessao.id_art);
          const obras = await buscarObrasArtista(usuarioSessao.id_art);
          const favoritosPer = await contarFavoritosArtista(usuario.id_art);
-         console.log(obras);
+         logger.info(`[PERFIL] Dados carregados para perfil de artista | ArtistaID: ${usuarioSessao.id_art} | UsuarioID: ${usuarioSessao.id_usu} | IP: ${req.ip}`);
          res.render("perfil", {
-         title: "Perfil - ArtGallery",
-         usuario: {
-            id_usu: usuario.id_usu,
-            id_art: artista.id_art,
-            nome_usu: usuario.nome_usu,
-            nome_comp: usuario.nome_comp,
-            email_usu: usuario.email_usu,
-            foto_usu: usuario.foto_usu,
-            bio_usu: usuario.bio_usu,
-            tipo_usu: usuario.tipo_usu,
-            obras,
-         },
-         favoritosPer,
-         totalSeguidores,
-         colecoes: null,
-         favoritos: null,
-         totalSeguindo: null
-      });
+            title: "Perfil - ArtGallery",
+            usuario: {
+               id_usu: usuario.id_usu,
+               id_art: artista.id_art,
+               nome_usu: usuario.nome_usu,
+               nome_comp: usuario.nome_comp,
+               email_usu: usuario.email_usu,
+               foto_usu: usuario.foto_usu,
+               bio_usu: usuario.bio_usu,
+               tipo_usu: usuario.tipo_usu,
+               obras,
+            },
+            favoritosPer,
+            totalSeguidores,
+            colecoes: null,
+            favoritos: null,
+            totalSeguindo: null
+         });
       }
 
    } catch (err) {
-      console.error("Erro ao carregar perfil:", err);
+      logger.error(`[PERFIL] Erro ao carregar perfil | UsuarioID: ${req.session.usuario?.id_usu} | IP: ${req.ip} | Erro: ${err.message}`);
       res.status(500).send("Erro ao carregar perfil");
    }
 });
 
 router.get("/editar-perfil", autenticado, async (req, res) => {
+  logger.info(`[PERFIL] Usuário acessou página de edição de perfil | UsuarioID: ${req.session.usuario.id_usu} | IP: ${req.ip}`);
   const usuario = await buscarDadosUsuarioPorId(req.session.usuario.id_usu);
-  if (!usuario) return res.status(404).send("Usuário não encontrado.");
+  if (!usuario) {
+    logger.warn(`[PERFIL] Usuário não encontrado ao editar perfil | UsuarioID: ${req.session.usuario.id_usu} | IP: ${req.ip}`);
+    return res.status(404).send("Usuário não encontrado.");
+  }
   res.render("editarPerfil", { usuario });
 });
 
@@ -100,6 +108,7 @@ router.post("/editar-perfil", autenticado, uploadPerfil.single("foto_usu"), asyn
 
   if (req.file) {
     fotoPath = "/uploads/fotos-perfil/" + req.file.filename;
+    logger.info(`[PERFIL] Foto de perfil atualizada | UsuarioID: ${id_usu} | IP: ${req.ip}`);
   }
 
   try {
@@ -111,35 +120,39 @@ router.post("/editar-perfil", autenticado, uploadPerfil.single("foto_usu"), asyn
     req.session.usuario.nome_usu = nome_usu;
     req.session.usuario.foto_usu = fotoPath;
 
+    logger.info(`[PERFIL] Perfil atualizado com sucesso | UsuarioID: ${id_usu} | IP: ${req.ip}`);
     res.redirect("/perfil");
   } catch (err) {
-    console.error("Erro ao atualizar perfil:", err);
+    logger.error(`[PERFIL] Erro ao atualizar perfil | UsuarioID: ${id_usu} | IP: ${req.ip} | Erro: ${err.message}`);
     res.status(500).send("Erro ao atualizar perfil.");
   }
 });
 
-
-
-
 // Página de perfil público
 router.get("/perfilVisitante/:id", autenticado, async (req, res) => {
-   const id_usu = req.params.id; // ID do usuário a ser visualizado
+   const id_usu = req.params.id;
    const usuarioSessao = req.session.usuario;
 
-   // Validação do ID
+   logger.info(`[PERFIL] Usuário acessou perfil visitante | VisitadoID: ${id_usu} | UsuarioID: ${usuarioSessao.id_usu} | IP: ${req.ip}`);
+
    if (!id_usu || isNaN(Number(id_usu))) {
+      logger.warn(`[PERFIL] ID inválido ao acessar perfil visitante | VisitadoID: ${id_usu} | UsuarioID: ${usuarioSessao.id_usu} | IP: ${req.ip}`);
       return res.status(400).send("ID inválido");
    }
 
    try {
       const usuario = await buscarDadosUsuarioPorId(id_usu);
-      if (!usuario) return res.status(404).send("Usuário não encontrado");
+      if (!usuario) {
+        logger.warn(`[PERFIL] Usuário visitante não encontrado | VisitadoID: ${id_usu} | UsuarioID: ${usuarioSessao.id_usu} | IP: ${req.ip}`);
+        return res.status(404).send("Usuário não encontrado");
+      }
 
       const colecoes = await buscarColecoesPorUsuario(id_usu);
       const favoritos = await buscarObrasFavoritas(id_usu);
       const totalSeguindo = await getQtdSeguindo(id_usu);
       const favoritosPer = await contarFavoritosUsuario(id_usu);
 
+      logger.info(`[PERFIL] Dados carregados para perfil visitante | VisitadoID: ${id_usu} | UsuarioID: ${usuarioSessao.id_usu} | IP: ${req.ip}`);
       res.render("perfilVisitante", {
          title: `Perfil de ${usuario.nome_usu}`,
          usuario: {
@@ -158,7 +171,7 @@ router.get("/perfilVisitante/:id", autenticado, async (req, res) => {
          favoritosPer
       });
    } catch (err) {
-      console.error("Erro ao carregar perfil visitante:", err);
+      logger.error(`[PERFIL] Erro ao carregar perfil visitante | VisitadoID: ${id_usu} | UsuarioID: ${usuarioSessao.id_usu} | IP: ${req.ip} | Erro: ${err.message}`);
       res.status(500).send("Erro ao carregar perfil");
    }
 });
@@ -168,14 +181,19 @@ router.post("/seguir/:id_art", autenticado, async (req, res) => {
    const seguidorId = req.session.usuario.id_usu;
    const seguidoId = req.params.id_art;
 
+   logger.info(`[PERFIL] Tentativa de seguir artista | SeguidorID: ${seguidorId} | SeguidoID: ${seguidoId} | IP: ${req.ip}`);
+
    try {
       const jaSegue = await estaSeguindo(seguidorId, seguidoId);
       if (!jaSegue) {
          await seguirUsuario(seguidorId, seguidoId);
+         logger.info(`[PERFIL] Usuário começou a seguir artista | SeguidorID: ${seguidorId} | SeguidoID: ${seguidoId} | IP: ${req.ip}`);
+      } else {
+         logger.info(`[PERFIL] Usuário já segue artista | SeguidorID: ${seguidorId} | SeguidoID: ${seguidoId} | IP: ${req.ip}`);
       }
       res.redirect(`/perfil/perfilArtista/${seguidoId}`);
    } catch (error) {
-      console.error("Erro ao seguir usuário:", error);
+      logger.error(`[PERFIL] Erro ao seguir artista | SeguidorID: ${seguidorId} | SeguidoID: ${seguidoId} | IP: ${req.ip} | Erro: ${error.message}`);
       res.status(500).send("Erro ao seguir usuário.");
    }
 });
@@ -185,14 +203,19 @@ router.post("/desseguir/:id_art", autenticado, async (req, res) => {
    const seguidorId = req.session.usuario.id_usu;
    const seguidoId = req.params.id_art;
 
+   logger.info(`[PERFIL] Tentativa de deixar de seguir artista | SeguidorID: ${seguidorId} | SeguidoID: ${seguidoId} | IP: ${req.ip}`);
+
    try {
       const jaSegue = await estaSeguindo(seguidorId, seguidoId);
       if (jaSegue) {
          await deixarDeSeguirUsuario(seguidorId, seguidoId);
+         logger.info(`[PERFIL] Usuário deixou de seguir artista | SeguidorID: ${seguidorId} | SeguidoID: ${seguidoId} | IP: ${req.ip}`);
+      } else {
+         logger.info(`[PERFIL] Usuário já não seguia artista | SeguidorID: ${seguidorId} | SeguidoID: ${seguidoId} | IP: ${req.ip}`);
       }
       res.redirect(`/perfil/perfilArtista/${seguidoId}`);
    } catch (error) {
-      console.error("Erro ao deixar de seguir usuário:", error);
+      logger.error(`[PERFIL] Erro ao deixar de seguir artista | SeguidorID: ${seguidorId} | SeguidoID: ${seguidoId} | IP: ${req.ip} | Erro: ${error.message}`);
       res.status(500).send("Erro ao deixar de seguir usuário.");
    }
 });
@@ -201,6 +224,9 @@ router.get("/perfilArtista/:id_art", autenticado, async (req, res) => {
    const usuarioSessao = req.session.usuario;
    const id_usu = req.session.usuario.id_usu;
    const id_art = req.params.id_art;
+
+   logger.info(`[PERFIL] Usuário acessou perfil de artista | ArtistaID: ${id_art} | UsuarioID: ${id_usu} | IP: ${req.ip}`);
+
    const artista = await buscarArtistaPorIdArt(id_art);
    const obras = await buscarObrasArtista(id_art);
    const favoritosPer = await contarFavoritosArtista(id_art);
@@ -218,7 +244,7 @@ router.get("/perfilArtista/:id_art", autenticado, async (req, res) => {
    try {
       if (artista.id_usu != null && artista.id_usu === id_usu){
          const pertencente = true;
-         console.log(artista);
+         logger.info(`[PERFIL] Artista acessou seu próprio perfil | ArtistaID: ${id_art} | UsuarioID: ${id_usu} | IP: ${req.ip}`);
          res.render("perfilArtista", {
             title: `Perfil de ${artista.nome_usu}`,
             artista: {
@@ -237,7 +263,7 @@ router.get("/perfilArtista/:id_art", autenticado, async (req, res) => {
          });
       } else {
          const pertencente = false;
-         console.log(artista);
+         logger.info(`[PERFIL] Usuário acessou perfil de outro artista | ArtistaID: ${id_art} | UsuarioID: ${id_usu} | IP: ${req.ip}`);
          res.render("perfilArtista", {
             title: `Perfil de ${artista.nome_usu}`,
             artista: {
@@ -256,10 +282,9 @@ router.get("/perfilArtista/:id_art", autenticado, async (req, res) => {
          });
       }
    } catch (err) {
-      console.error("Erro ao carregar perfil do artista:", err);
+      logger.error(`[PERFIL] Erro ao carregar perfil do artista | ArtistaID: ${id_art} | UsuarioID: ${id_usu} | IP: ${req.ip} | Erro: ${err.message}`);
       res.status(500).send("Erro ao carregar perfil do artista");
    }
 });
-
 
 module.exports = router;

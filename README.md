@@ -51,6 +51,8 @@ O ArtGallery é uma plataforma para artistas exporem suas obras digitais, onde u
 
 ``` semgrep --config auto . ``` (Executar dentro do projeto)
 
+``` Get-Content logs\app.log -Wait ``` (Executar dentro do projeto usando Power Shell)
+
 ### 3. Banco de dados
 * Dump para banco de dados se encontra disponível no caminho: ArtGallery > BackupBD > ArtGallery.sql
 * Crie um banco de dados com o nome ``` artg ``` para importar dump 

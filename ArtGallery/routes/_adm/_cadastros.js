@@ -7,18 +7,21 @@ const {
     buscarIdUltimaCategoria,
     registrarArtista
 } = require("../../banco");
+const { logger } = require('../../logger'); // Adiciona o logger
 
 router.get("/", async (req, res) => {
+    logger.info(`[ADM_CADASTROS] Redirecionamento para página inicial de administração | IP: ${req.ip}`);
     res.redirect(`/_adm/_index`);
 });
 
 router.get("/categoria", async (req, res) => {
   validarPermissaoAdm(req, res);
+  logger.info(`[ADM_CADASTROS] Administrador acessou cadastro de categoria | UsuarioID: ${req.session.usuario.id_usu} | IP: ${req.ip}`);
   res.render("_adm/_cadastroCategoria", {
     usuario: req.session.usuario,
     title: "Administração - Cadastro de Categorias - ArtGallery",
     menssagem: null,
-    dados: {}, // <-- Adicionado aqui
+    dados: {},
     });
 });
 
@@ -28,27 +31,30 @@ router.post("/categoria", uploadCategoria.single("foto"), async (req, res) => {
         let fotoPath = null;
         if (req.file) {
             fotoPath = "/uploads/categorias/" + req.file.filename;
+            logger.info(`[ADM_CADASTROS] Foto de categoria enviada | UsuarioID: ${req.session.usuario.id_usu} | IP: ${req.ip}`);
         }
         const dados = {
             categoria: req.body.categoria,
             descricao: req.body.descricao,
-            foto: fotoPath, // agora está correto
+            foto: fotoPath,
         };
         await registrarCategoria(dados);
+        logger.info(`[ADM_CADASTROS] Categoria cadastrada com sucesso | Categoria: ${req.body.categoria} | UsuarioID: ${req.session.usuario.id_usu} | IP: ${req.ip}`);
         res.redirect(`/adm/obras/categorias`);
     } catch (erro) {
-        console.error('Erro ao cadastrar categoria:', erro);
+        logger.error(`[ADM_CADASTROS] Erro ao cadastrar categoria | Categoria: ${req.body.categoria} | UsuarioID: ${req.session.usuario.id_usu} | IP: ${req.ip} | Erro: ${erro.message}`);
         res.render('_adm/_cadastroCategoria', {
             usuario: req.session.usuario,
             title: "Administração - Cadastro de Categorias - ArtGallery",
             menssagem: "erro",
-            dados: req.body // reutiliza os dados que o usuário enviou
+            dados: req.body
         });
     }
 });
 
 router.get("/artista", async (req, res) => {
     validarPermissaoAdm(req, res);
+    logger.info(`[ADM_CADASTROS] Administrador acessou cadastro de artista | UsuarioID: ${req.session.usuario.id_usu} | IP: ${req.ip}`);
     res.render("_adm/_cadastroArtista", {
         usuario: req.session.usuario,
         title: "Administração - Cadastro de Artista - ArtGallery",
@@ -63,6 +69,7 @@ router.post("/artista", uploadPerfil.single("foto"), async (req, res) => {
         let fotoPath = null;
         if (req.file) {
             fotoPath = "/uploads/fotos-perfil/" + req.file.filename;
+            logger.info(`[ADM_CADASTROS] Foto de artista enviada | UsuarioID: ${req.session.usuario.id_usu} | IP: ${req.ip}`);
         }
         const dados = {
             nome_comp: req.body.nome_comp,
@@ -71,14 +78,15 @@ router.post("/artista", uploadPerfil.single("foto"), async (req, res) => {
             foto: fotoPath, 
         };
         await registrarArtista(dados);
+        logger.info(`[ADM_CADASTROS] Artista cadastrado com sucesso | Nome: ${req.body.nome_usu} | UsuarioID: ${req.session.usuario.id_usu} | IP: ${req.ip}`);
         res.redirect(`/adm/usuarios/artistas/ativos`);
     } catch (erro) {
-        console.error('Erro ao cadastrar categoria:', erro);
+        logger.error(`[ADM_CADASTROS] Erro ao cadastrar artista | Nome: ${req.body.nome_usu} | UsuarioID: ${req.session.usuario.id_usu} | IP: ${req.ip} | Erro: ${erro.message}`);
         res.render('_adm/_usuariosTotal', {
             usuario: req.session.usuario,
             title: "Administração - Cadastro de Artistas - ArtGallery",
             menssagem: "erro",
-            dados: req.body // reutiliza os dados que o usuário enviou
+            dados: req.body
         });
     }
 });
