@@ -25,7 +25,7 @@ router.post("/", async (req, res) => {
 
   if (!email || !senha) {
     erros = "E-mail e senha são obrigatórios!";
-    logger.warn(`Tentativa de login sem email/senha preenchidos`);
+    logger.warn(`[LOGIN] Tentativa de login sem email/senha preenchidos | IP: ${req.ip}`);
     return res.render("login", {
       title: "Login - ArtGallery",
       erros,
@@ -34,12 +34,12 @@ router.post("/", async (req, res) => {
   }
 
   try {
+    logger.info(`[LOGIN] Tentativa de login | Email: ${email} | IP: ${req.ip}`);
     const usuario = await buscarUsuario({ email, senha });
 
     if (usuario) {
-      // 🔒 VERIFICAÇÃO DE ARTISTA NÃO LIBERADO
       if (usuario.ban === true){
-        logger.warn(`Login bloqueado - usuario banido: ${email}`);
+        logger.warn(`[LOGIN] Bloqueado - usuário banido | Email: ${email} | ID: ${usuario.id_usu} | IP: ${req.ip}`);
         return res.render("login", {
           title: "Login - ArtGallery",
           erros: "Este usuário está permanemente bloqueado.",
@@ -54,7 +54,7 @@ router.post("/", async (req, res) => {
         );
 
         if (liberacao.status_lib !== "l") {
-          logger.warn(`Login recusado - artista ainda nao liberado: ${email}`);
+          logger.warn(`[LOGIN] Recusado - artista não liberado | Email: ${email} | ID: ${usuario.id_usu} | Status: ${liberacao.status_lib} | IP: ${req.ip}`);
           return res.render("login", {
             title: "Login - ArtGallery",
             erros: "Seu cadastro como artista ainda não foi aprovado.",
@@ -62,18 +62,17 @@ router.post("/", async (req, res) => {
           });
         } else {
           const artista = await buscarArtistaPorIdUsu(usuario.id_usu);
-          const dadosArtista = artista[0]; // porque a função retorna um array com 1 objeto
+          const dadosArtista = artista[0];
 
           req.session.usuario = {
             id_usu: dadosArtista.id_usu,
             nome_usu: dadosArtista.nome_usu,
-            email_usu: usuario.email_usu, // ou dadosArtista.email
+            email_usu: usuario.email_usu,
             tipo_usu: usuario.tipo_usu,
             id_art: dadosArtista.id_art,
           };
 
-          logger.info(`Login bem sucedido (artista): ${email}`);
-          //console.log("Sessão após login:", req.session);
+          logger.info(`[LOGIN] Sucesso (artista) | Email: ${email} | ID: ${usuario.id_usu} | IP: ${req.ip}`);
           return res.render("login", {
             title: "Login - ArtGallery",
             erros: null,
@@ -87,17 +86,16 @@ router.post("/", async (req, res) => {
           email_usu: usuario.email_usu,
           tipo_usu: usuario.tipo_usu,
         };
-        logger.info(`Login bem-sucedido ${email}`);
+        logger.info(`[LOGIN] Sucesso | Email: ${email} | ID: ${usuario.id_usu} | Tipo: ${usuario.tipo_usu} | IP: ${req.ip}`);
       }
 
-      //console.log("Sessão após login:", req.session);
       return res.render("login", {
         title: "Login - ArtGallery",
         erros: null,
         sucesso: true,
       });
     } else {
-      logger.warn(`Login falhou - email ou senha incorretos: ${email}`);
+      logger.warn(`[LOGIN] Falhou - email ou senha incorretos | Email: ${email} | IP: ${req.ip}`);
       return res.render("login", {
         title: "Login - ArtGallery",
         erros: "E-mail ou senha incorretos.",
@@ -105,8 +103,7 @@ router.post("/", async (req, res) => {
       });
     }
   } catch (error) {
-    logger.error(`Erro no login para ${email}: ${error.message}`);
-    //console.error("Erro ao buscar usuário:", error);
+    logger.error(`[LOGIN] Erro no login | Email: ${email} | IP: ${req.ip} | Erro: ${error.message}`);
     return res.render("login", {
       title: "Login - ArtGallery",
       erros: "Erro no servidor, tente novamente.",

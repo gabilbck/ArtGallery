@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 const path = require("path");
 const { uploadObra } = require("../utils/upload");
+const { logger } = require('../logger'); //->impoirt o logger
 const {
   jaFavoritou, // bool  -> usuário já marcou?
   favoritarObra, // void  -> grava favorito
@@ -19,8 +20,10 @@ const { validarSessao } = require("../middlewares/adm");
 
 router.get("/", async (req, res) => {
   if (!req.session.usuario) {
+    logger.warn(`[OBRAS] Tentativa de acesso sem login | IP: ${req.ip}`);
     return res.redirect("/login");
   } else{
+    logger.info(`[OBRAS] Usuário acessou /obras e foi redirecionado para /explorar | UsuarioID: ${req.session.usuario.id_usu} | IP: ${req.ip}`);
     return res.redirect("/explorar");
   }
 });
@@ -29,21 +32,24 @@ const autenticado = (req, res, next) => {
   if (req.session && req.session.usuario) {
     next();
   } else {
+    logger.warn(`[OBRAS] Tentativa de acesso sem login | IP: ${req.ip}`);
     res.redirect("/login");
   }
 };
 
 router.get("/nova", autenticado, async (req, res) => {
-  
   try {
     validarSessao(req, res);
     const tipo = req.session.usuario.tipo_usu;
+    logger.info(`[OBRAS] Usuário acessou página de nova obra | UsuarioID: ${req.session.usuario.id_usu} | Tipo: ${tipo} | IP: ${req.ip}`);
     if (tipo == "apr"){
+      logger.warn(`[OBRAS] Usuário apreciador tentou acessar nova obra | UsuarioID: ${req.session.usuario.id_usu} | IP: ${req.ip}`);
       return res.redirect("/");
     } else {
       const [categorias] = await conexao.query("SELECT id_cat, nome_cat FROM categoria");
       if (tipo == "adm") {
         const [artistas] = await conexao.query("SELECT id_art, nome_comp as nome_art from artista;");
+        logger.info(`[OBRAS] Admin acessou nova obra | UsuarioID: ${req.session.usuario.id_usu} | IP: ${req.ip}`);
         res.render("novaObra", {
           title: "Nova Obra",
           categorias: categorias.map(c => ({
@@ -60,20 +66,21 @@ router.get("/nova", autenticado, async (req, res) => {
           usuario: req.session.usuario
         });
       } else{
+        logger.info(`[OBRAS] Artista acessou nova obra | UsuarioID: ${req.session.usuario.id_usu} | IP: ${req.ip}`);
         res.render("novaObra", {
-        title: "Nova Obra",
-        categorias: categorias.map(c => ({
-          id_cat: c.id_cat,
-          nome_cat: c.nome_cat,
-          tabela: "categoria"
-        })),
-        asrtistas: null,
-        usuario: req.session.usuario
-      });
+          title: "Nova Obra",
+          categorias: categorias.map(c => ({
+            id_cat: c.id_cat,
+            nome_cat: c.nome_cat,
+            tabela: "categoria"
+          })),
+          asrtistas: null,
+          usuario: req.session.usuario
+        });
       }
     }
   } catch (error) {
-    console.error("Erro ao carregar categorias:", error);
+    logger.error(`[OBRAS] Erro ao carregar página de nova obra | UsuarioID: ${req.session.usuario?.id_usu} | IP: ${req.ip} | Erro: ${error.message}`);
     res.status(500).send("Erro ao carregar página de nova obra");
   }
 });
@@ -83,32 +90,37 @@ router.post("/nova", uploadObra.single("imagem"), async (req, res) => {
   validarSessao(req, res);
   const tipo = req.session.usuario.tipo_usu;
   if (tipo == "apr"){
+    logger.warn(`[OBRAS] Usuário apreciador tentou criar nova obra | UsuarioID: ${req.session.usuario.id_usu} | IP: ${req.ip}`);
     return res.redirect("/");
   } else {
     try {
       const { titulo, descricao, categoria, artista } = req.body;
       const caminhoImagem = "/uploads/obras/" + req.file.filename;
+      logger.info(`[OBRAS] Tentativa de criar nova obra | UsuarioID: ${req.session.usuario.id_usu} | Título: ${titulo} | ArtistaID: ${artista} | IP: ${req.ip}`);
       const enviar = await banco.salvarNovaObra(titulo, descricao, categoria, caminhoImagem, artista);
-      console.log(enviar);
       const obraNova = await banco.consultarUltimaObraArtista(artista);
-      console.log(obraNova);
-      res.redirect(`/obras/${obraNova.id_obr}`); // Redirecionar após publicar
+      logger.info(`[OBRAS] Nova obra criada com sucesso | ObraID: ${obraNova.id_obr} | UsuarioID: ${req.session.usuario.id_usu} | IP: ${req.ip}`);
+      res.redirect(`/obras/${obraNova.id_obr}`);
     } catch (error) {
-      console.error("Erro ao salvar nova obra:", error);
+      logger.error(`[OBRAS] Erro ao salvar nova obra | UsuarioID: ${req.session.usuario.id_usu} | IP: ${req.ip} | Erro: ${error.message}`);
       res.status(500).send("Erro ao salvar nova obra.");
     }
   }
 });
 
 router.get("/editar/:id", async (req, res) => {
-  if (!req.session.usuario) return res.redirect("/login");
+  if (!req.session.usuario) {
+    logger.warn(`[OBRAS] Tentativa de acesso à edição sem login | IP: ${req.ip}`);
+    return res.redirect("/login");
+  }
   const id = req.params.id;
   const usuario = req.session.usuario;
   try {
-    const dados = await buscarUmaObra(id); // retorna { id, titulo, foto, des, id_art, idCat, ... }
+    logger.info(`[OBRAS] Usuário acessou edição de obra | ObraID: ${id} | UsuarioID: ${usuario.id_usu} | IP: ${req.ip}`);
+    const dados = await buscarUmaObra(id);
 
-    // Segurança: artista só edita se for dono
     if (usuario.tipo_usu !== "adm" && usuario.id_usu !== dados.id_usu_art) {
+      logger.warn(`[OBRAS] Usuário sem permissão para editar obra | ObraID: ${id} | UsuarioID: ${usuario.id_usu} | IP: ${req.ip}`);
       return res.status(403).send("Você não tem permissão para editar esta obra.");
     }
 
@@ -138,13 +150,16 @@ router.get("/editar/:id", async (req, res) => {
       }))
     });
   } catch (err) {
-    console.error("Erro ao carregar edição:", err);
+    logger.error(`[OBRAS] Erro ao carregar edição de obra | ObraID: ${id} | UsuarioID: ${usuario.id_usu} | IP: ${req.ip} | Erro: ${err.message}`);
     res.redirect("/obras/" + id + "?menssagem=erro");
   }
 });
 
 router.post("/editar/:id", uploadObra.single("imagem"), async (req, res) => {
-  if (!req.session.usuario) return res.redirect("/login");
+  if (!req.session.usuario) {
+    logger.warn(`[OBRAS] Tentativa de edição sem login | IP: ${req.ip}`);
+    return res.redirect("/login");
+  }
 
   const id = req.params.id;
   const usuario = req.session.usuario;
@@ -153,13 +168,14 @@ router.post("/editar/:id", uploadObra.single("imagem"), async (req, res) => {
   let fotoPath = null;
   if (req.file) {
     fotoPath = "/uploads/obras/" + req.file.filename;
+    logger.info(`[OBRAS] Foto da obra atualizada | ObraID: ${id} | UsuarioID: ${usuario.id_usu} | IP: ${req.ip}`);
   }
 
   try {
     const obraAtual = await buscarUmaObra(id);
 
-    // Segurança: só admin ou artista dono pode editar
     if (usuario.tipo_usu !== "adm" && usuario.id_usu !== obraAtual.id_usu_art) {
+      logger.warn(`[OBRAS] Usuário sem permissão para editar obra | ObraID: ${id} | UsuarioID: ${usuario.id_usu} | IP: ${req.ip}`);
       return res.status(403).send("Você não tem permissão para editar esta obra.");
     }
 
@@ -181,9 +197,10 @@ router.post("/editar/:id", uploadObra.single("imagem"), async (req, res) => {
 
     await conexao.query(sql, params);
 
+    logger.info(`[OBRAS] Obra editada com sucesso | ObraID: ${id} | UsuarioID: ${usuario.id_usu} | IP: ${req.ip}`);
     res.redirect(`/obras/${id}`);
   } catch (erro) {
-    console.error("Erro ao salvar edição:", erro);
+    logger.error(`[OBRAS] Erro ao salvar edição de obra | ObraID: ${id} | UsuarioID: ${usuario.id_usu} | IP: ${req.ip} | Erro: ${erro.message}`);
     res.status(500).send("Erro ao editar a obra.");
   }
 });
@@ -192,6 +209,7 @@ router.post("/editar/:id", uploadObra.single("imagem"), async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   if (!req.session.usuario) {
+    logger.warn(`[OBRAS] Tentativa de acesso à obra sem login | IP: ${req.ip}`);
     return res.redirect("/login");
   }
   const obraId = req.params.id.includes("=")
@@ -199,11 +217,13 @@ router.get("/:id", async (req, res) => {
     : req.params.id;
   const usuario = req.session.usuario.id_usu;
   try {
+    logger.info(`[OBRAS] Usuário acessou detalhes da obra | ObraID: ${obraId} | UsuarioID: ${usuario} | IP: ${req.ip}`);
     const obra = await buscarUmaObra(obraId);
     const jaFavoritouObra = await jaFavoritou(usuario, obraId);
-    const comentarios = await buscarComentariosPorObra(obraId); // Supondo que você tenha uma função para buscar comentários
+    const comentarios = await buscarComentariosPorObra(obraId);
 
     if (!obra) {
+      logger.warn(`[OBRAS] Obra não encontrada | ObraID: ${obraId} | UsuarioID: ${usuario} | IP: ${req.ip}`);
       return res.status(404).send("Obra não encontrada");
     }
 
@@ -243,13 +263,14 @@ router.get("/:id", async (req, res) => {
         sucesso
     });
   } catch (err) {
-    console.error("Erro ao carregar detalhes da obra:", err);
+    logger.error(`[OBRAS] Erro ao carregar detalhes da obra | ObraID: ${obraId} | UsuarioID: ${usuario} | IP: ${req.ip} | Erro: ${err.message}`);
     res.status(500).send("Erro ao carregar detalhes da obra");
   }
 });
 
 router.get("/:id/favoritar", async (req, res) => {
   if (!req.session.usuario) {
+    logger.warn(`[OBRAS] Tentativa de favoritar sem login | IP: ${req.ip}`);
     return res.redirect("/login");
   }
   const usuId = req.session.usuario.id_usu;
@@ -257,41 +278,38 @@ router.get("/:id/favoritar", async (req, res) => {
     ? req.params.id.split("=")[1]
     : req.params.id;
 
-  // --- BLOQUEIO de 5s ---
   const agora = Date.now();
   const ultimoClique = req.session.ultimoFav?.[obraId] || 0;
 
   if (agora - ultimoClique < 5000) {
-  console.log("Clique bloqueado por 5s");
-  req.session.erro = "Espere pelo menos 5 segundos antes de favoritar novamente.";
-  return res.redirect(`/obras/${obraId}`); 
-}
+    logger.warn(`[OBRAS] Favoritar bloqueado por 5s | ObraID: ${obraId} | UsuarioID: ${usuId} | IP: ${req.ip}`);
+    req.session.erro = "Espere pelo menos 5 segundos antes de favoritar novamente.";
+    return res.redirect(`/obras/${obraId}`); 
+  }
 
-
-  // Atualiza a marca de tempo
   req.session.ultimoFav = {
     ...(req.session.ultimoFav || {}),
     [obraId]: agora,
   };
 
   try {
-    // Alterna favorito ↔ desfavorito
-    console.log("usuId:", usuId, "obraId:", obraId);
     if (await jaFavoritou(usuId, obraId)) {
       await desfavoritarObra(usuId, obraId);
+      logger.info(`[OBRAS] Obra desfavoritada | ObraID: ${obraId} | UsuarioID: ${usuId} | IP: ${req.ip}`);
     } else {
       await favoritarObra(usuId, obraId);
+      logger.info(`[OBRAS] Obra favoritada | ObraID: ${obraId} | UsuarioID: ${usuId} | IP: ${req.ip}`);
     }
-    console.log("Favoritou");
     res.redirect(`/obras/${obraId}`);
   } catch (err) {
-    console.error("Erro ao favoritar:", err);
+    logger.error(`[OBRAS] Erro ao favoritar/desfavoritar obra | ObraID: ${obraId} | UsuarioID: ${usuId} | IP: ${req.ip} | Erro: ${err.message}`);
     res.status(500).send("Erro ao favoritar obra");
   }
 });
 
 router.post("/:id/favoritar", async (req, res) => {
   if (!req.session.usuario) {
+    logger.warn(`[OBRAS] Tentativa de favoritar via AJAX sem login | IP: ${req.ip}`);
     return res.status(401).json({ sucesso: false, mensagem: "Não autenticado" });
   }
 
@@ -302,8 +320,10 @@ router.post("/:id/favoritar", async (req, res) => {
     const jaTem = await jaFavoritou(id_usu, id_obr);
     if (jaTem) {
       await desfavoritarObra(id_usu, id_obr);
+      logger.info(`[OBRAS] Obra desfavoritada via AJAX | ObraID: ${id_obr} | UsuarioID: ${id_usu} | IP: ${req.ip}`);
     } else {
       await favoritarObra(id_usu, id_obr);
+      logger.info(`[OBRAS] Obra favoritada via AJAX | ObraID: ${id_obr} | UsuarioID: ${id_usu} | IP: ${req.ip}`);
     }
 
     const total = await contarFavoritos(id_obr);
@@ -314,50 +334,14 @@ router.post("/:id/favoritar", async (req, res) => {
       total,
     });
   } catch (err) {
-    console.error("Erro ao favoritar via AJAX:", err);
+    logger.error(`[OBRAS] Erro ao favoritar via AJAX | ObraID: ${id_obr} | UsuarioID: ${id_usu} | IP: ${req.ip} | Erro: ${err.message}`);
     return res.status(500).json({ sucesso: false, mensagem: "Erro interno" });
   }
 });
 
-router.get("/:id/comentar", async (res, req) => {
-  if (!req.session.usuario) {
-    return res.redirect("/login");
-  }
-  const usuId = req.session.usuario.id_usu;
-  const obraId = req.params.id.includes("=")
-    ? req.params.id.split("=")[1]
-    : req.params.id;
-  const comentario = req.params.comentario;
-  // --- BLOQUEIO de 5s ---
-  const agora = Date.now();
-  const ultimoClique = req.session.ultimoFav?.[obraId] || 0;
-
-  if (agora - ultimoClique < 5000) {
-    console.log("Clique bloqueado por 5s");
-    res.redirect(`/obras/${obraId}`);
-  }
-
-  // Atualiza a marca de tempo
-  req.session.ultimoFav = {
-    ...(req.session.ultimoFav || {}),
-    [obraId]: agora,
-  };
-
-  try {
-    if (!!comentario){
-    await comentarObra(usuId, obraId, comentario);
-    console.log(`$usuID: $comentario (na obra $obraId)`);
-    res.redirect(`/obras/${obraId}`);
-    } 
-  } catch (err) {
-    console.error("Erro ao comentar:", err);
-    res.status(500).send("Erro ao comentar na obra");
-  }
-});
-
-// Corrija seu método de POST para comentar:
 router.post("/:id/comentar", async (req, res) => {
   if (!req.session.usuario) {
+    logger.warn(`[OBRAS] Tentativa de comentar sem login | IP: ${req.ip}`);
     return res.redirect("/login");
   }
 
@@ -366,23 +350,28 @@ router.post("/:id/comentar", async (req, res) => {
   const comentario = req.body.comentario;
 
   if (!comentario || comentario.length > 255) {
+    logger.warn(`[OBRAS] Comentário inválido | ObraID: ${id_obr} | UsuarioID: ${id_usu} | IP: ${req.ip}`);
     req.session.erro = "Comentário inválido: precisa ter entre 1 e 255 caracteres.";
     return res.redirect(`/obras/${id_obr}`);
   }
 
   try {
     await comentarObra(id_usu, id_obr, comentario);
+    logger.info(`[OBRAS] Comentário enviado | ObraID: ${id_obr} | UsuarioID: ${id_usu} | IP: ${req.ip}`);
     req.session.sucessoComentario = "Comentário enviado com sucesso!";
     res.redirect(`/obras/${id_obr}`);
   } catch (err) {
-    console.error("Erro ao comentar:", err);
+    logger.error(`[OBRAS] Erro ao comentar | ObraID: ${id_obr} | UsuarioID: ${id_usu} | IP: ${req.ip} | Erro: ${err.message}`);
     req.session.erro = "Erro ao enviar comentário.";
     res.redirect(`/obras/${id_obr}`);
   }
 });
 
 router.post("/:id/comentarios/:id_com/excluir", async (req, res) => {
-  if (!req.session.usuario) return res.redirect("/login");
+  if (!req.session.usuario) {
+    logger.warn(`[OBRAS] Tentativa de excluir comentário sem login | IP: ${req.ip}`);
+    return res.redirect("/login");
+  }
 
   const id_com = req.params.id_com;
   const id_obr = req.params.id;
@@ -393,25 +382,27 @@ router.post("/:id/comentarios/:id_com/excluir", async (req, res) => {
     const comentario = comentarios.find(c => c.id_com == id_com);
 
     if (!comentario) {
+      logger.warn(`[OBRAS] Comentário não encontrado para exclusão | ComentarioID: ${id_com} | ObraID: ${id_obr} | UsuarioID: ${usuarioLogado.id_usu} | IP: ${req.ip}`);
       req.session.erro = "Comentário não encontrado.";
       return res.redirect(`/obras/${id_obr}`);
     }
 
-    // Apenas dono do comentário ou artista da obra pode excluir
     const obra = await buscarUmaObra(id_obr);
     if (
       usuarioLogado.id_usu !== comentario.id_usu &&
       usuarioLogado.id_usu !== obra.id_art
     ) {
+      logger.warn(`[OBRAS] Usuário sem permissão para excluir comentário | ComentarioID: ${id_com} | ObraID: ${id_obr} | UsuarioID: ${usuarioLogado.id_usu} | IP: ${req.ip}`);
       req.session.erro = "Você não tem permissão para excluir esse comentário.";
       return res.redirect(`/obras/${id_obr}`);
     }
 
     await excluirComentario(id_com);
+    logger.info(`[OBRAS] Comentário excluído com sucesso | ComentarioID: ${id_com} | ObraID: ${id_obr} | UsuarioID: ${usuarioLogado.id_usu} | IP: ${req.ip}`);
     req.session.sucesso = "Comentário excluído com sucesso.";
     res.redirect(`/obras/${id_obr}`);
   } catch (err) {
-    console.error("Erro ao excluir comentário:", err);
+    logger.error(`[OBRAS] Erro ao excluir comentário | ComentarioID: ${id_com} | ObraID: ${id_obr} | UsuarioID: ${usuarioLogado.id_usu} | IP: ${req.ip} | Erro: ${err.message}`);
     req.session.erro = "Erro ao tentar excluir o comentário.";
     res.redirect(`/obras/${id_obr}`);
   }
