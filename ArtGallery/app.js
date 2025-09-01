@@ -1,12 +1,11 @@
 const createError = require("http-errors");
 const express = require("express");
-const logger = require('./logger');
+const { logger, loggerMiddleware} = require('./logger');
 const tracer = require('dd-trace').init();
 const winston = require('winston');
 const multer = require("multer");
 const path = require("path");
 const cookieParser = require("cookie-parser");
-//const logger = require("morgan");
 const session = require("express-session");
 
 const indexRouter = require("./routes/index");
@@ -60,9 +59,7 @@ app.use(
    })
 );
 
-const { loggerMiddleware } = require("./logger");
 app.use(loggerMiddleware);
-
 
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -136,6 +133,44 @@ app.use((err, req, res, next) => {
    res.status(err.status || 500);
    res.render("error");
 });
+
+
+
+//criando erros para gerar relatorio no Datadog
+
+// Rota que gera um erro simples
+app.get('/erro1', (req, res) => {
+  logger.error('Erro de teste 1');
+  res.status(500).send('Erro 1 enviado!');
+});
+
+// Rota que gera outro erro
+app.get('/erro2', (req, res) => {
+  logger.error('Erro de teste 2');
+  res.status(500).send('Erro 2 enviado!');
+});
+
+// Rota que lança erro não tratado (vai cair no error handler)
+app.get('/erro-nao-tratado', (req, res) => {
+  throw new Error('Erro não tratado de teste');
+});
+
+// Rota que dispara vários erros de uma vez
+app.get('/erro-massivo', (req, res) => {
+  for (let i = 1; i <= 20; i++) {
+    logger.error(`Erro massivo #${i}`);
+  }
+  res.status(500).send('20 erros enviados!');
+});
+
+
+logger.error('Esse é um erro de teste enviado ao Datadog');
+
+
+app.get('/bug', (req, res) => {
+  throw new Error('Erro de teste forçado!');
+});
+
 
 // Iniciando servidor
 const PORT = process.env.PORT || 3001;
