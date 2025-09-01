@@ -13,7 +13,7 @@ router.get('/recuperar', (req, res) => {
 router.post('/recuperar', async (req, res) => {
   const { email } = req.body;
 
-  logger.info(`[RECUPERAR] Tentativa de recuperação de senha | Email: ${email} | IP: ${req.ip}`);
+  logger.warn(`[RECUPERAR] Tentativa de recuperação de senha | Email: ${email} | IP: ${req.ip}`);
 
   try {
     const existe = await verificarEmailExiste(email);

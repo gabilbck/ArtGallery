@@ -12,6 +12,7 @@
       "@opentelemetry/sdk-node": "^0.203.0",
       "bootstrap-icons": "^1.12.1",
       "cookie-parser": "~1.4.4",
+      "dd-trace": "^5.64.0",
       "debug": "~2.6.9",
       "ejs": "^3.1.10",
       "express": "^4.21.2",

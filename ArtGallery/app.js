@@ -1,6 +1,8 @@
 const createError = require("http-errors");
 const express = require("express");
 const logger = require('./logger');
+const tracer = require('dd-trace').init();
+const winston = require('winston');
 const multer = require("multer");
 const path = require("path");
 const cookieParser = require("cookie-parser");
@@ -24,7 +26,6 @@ const admSuporteRouter = require("./routes/_adm/_suporte");
 const admCadastrarRouter = require("./routes/_adm/_cadastros");
 
 const app = express();
-
 
 
 app.set('views', path.join(__dirname, "views"));
@@ -112,6 +113,7 @@ app.use("/adm/suporte", admSuporteRouter);
 app.use("/adm/cadastrar", admCadastrarRouter);
 
 const conexao = require('./banco');
+
 app.get('/', async (req, res) => {
   try {
     const [categorias] = await conexao.query('SELECT id_cat, nome_cat FROM categoria');
@@ -143,4 +145,4 @@ app.listen(PORT, () => {
 
 
 
-module.exports = app ;
+module.exports = { app, logger };

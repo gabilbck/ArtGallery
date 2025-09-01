@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { logger } = require('../logger'); //->impoirt o logger
+const { logger } = require('../../logger'); //->impoirt o logger
 const {
   listarUsuarios,
   listarApreciadores,
